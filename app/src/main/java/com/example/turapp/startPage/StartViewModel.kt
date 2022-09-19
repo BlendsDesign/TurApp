@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import java.lang.IllegalArgumentException
 
-class StartViewModel(private val testText: String) : ViewModel() {
+class StartViewModel(testText: String) : ViewModel() {
     // TODO: Implement the ViewModel
     private val _test = MutableLiveData<String>()
     val test: LiveData<String> get() = _test

@@ -9,5 +9,13 @@
         android:id="@+id/startFragment"
         android:name="com.example.turapp.startPage.StartFragment"
         android:label="start_fragment"
-        tools:layout="@layout/start_fragment" />
+        tools:layout="@layout/start_fragment" >
+        <action
+            android:id="@+id/action_startFragment_to_listFragment2"
+            app:destination="@id/listFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/listFragment2"
+        android:name="com.example.turapp.list.ListFragment"
+        android:label="ListFragment" />
 </navigation>
