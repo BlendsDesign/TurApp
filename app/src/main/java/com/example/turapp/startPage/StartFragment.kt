@@ -31,7 +31,7 @@ class StartFragment : Fragment(), MenuProvider {
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.app_bar_menu, menu)
+        menuInflater.inflate(R.menu.bottom_nav_menu, menu)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -53,6 +53,7 @@ class StartFragment : Fragment(), MenuProvider {
         }
         return true
     }
+
 
 
 }
