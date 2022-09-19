@@ -7,26 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.turapp.R
+import com.example.turapp.databinding.StartFragmentBinding
 
 class StartFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = StartFragment()
-    }
 
-    private lateinit var viewModel: StartViewModel
+    private val viewModel: StartViewModel by lazy {
+        val test = "velkommen til appen"
+        ViewModelProvider(this, StartViewModel.Factory(test)).get(StartViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.start_fragment, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(StartViewModel::class.java)
-        // TODO: Use the ViewModel
+        val binding = StartFragmentBinding.inflate(inflater)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
+        return binding.root
     }
 
 }
