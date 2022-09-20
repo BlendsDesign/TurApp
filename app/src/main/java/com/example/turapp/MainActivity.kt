@@ -10,6 +10,10 @@ import android.widget.Toolbar
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.turapp.startPage.Location
+import com.example.turapp.startPage.LocationAdapter
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(), MenuProvider {
@@ -17,6 +21,25 @@ class MainActivity : AppCompatActivity(), MenuProvider {
         super.onCreate(savedInstanceState)
         setSupportActionBar(findViewById(R.id.turToolbar))
         setContentView(R.layout.activity_main)
+
+        //List of locations with distance from user (RecyclerView)
+        val locationsList = mutableListOf(
+            Location("Canary River", 111 ),
+            Location("Sweet Canyon", 222 ),
+            Location("Country Road", 333 ),
+            Location("Cotton Fields", 444 ),
+            Location("Death Valley", 555 ),
+            Location("Scary Forest", 666 ),
+            Location("Twin Peaks", 777 ),
+            Location("Fishing Spot", 888 ),
+            Location("Hunting ground", 999 ),
+            Location("Steep Hill", 132 ),
+
+        )
+
+        val adapter = LocationAdapter(locationsList)
+        rvLocations.adapter = adapter
+        rvLocations.layoutManager = LinearLayoutManager(this)
 
     }
 
