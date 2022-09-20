@@ -3,6 +3,8 @@ package com.example.turapp.Sensors
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Sensor
+import android.os.Build
+import androidx.annotation.RequiresApi
 
 class LightSensor(
     context: Context
@@ -27,4 +29,13 @@ class GyroscopeSensor(
     context = context,
     sensorFeature = PackageManager.FEATURE_SENSOR_GYROSCOPE,
     sensorType = Sensor.TYPE_GYROSCOPE
+)
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+class HeadingSensor(
+    context: Context
+): AndroidSensor(
+    context = context,
+    sensorFeature = PackageManager.FEATURE_SENSOR_HEADING,
+    sensorType = Sensor.TYPE_HEADING
 )
