@@ -8,11 +8,15 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toolbar
+import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.StartFragmentBinding
 
 class StartFragment : Fragment(), MenuProvider {
-
 
     private val viewModel: StartViewModel by lazy {
         val test = "velkommen til appen"
@@ -21,13 +25,31 @@ class StartFragment : Fragment(), MenuProvider {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
+
+
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
+
+
         val binding = StartFragmentBinding.inflate(inflater)
+
+
+
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
+
+
+        //binding.btnNextFrag.setOnClickListener { findNavController().navigate(StartFragmentDirections
+        //    .actionStartFragmentToLiveSensorDataFragment()) }
+        binding.navShowTides.setOnItemReselectedListener {
+            when(it.itemId) {
+                R.id.btnGoToSensor -> findNavController().navigate(StartFragmentDirections.actionStartFragmentToLiveSensorDataFragment())
+            }
+        }
+
         return binding.root
+
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
