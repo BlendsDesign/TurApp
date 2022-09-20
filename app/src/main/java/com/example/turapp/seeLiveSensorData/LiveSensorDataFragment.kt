@@ -5,14 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.turapp.R
 import com.example.turapp.databinding.FragmentLiveSensorDataBinding
 
 class LiveSensorDataFragment : Fragment() {
 
     private val viewModel: LiveSensorDataViewModel by lazy {
-        ViewModelProvider(this, LiveSensorDataViewModel.Factory()).get(LiveSensorDataViewModel::class.java)
+        val app = requireNotNull(activity).application
+        ViewModelProvider(this, LiveSensorDataViewModel.Factory(app)).get(LiveSensorDataViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -21,6 +22,15 @@ class LiveSensorDataFragment : Fragment() {
     ): View? {
         val binding = FragmentLiveSensorDataBinding.inflate(inflater)
         binding.lifecycleOwner = this
+
+        viewModel.accSensorData.observe(viewLifecycleOwner, Observer {
+            binding.tvAccSensor.text = it.toString()
+        })
+
+        viewModel.gyroSensorData.observe(viewLifecycleOwner, Observer {
+            binding.tvGyroSensor.text = it.toString()
+        })
+
 
 
         return binding.root

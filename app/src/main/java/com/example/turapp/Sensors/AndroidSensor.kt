@@ -13,7 +13,8 @@ abstract class AndroidSensor(
     private val context: Context,
     private val sensorFeature: String,
     sensorType: Int
-    ) : MeasurableSensor(sensorType), SensorEventListener {
+) : MeasurableSensor(sensorType), SensorEventListener {
+
     override val doesSensorExist: Boolean
         get() = context.packageManager.hasSystemFeature(sensorFeature)
 
@@ -22,18 +23,21 @@ abstract class AndroidSensor(
 
     override fun startListening() {
         if (!doesSensorExist) {
-            if(::sensorManager.isInitialized && sensor == null) {
-                sensorManager = context.getSystemService(SensorManager::class.java) as SensorManager
-                sensor = sensorManager.getDefaultSensor(sensorType)
-            }
-            sensor.let {
-                sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
-            }
+            return
+        }
+
+        if (!::sensorManager.isInitialized && sensor == null) {
+            sensorManager = context.getSystemService(SensorManager::class.java) as SensorManager
+            sensor = sensorManager.getDefaultSensor(sensorType)
+        }
+        sensor.let {
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
         }
     }
 
+
     override fun stopListening() {
-        if(!doesSensorExist || !::sensorManager.isInitialized) {
+        if (!doesSensorExist || !::sensorManager.isInitialized) {
             sensor.let {
                 sensorManager.unregisterListener(this)
             }
@@ -41,10 +45,10 @@ abstract class AndroidSensor(
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if(!doesSensorExist) {
+        if (!doesSensorExist) {
             return
         }
-        if(event?.sensor?.type == sensorType) {
+        if (event?.sensor?.type == sensorType) {
             onSensorValuesChanged?.invoke(event.values.toList())
         }
     }

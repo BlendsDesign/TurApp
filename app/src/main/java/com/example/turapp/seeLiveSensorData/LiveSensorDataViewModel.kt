@@ -1,18 +1,43 @@
 package com.example.turapp.seeLiveSensorData
 
+import android.app.Application
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.turapp.Sensors.AccelerometerSensor
+import com.example.turapp.Sensors.GyroscopeSensor
 import java.lang.IllegalArgumentException
 
-class LiveSensorDataViewModel: ViewModel()  {
+class LiveSensorDataViewModel(private val app: Application): ViewModel()  {
 
-    val text = "Hello this is it"
+    private val accSensor = AccelerometerSensor(app)
+    private val _accSensorData = MutableLiveData<List<Float>>()
+    val accSensorData: LiveData<List<Float>> get() = _accSensorData
 
-    class Factory() : ViewModelProvider.Factory {
+    private val gyroSensor = GyroscopeSensor(app)
+    private val _gyroSensorData = MutableLiveData<List<Float>>()
+    val gyroSensorData: LiveData<List<Float>> get() = _gyroSensorData
+
+
+    init {
+        accSensor.startListening()
+        accSensor.setOnSensorValuesChangedListener {
+            _accSensorData.value = it
+        }
+        gyroSensor.startListening()
+        gyroSensor.setOnSensorValuesChangedListener {
+            _gyroSensorData.value = it
+        }
+
+    }
+
+
+    class Factory(private val app: Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(LiveSensorDataViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return LiveSensorDataViewModel() as T
+                return LiveSensorDataViewModel(app) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }
