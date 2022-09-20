@@ -11,7 +11,6 @@ import com.example.turapp.databinding.StartFragmentBinding
 
 class StartFragment : Fragment() {
 
-
     private val viewModel: StartViewModel by lazy {
         val test = "velkommen til appen"
         ViewModelProvider(this, StartViewModel.Factory(test)).get(StartViewModel::class.java)
