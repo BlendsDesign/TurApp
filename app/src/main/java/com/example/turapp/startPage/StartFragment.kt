@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.turapp.R
+import androidx.navigation.fragment.findNavController
 import com.example.turapp.databinding.StartFragmentBinding
 
 class StartFragment : Fragment() {
@@ -23,7 +23,11 @@ class StartFragment : Fragment() {
         val binding = StartFragmentBinding.inflate(inflater)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
+        binding.btnNextFrag.setOnClickListener { findNavController().navigate(StartFragmentDirections
+            .actionStartFragmentToLiveSensorDataFragment()) }
+
         return binding.root
+
     }
 
 }
