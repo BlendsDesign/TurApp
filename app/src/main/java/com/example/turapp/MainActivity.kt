@@ -14,8 +14,9 @@ import androidx.lifecycle.Lifecycle
 class MainActivity : AppCompatActivity(), MenuProvider {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(findViewById(R.id.turToolbar))
         setContentView(R.layout.activity_main)
-        
+
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

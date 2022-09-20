@@ -31,6 +31,10 @@ class LiveSensorDataFragment : Fragment() {
             binding.tvGyroSensor.text = it.toString()
         })
 
+        viewModel.headingSensorData.observe(viewLifecycleOwner, Observer {
+            binding.tvOtherSensors.text = it.toString()
+        })
+
 
 
         return binding.root
