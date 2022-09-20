@@ -24,13 +24,15 @@
 
         android:text="@{viewModel.test}" />
 
-        <Button
-            android:text="GO NEXT"
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/navShowTides"
+            app:menu="@menu/start_bottom_nav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btnNextFrag"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            android:background="@color/cardview_dark_background"
+            />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
