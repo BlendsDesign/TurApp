@@ -25,16 +25,10 @@ class StartFragment : Fragment(), MenuProvider {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
-
-
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-
-
         val binding = StartFragmentBinding.inflate(inflater)
-
-
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
