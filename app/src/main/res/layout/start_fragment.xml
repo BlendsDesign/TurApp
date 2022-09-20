@@ -24,11 +24,7 @@
 
         android:text="@{viewModel.test}" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="match_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

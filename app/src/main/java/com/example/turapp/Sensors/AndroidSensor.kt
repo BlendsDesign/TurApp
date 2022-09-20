@@ -1,8 +1,8 @@
 package com.example.turapp.Sensors
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.hardware.Sensor
+import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 
@@ -39,4 +39,15 @@ abstract class AndroidSensor(
             }
         }
     }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if(!doesSensorExist) {
+            return
+        }
+        if(event?.sensor?.type == sensorType) {
+            onSensorValuesChanged?.invoke(event.values.toList())
+        }
+    }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) = Unit
 }
