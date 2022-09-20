@@ -7,15 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.turapp.Sensors.AccelerometerSensor
 import com.example.turapp.databinding.FragmentLiveSensorDataBinding
 
 class LiveSensorDataFragment : Fragment() {
 
     private val viewModel: LiveSensorDataViewModel by lazy {
         val app = requireNotNull(activity).application
-        val sensor = AccelerometerSensor(app)
-        ViewModelProvider(this, LiveSensorDataViewModel.Factory(sensor)).get(LiveSensorDataViewModel::class.java)
+        ViewModelProvider(this, LiveSensorDataViewModel.Factory(app)).get(LiveSensorDataViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -25,8 +23,12 @@ class LiveSensorDataFragment : Fragment() {
         val binding = FragmentLiveSensorDataBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
-        viewModel.sensorData.observe(viewLifecycleOwner, Observer {
-            binding.tester.text = it.toString()
+        viewModel.accSensorData.observe(viewLifecycleOwner, Observer {
+            binding.tvAccSensor.text = it.toString()
+        })
+
+        viewModel.gyroSensorData.observe(viewLifecycleOwner, Observer {
+            binding.tvGyroSensor.text = it.toString()
         })
 
 
