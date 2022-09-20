@@ -31,20 +31,20 @@ class StartFragment : Fragment(), MenuProvider {
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.bottom_nav_menu, menu)
+        menuInflater.inflate(R.menu.app_bar_menu, menu)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         // Handle the menu selection
         when (menuItem.itemId) {
             R.id.miSettings -> {
-                Toast.makeText(activity,"You clicked on settings", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "You clicked on settings", Toast.LENGTH_SHORT).show()
             }
             R.id.miHelp -> {
-                Toast.makeText(activity,"You clicked on help", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "You clicked on help", Toast.LENGTH_SHORT).show()
             }
             R.id.miInfo -> {
-                Toast.makeText(activity,"You clicked on info", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "You clicked on info", Toast.LENGTH_SHORT).show()
             }
             R.id.miClose -> {
                 activity?.finish() //shuts down the app
