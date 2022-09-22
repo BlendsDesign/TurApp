@@ -27,12 +27,12 @@ class LiveSensorDataViewModel(private val app: Application): ViewModel()  {
         accSensor.startListening()
         accSensor.setOnSensorValuesChangedListener {
             _accSensorData.value = it
-            var temp: String = dbFake.value + it.toString()
-            dbFake.value = temp
         }
         gyroSensor.startListening()
         gyroSensor.setOnSensorValuesChangedListener {
             _gyroSensorData.value = it
+            var temp: String = dbFake.value + it.toString()
+            dbFake.value = temp
         }
     }
 
