@@ -18,13 +18,6 @@
         app:menu="@menu/app_bar_menu"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvLocations"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_host_fragment"
-        app:layout_constraintTop_toBottomOf="@+id/turToolbar" />
-
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
@@ -33,7 +26,7 @@
         android:layout_height="wrap_content"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvLocations"
+        app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/nav_graph"
         tools:layout_editor_absoluteY="677dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,8 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toolbar
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.turapp.R
 import com.example.turapp.databinding.StartFragmentBinding
+import kotlinx.android.synthetic.main.activity_main.*
 
 class StartFragment : Fragment(), MenuProvider {
 
@@ -23,12 +25,14 @@ class StartFragment : Fragment(), MenuProvider {
         ViewModelProvider(this, StartViewModel.Factory(test)).get(StartViewModel::class.java)
     }
 
+    private lateinit var binding: StartFragmentBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-        val binding = StartFragmentBinding.inflate(inflater)
+        binding = StartFragmentBinding.inflate(inflater)
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -36,14 +40,42 @@ class StartFragment : Fragment(), MenuProvider {
 
         //binding.btnNextFrag.setOnClickListener { findNavController().navigate(StartFragmentDirections
         //    .actionStartFragmentToLiveSensorDataFragment()) }
-        binding.navShowTides.setOnItemReselectedListener {
+        binding.navShowTides.setOnItemSelectedListener {
             when(it.itemId) {
                 R.id.btnGoToSensor -> findNavController().navigate(StartFragmentDirections.actionStartFragmentToLiveSensorDataFragment())
+                R.id.miCamera -> findNavController().navigate(StartFragmentDirections.actionStartFragmentToCameraScreenFragment())
+                R.id.miMap -> findNavController().navigate(StartFragmentDirections.actionStartFragmentToMapScreenFragment())
+
             }
+            true
         }
 
         return binding.root
 
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        //List of locations with distance from user (RecyclerView)
+        var locationsList = mutableListOf(
+            Location("Canary River", 111 ),
+            Location("Sweet Canyon", 222 ),
+            Location("Country Road", 333 ),
+            Location("Cotton Fields", 444 ),
+            Location("Death Valley", 555 ),
+            Location("Scary Forest", 666 ),
+            Location("Twin Peaks", 777 ),
+            Location("Fishing Spot", 888 ),
+            Location("Hunting ground", 999 ),
+            Location("Steep Hill", 132 ),
+
+            )
+
+        binding.rvLocations.apply {
+            adapter = LocationAdapter(locationsList)
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

@@ -8,6 +8,8 @@ import com.example.turapp.R
 import com.example.turapp.databinding.ItemLocationBinding
 import kotlinx.android.synthetic.main.item_location.view.*
 
+// BASED ON https://youtu.be/HtwDXRWjMcU
+
 class LocationAdapter(
     var locations: List<Location>
 ) : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
