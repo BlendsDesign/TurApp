@@ -25,28 +25,14 @@ class StartFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
 
+        setUpBottomNav()
+
         binding = StartFragmentBinding.inflate(inflater)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
         // SETTING UP BOTTOM NAV
-        val bottomNav = this.activity?.findViewById<BottomNavigationView>(R.id.bottomNav)
-        bottomNav?.setOnItemSelectedListener {
-            when(it.itemId) {
-                R.id.miCamera -> Toast.makeText(this.requireContext(), "CAMERA PRESSED", Toast.LENGTH_SHORT).show()
-                R.id.miMap -> {
-                    val navCon = findNavController()
-                    navCon.popBackStack(R.id.startFragment, false)
-                    navCon.navigate(StartFragmentDirections.actionStartFragmentToLiveSensorDataFragment())
-                }
-                R.id.miLiveSensors -> {
-                    val navCon = findNavController()
-                    navCon.popBackStack(R.id.startFragment, false)
-                    navCon.navigate(StartFragmentDirections.actionStartFragmentToLiveSensorDataFragment())
-                }
-            }
-            true
-        }
+
 
 
         return binding.root
@@ -58,5 +44,26 @@ class StartFragment : Fragment() {
             adapter = LocationAdapter(viewModel.getMockData())
             layoutManager = LinearLayoutManager(context)
         }
+    }
+
+    private fun setUpBottomNav() {
+        val bottomNav = this.activity?.findViewById<BottomNavigationView>(R.id.bottomNav)
+        val navCon = findNavController()
+        bottomNav?.setOnItemSelectedListener {
+            when(it.itemId) {
+                R.id.miList -> navCon.popBackStack(R.id.startFragment, false)
+                R.id.miCamera -> Toast.makeText(this.requireContext(), "CAMERA PRESSED", Toast.LENGTH_SHORT).show()
+                R.id.miMap -> {
+                    navCon.popBackStack(R.id.startFragment, false)
+                    navCon.navigate(StartFragmentDirections.actionStartFragmentToMapFragment("IT WORKS"))
+                }
+                R.id.miLiveSensors -> {
+                    navCon.popBackStack(R.id.startFragment, false)
+                    navCon.navigate(StartFragmentDirections.actionStartFragmentToLiveSensorDataFragment())
+                }
+            }
+            true
+        }
+
     }
 }

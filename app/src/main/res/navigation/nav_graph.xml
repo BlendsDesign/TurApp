@@ -13,12 +13,24 @@
         <action
             android:id="@+id/action_startFragment_to_liveSensorDataFragment"
             app:destination="@id/liveSensorDataFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/liveSensorDataFragment"
         android:name="com.example.turapp.seeLiveSensorData.LiveSensorDataFragment"
         android:label="fragment_live_sensor_data"
         tools:layout="@layout/fragment_live_sensor_data" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.turapp.mapView.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" >
+        <argument
+            android:name="TestArgument"
+            app:argType="string" />
+    </fragment>
 
 
 </navigation>

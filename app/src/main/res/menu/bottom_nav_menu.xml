@@ -21,8 +21,8 @@
 
     <item
         android:id="@+id/miLiveSensors"
-        android:title="Camera"
-        android:icon="@drawable/ic_camera">
+        android:title="SensorData"
+        android:icon="@drawable/ic_sensor">
     </item>
 
 </menu>
