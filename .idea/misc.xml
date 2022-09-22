@@ -3,8 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/magnu/AndroidStudioProjects/TurApp/app/src/main/res/layout/activity_main.xml" value="0.1490036231884058" />
-        <entry key="..\:/Users/magnu/AndroidStudioProjects/TurApp/app/src/main/res/layout/start_fragment.xml" value="0.13903985507246377" />
+        <entry key="..\:/Users/sharmila.ratnasingam/AndroidStudioProjects/TurApp/app/src/main/res/drawable-anydpi/ic_action_settings.xml" value="0.1995" />
+        <entry key="..\:/Users/sharmila.ratnasingam/AndroidStudioProjects/TurApp/app/src/main/res/layout/activity_main.xml" value="0.1425925925925926" />
+        <entry key="..\:/Users/sharmila.ratnasingam/AndroidStudioProjects/TurApp/app/src/main/res/layout/activity_setting.xml" value="0.36102564102564105" />
+        <entry key="..\:/Users/sharmila.ratnasingam/AndroidStudioProjects/TurApp/app/src/main/res/layout/start_fragment.xml" value="0.1" />
+        <entry key="..\:/Users/sharmila.ratnasingam/AndroidStudioProjects/TurApp/app/src/main/res/menu/options_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/sharmila.ratnasingam/AndroidStudioProjects/TurApp/app/src/main/res/xml/preference.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/sharmila.ratnasingam/AndroidStudioProjects/TurApp/app/src/main/res/xml/preferences.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>
