@@ -16,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.turapp.R
 import com.example.turapp.databinding.StartFragmentBinding
-import kotlinx.android.synthetic.main.activity_main.*
 
 class StartFragment : Fragment(), MenuProvider {
 
@@ -40,15 +39,7 @@ class StartFragment : Fragment(), MenuProvider {
 
         //binding.btnNextFrag.setOnClickListener { findNavController().navigate(StartFragmentDirections
         //    .actionStartFragmentToLiveSensorDataFragment()) }
-        binding.navShowTides.setOnItemSelectedListener {
-            when(it.itemId) {
-                R.id.btnGoToSensor -> findNavController().navigate(StartFragmentDirections.actionStartFragmentToLiveSensorDataFragment())
-                R.id.miCamera -> findNavController().navigate(StartFragmentDirections.actionStartFragmentToCameraScreenFragment())
-                R.id.miMap -> findNavController().navigate(StartFragmentDirections.actionStartFragmentToMapScreenFragment())
 
-            }
-            true
-        }
 
         return binding.root
 
