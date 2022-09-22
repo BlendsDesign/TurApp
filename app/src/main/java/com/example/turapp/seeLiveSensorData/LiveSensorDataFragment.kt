@@ -35,8 +35,6 @@ class LiveSensorDataFragment : Fragment() {
             binding.tvOtherSensors.text = it.toString()
         })
 
-
-
         return binding.root
     }
 

@@ -15,6 +15,25 @@ class StartViewModel(testText: String) : ViewModel() {
         _test.value = testText
     }
 
+
+    fun getMockData(): MutableList<Location> {
+        return  mutableListOf(
+            Location("Canary River", 111 ),
+            Location("Sweet Canyon", 222 ),
+            Location("Country Road", 333 ),
+            Location("Cotton Fields", 444 ),
+            Location("Death Valley", 555 ),
+            Location("Scary Forest", 666 ),
+            Location("Twin Peaks", 777 ),
+            Location("Fishing Spot", 888 ),
+            Location("Hunting ground", 999 ),
+            Location("Steep Hill", 132 ),
+        )
+    }
+
+
+
+
     class Factory(val testText: String) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(StartViewModel::class.java)) {
@@ -24,4 +43,5 @@ class StartViewModel(testText: String) : ViewModel() {
             throw IllegalArgumentException("Unable to construct viewModel")
         }
     }
+
 }

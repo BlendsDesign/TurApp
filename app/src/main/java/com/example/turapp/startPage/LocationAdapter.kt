@@ -1,12 +1,10 @@
 package com.example.turapp.startPage
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.turapp.R
-import com.example.turapp.databinding.ItemLocationBinding
-import kotlinx.android.synthetic.main.item_location.view.*
+import com.example.turapp.databinding.RvItemLocationBinding
+import kotlinx.android.synthetic.main.rv_item_location.view.*
 
 // BASED ON https://youtu.be/HtwDXRWjMcU
 
@@ -14,11 +12,11 @@ class LocationAdapter(
     var locations: List<Location>
 ) : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
-    inner class LocationViewHolder(val binding: ItemLocationBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class LocationViewHolder(val binding: RvItemLocationBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = ItemLocationBinding.inflate(layoutInflater,parent,false)
+        val binding = RvItemLocationBinding.inflate(layoutInflater,parent,false)
         return LocationViewHolder(binding)
     }
 

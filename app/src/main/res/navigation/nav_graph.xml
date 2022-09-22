@@ -13,36 +13,12 @@
         <action
             android:id="@+id/action_startFragment_to_liveSensorDataFragment"
             app:destination="@id/liveSensorDataFragment" />
-        <action
-            android:id="@+id/action_startFragment_to_CameraScreenFragment"
-            app:destination="@id/CameraScreenFragment" />
-        <action
-            android:id="@+id/action_startFragment_to_MapScreenFragment"
-            app:destination="@id/MapScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/liveSensorDataFragment"
         android:name="com.example.turapp.seeLiveSensorData.LiveSensorDataFragment"
         android:label="fragment_live_sensor_data"
         tools:layout="@layout/fragment_live_sensor_data" />
-
-    <fragment
-        android:id="@+id/homeScreenFragment"
-        android:name="com.example.turapp.startPage.FragmentTest1"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_test1" />
-
-    <fragment
-        android:id="@+id/CameraScreenFragment"
-        android:name="com.example.turapp.startPage.FragmentTest2"
-        android:label="fragment_camera"
-        tools:layout="@layout/fragment_test2" />
-
-    <fragment
-        android:id="@+id/MapScreenFragment"
-        android:name="com.example.turapp.startPage.FragmentTest2"
-        android:label="fragment_map"
-        tools:layout="@layout/fragment_test3" />
 
 
 </navigation>
