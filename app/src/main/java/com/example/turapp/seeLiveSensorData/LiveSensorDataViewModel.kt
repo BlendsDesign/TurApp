@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.Sensors.AccelerometerSensor
 import com.example.turapp.Sensors.GyroscopeSensor
-import com.example.turapp.Sensors.HeadingSensor
 import java.lang.IllegalArgumentException
 
 class LiveSensorDataViewModel(private val app: Application): ViewModel()  {
@@ -20,24 +19,21 @@ class LiveSensorDataViewModel(private val app: Application): ViewModel()  {
     private val _gyroSensorData = MutableLiveData<List<Float>>()
     val gyroSensorData: LiveData<List<Float>> get() = _gyroSensorData
 
-    private val headingSensor = HeadingSensor(app)
-    private val _headingSensorData = MutableLiveData<List<Float>>()
-    val headingSensorData: LiveData<List<Float>> get() = _headingSensorData
+
+    // TEMP FAKE database
+    val dbFake = MutableLiveData<String>()
 
     init {
         accSensor.startListening()
         accSensor.setOnSensorValuesChangedListener {
             _accSensorData.value = it
+            var temp: String = dbFake.value + it.toString()
+            dbFake.value = temp
         }
         gyroSensor.startListening()
         gyroSensor.setOnSensorValuesChangedListener {
             _gyroSensorData.value = it
         }
-        headingSensor.startListening()
-        headingSensor.setOnSensorValuesChangedListener {
-            _headingSensorData.value = it
-        }
-
     }
 
 

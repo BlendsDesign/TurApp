@@ -30,12 +30,3 @@ class GyroscopeSensor(
     sensorFeature = PackageManager.FEATURE_SENSOR_GYROSCOPE,
     sensorType = Sensor.TYPE_GYROSCOPE
 )
-
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-class HeadingSensor(
-    context: Context
-): AndroidSensor(
-    context = context,
-    sensorFeature = PackageManager.FEATURE_SENSOR_HEADING,
-    sensorType = Sensor.TYPE_HEADING
-)
