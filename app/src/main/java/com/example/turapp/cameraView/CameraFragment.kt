@@ -1,4 +1,4 @@
-package com.example.turapp.mapView
+package com.example.turapp.cameraView
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,22 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.example.turapp.databinding.FragmentMapBinding
+import com.example.turapp.databinding.FragmentCameraBinding
 
 
-class MapFragment : Fragment() {
+class CameraFragment : Fragment() {
 
-    private lateinit var binding : FragmentMapBinding
+    private lateinit var binding : FragmentCameraBinding
 
-    private val viewModel: MapViewModel by lazy {
-        ViewModelProvider(this, MapViewModel.Factory())[MapViewModel::class.java]
+    private val viewModel: CameraViewModel by lazy {
+        ViewModelProvider(this, CameraViewModel.Factory())[CameraViewModel::class.java]
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMapBinding.inflate(inflater)
+        Toast.makeText(context, arguments.toString(), Toast.LENGTH_SHORT).show()
+        binding = FragmentCameraBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
         binding.viewModel = viewModel

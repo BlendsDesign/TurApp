@@ -52,10 +52,13 @@ class StartFragment : Fragment() {
         bottomNav?.setOnItemSelectedListener {
             when(it.itemId) {
                 R.id.miList -> navCon.popBackStack(R.id.startFragment, false)
-                R.id.miCamera -> Toast.makeText(this.requireContext(), "CAMERA PRESSED", Toast.LENGTH_SHORT).show()
+                R.id.miCamera -> {
+                    navCon.popBackStack(R.id.startFragment, false)
+                    navCon.navigate(StartFragmentDirections.actionStartFragmentToCameraFragment())
+                }
                 R.id.miMap -> {
                     navCon.popBackStack(R.id.startFragment, false)
-                    navCon.navigate(StartFragmentDirections.actionStartFragmentToMapFragment("IT WORKS"))
+                    navCon.navigate(StartFragmentDirections.actionStartFragmentToMapFragment())
                 }
                 R.id.miLiveSensors -> {
                     navCon.popBackStack(R.id.startFragment, false)

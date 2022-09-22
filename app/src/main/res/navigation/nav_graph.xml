@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_startFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
     </fragment>
     <fragment
         android:id="@+id/liveSensorDataFragment"
@@ -27,10 +30,12 @@
         android:name="com.example.turapp.mapView.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" >
-        <argument
-            android:name="TestArgument"
-            app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.example.turapp.cameraView.CameraFragment"
+        android:label="fragment_camera"
+        tools:layout="@layout/fragment_camera" />
 
 
 </navigation>
