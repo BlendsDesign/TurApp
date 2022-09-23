@@ -9,5 +9,33 @@
         android:id="@+id/startFragment"
         android:name="com.example.turapp.startPage.StartFragment"
         android:label="start_fragment"
-        tools:layout="@layout/start_fragment" />
+        tools:layout="@layout/start_fragment" >
+        <action
+            android:id="@+id/action_startFragment_to_liveSensorDataFragment"
+            app:destination="@id/liveSensorDataFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/liveSensorDataFragment"
+        android:name="com.example.turapp.seeLiveSensorData.LiveSensorDataFragment"
+        android:label="fragment_live_sensor_data"
+        tools:layout="@layout/fragment_live_sensor_data" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.turapp.mapView.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" >
+    </fragment>
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.example.turapp.cameraView.CameraFragment"
+        android:label="fragment_camera"
+        tools:layout="@layout/fragment_camera" />
+
+
 </navigation>
