@@ -1,6 +1,7 @@
 package com.example.turapp
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import com.example.turapp.databinding.ActivityMainBinding
 
@@ -24,11 +26,19 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.turToolbar))
         setContentView(R.layout.activity_main)
 
+        checkPrefs()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
         setSupportActionBar(myToolbar)
 
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        val test = getSharedPreferences("myPrefs", Context.MODE_PRIVATE).getBoolean("isNight", false).toString()
+        Toast.makeText(this, test, Toast.LENGTH_LONG).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -71,5 +81,14 @@ class MainActivity : AppCompatActivity() {
     private fun doQuit() {
         Toast.makeText(this, "Quitting!", Toast.LENGTH_SHORT).show()
 
+    }
+
+    private fun checkPrefs() {
+        val sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        if (sharedPrefs.contains("isNight") && sharedPrefs.getBoolean("isNight", false)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 }
