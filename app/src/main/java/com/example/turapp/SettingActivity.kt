@@ -10,7 +10,7 @@ import com.example.turapp.R
 
 class SettingActivity : AppCompatActivity() {
 
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    //@SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)

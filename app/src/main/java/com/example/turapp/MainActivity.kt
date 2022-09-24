@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.miSettings -> {
                 startActivity(Intent(this, SettingActivity::class.java))
+                //return true
             }
             R.id.miHelp -> {
                 val alertDialog = AlertDialog.Builder(this@MainActivity).create()
