@@ -35,12 +35,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        val test = getSharedPreferences("myPrefs", Context.MODE_PRIVATE).getBoolean("isNight", false).toString()
-        Toast.makeText(this, test, Toast.LENGTH_LONG).show()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         this.menuInflater.inflate(R.menu.app_bar_menu, menu)
