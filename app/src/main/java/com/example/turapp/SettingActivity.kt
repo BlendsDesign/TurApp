@@ -1,4 +1,4 @@
-package com.test.android.turapp2
+package com.example.turapp
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration

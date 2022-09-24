@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             R.id.miSettings -> {
-                //startActivity(Intent(this, SettingActivity::class.java))
+                startActivity(Intent(this, SettingActivity::class.java))
             }
             R.id.miHelp -> {
                 val alertDialog = AlertDialog.Builder(this@MainActivity).create()
