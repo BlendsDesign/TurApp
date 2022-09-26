@@ -20,14 +20,15 @@ class StartFragment : Fragment() {
         ViewModelProvider(this, StartViewModel.Factory(test))[StartViewModel::class.java]
     }
 
-    private lateinit var binding: StartFragmentBinding
+    private var _binding: StartFragmentBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
 
         setUpBottomNav()
 
-        binding = StartFragmentBinding.inflate(inflater)
+        _binding = StartFragmentBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
@@ -41,7 +42,8 @@ class StartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvLocations.apply {
-            adapter = LocationAdapter(viewModel.getMockData())
+            val navControl = findNavController()
+            adapter = LocationAdapter(viewModel.getMockData(), navControl)
             layoutManager = LinearLayoutManager(context)
         }
     }

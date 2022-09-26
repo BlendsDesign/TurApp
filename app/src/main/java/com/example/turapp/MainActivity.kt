@@ -23,15 +23,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSupportActionBar(findViewById(R.id.turToolbar))
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        //setSupportActionBar(findViewById(R.id.turToolbar))
+        //setContentView(R.layout.activity_main)
 
         checkPrefs()
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
 
-        val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
-        setSupportActionBar(myToolbar)
+
+        //val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
+        setSupportActionBar(binding.turToolbar)
 
     }
 
