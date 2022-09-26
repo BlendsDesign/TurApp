@@ -34,8 +34,7 @@ class LocationAdapter(
             tvLocationName.text = locations[position].title
             tvDistance.text = locations[position].distance.toString()
             setOnClickListener {
-                nav.navigate(StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(locations[position].title))
-                Toast.makeText(context.applicationContext, locations[position].title, Toast.LENGTH_SHORT).show()
+                nav.navigate(StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(locations[position]))
             }
         }
     }

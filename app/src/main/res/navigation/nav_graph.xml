@@ -45,8 +45,8 @@
         android:label="fragment_point_of_interest"
         tools:layout="@layout/fragment_point_of_interest" >
         <argument
-            android:name="test"
-            app:argType="string" />
+            android:name="point"
+            app:argType="com.example.turapp.startPage.Location" />
     </fragment>
 
 

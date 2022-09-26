@@ -7,12 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
-
+import com.example.turapp.startPage.Location
 
 
 class PointOfInterestFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
+    private var location: Location? = null
 
     private lateinit var _binding: FragmentPointOfInterestBinding
     private val binding get() = _binding
@@ -20,7 +20,7 @@ class PointOfInterestFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString("test")
+            location = it.getParcelable("point", Location::class.java)
         }
     }
 
@@ -31,7 +31,7 @@ class PointOfInterestFragment : Fragment() {
         _binding = FragmentPointOfInterestBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         // Inflate the layout for this fragment
-        binding.tvTest.text = param1
+        binding.tvTest.text = location.toString()
         return binding.root
     }
 }
