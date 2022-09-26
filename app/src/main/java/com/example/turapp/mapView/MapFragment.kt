@@ -23,7 +23,7 @@ class MapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapBinding.inflate(inflater)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         binding.viewModel = viewModel
 

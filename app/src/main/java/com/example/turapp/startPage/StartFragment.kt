@@ -28,7 +28,7 @@ class StartFragment : Fragment() {
         setUpBottomNav()
 
         binding = StartFragmentBinding.inflate(inflater)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
         // SETTING UP BOTTOM NAV

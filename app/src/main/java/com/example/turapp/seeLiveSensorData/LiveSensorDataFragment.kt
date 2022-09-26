@@ -21,7 +21,7 @@ class LiveSensorDataFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentLiveSensorDataBinding.inflate(inflater)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel.accSensorData.observe(viewLifecycleOwner, Observer {
             binding.tvAccSensor.text = it.toString()
