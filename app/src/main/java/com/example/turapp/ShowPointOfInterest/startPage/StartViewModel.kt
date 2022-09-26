@@ -1,4 +1,4 @@
-package com.example.turapp.startPage
+package com.example.turapp.ShowPointOfInterest.startPage
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

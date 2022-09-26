@@ -7,12 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 class SettingsViewModel(private val prefs: SharedPreferences): ViewModel() {
+
     private val editor = prefs.edit()
+
     private val _isNightMode = MutableLiveData<Boolean>()
     val isNightMode : LiveData<Boolean> get() = _isNightMode
 
+    private val _stringtest = MutableLiveData<String>()
+
     init {
         _isNightMode.value = prefs.getBoolean("isNight", false)
+        _stringtest.value = prefs.getString("stringInput", "No value put yet")
     }
 
     fun setIsNight() {
@@ -29,6 +34,11 @@ class SettingsViewModel(private val prefs: SharedPreferences): ViewModel() {
                 apply()
             }
         }
+    }
+
+    fun setAStringInPref(value: String) {
+        editor.putString("stringInput", value)
+        editor.apply()
     }
 
 

@@ -1,4 +1,4 @@
-package com.example.turapp.startPage
+package com.example.turapp.ShowPointOfInterest.startPage
 
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider

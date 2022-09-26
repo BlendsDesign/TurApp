@@ -1,5 +1,6 @@
 package com.example.turapp.mapView
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -28,6 +29,7 @@ class MapFragment : Fragment() {
     ): View? {
         binding = FragmentMapBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
+
 
         binding.viewModel = viewModel
 

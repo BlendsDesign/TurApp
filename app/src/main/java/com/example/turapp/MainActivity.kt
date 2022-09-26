@@ -19,7 +19,7 @@ import com.example.turapp.cameraView.CameraFragment
 import com.example.turapp.databinding.ActivityMainBinding
 import com.example.turapp.mapView.MapFragment
 import com.example.turapp.seeLiveSensorData.LiveSensorDataFragment
-import com.example.turapp.startPage.StartFragment
+import com.example.turapp.ShowPointOfInterest.startPage.StartFragment
 import com.example.turapp.startPage.StartFragmentDirections
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
