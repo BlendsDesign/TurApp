@@ -37,6 +37,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvAccSensor" />
 
+        <TextView
+            android:id="@+id/tvMagnetoSensor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="178dp"
+            android:text="TextView"
+            android:textSize="23sp"
+            app:layout_constraintBottom_toTopOf="@+id/tvAccSensor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ScrollView
             android:id="@+id/svOtherSensors"
             android:layout_width="wrap_content"
@@ -45,7 +57,7 @@
             android:textSize="23sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvGyroSensor" >
+            app:layout_constraintTop_toBottomOf="@+id/tvGyroSensor">
 
             <TextView
                 android:id="@+id/tvOtherSensors"

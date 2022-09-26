@@ -7,4 +7,16 @@ class SensorFilterFunctions {
         return data
     }
 
+    fun positionFilter(data: List<Float>): List<Float> {
+        // filter sensor data
+        val iterator = data.listIterator()
+
+        iterator.forEach {
+
+            println(it)
+        }
+
+        return data
+    }
+
 }

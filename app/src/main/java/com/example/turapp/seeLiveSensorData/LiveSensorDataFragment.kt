@@ -35,6 +35,10 @@ class LiveSensorDataFragment : Fragment() {
             binding.tvOtherSensors.text = it
         })
 
+        viewModel.magnetoSensorData.observe(viewLifecycleOwner, Observer {
+            binding.tvMagnetoSensor.text = it.toString()
+        })
+
         return binding.root
     }
 
