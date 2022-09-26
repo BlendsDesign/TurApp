@@ -1,17 +1,20 @@
 package com.example.turapp
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatDelegate
+import com.example.turapp.cameraView.CameraFragment
 import com.example.turapp.databinding.ActivityMainBinding
+import com.example.turapp.mapView.MapFragment
+import com.example.turapp.seeLiveSensorData.LiveSensorDataFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,15 +22,38 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSupportActionBar(findViewById(R.id.turToolbar))
-        setContentView(R.layout.activity_main)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        //setSupportActionBar(findViewById(R.id.turToolbar))
+        //setContentView(R.layout.activity_main)
 
-        val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
-        setSupportActionBar(myToolbar)
+        checkPrefs()
+
+        setUpBottomNav()
+
+
+
+        //val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
+        setSupportActionBar(binding.turToolbar)
+
+    }
+
+    private fun setUpBottomNav() {
+        binding.bottomNav.setOnItemSelectedListener {
+            when(it.itemId) {
+                R.id.miList -> {
+                    // Weird error led to this implementation. Probably connected to this being the base nav_graph in the fragment
+                    startActivity(Intent(this, MainActivity::class.java))
+                }
+                R.id.miCamera -> supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, CameraFragment()).commit()
+                R.id.miMap -> supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, MapFragment()).commit()
+                R.id.miLiveSensors -> supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, LiveSensorDataFragment()).commit()
+            }
+            true
+        }
 
     }
 
@@ -72,5 +98,14 @@ class MainActivity : AppCompatActivity() {
     private fun doQuit() {
         Toast.makeText(this, "Quitting!", Toast.LENGTH_SHORT).show()
 
+    }
+
+    private fun checkPrefs() {
+        val sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        if (sharedPrefs.contains("isNight") && sharedPrefs.getBoolean("isNight", false)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 }

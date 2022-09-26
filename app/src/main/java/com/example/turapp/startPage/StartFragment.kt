@@ -2,16 +2,13 @@ package com.example.turapp.startPage
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.turapp.R
 import com.example.turapp.databinding.StartFragmentBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class StartFragment : Fragment() {
 
@@ -20,16 +17,17 @@ class StartFragment : Fragment() {
         ViewModelProvider(this, StartViewModel.Factory(test))[StartViewModel::class.java]
     }
 
-    private lateinit var binding: StartFragmentBinding
+    private var _binding: StartFragmentBinding? = null
+    private val binding get() = _binding!!
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
-
-        setUpBottomNav()
-
-        binding = StartFragmentBinding.inflate(inflater)
-        binding.lifecycleOwner = this
+        _binding = StartFragmentBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+
+        //setUpBottomNav()
 
         // SETTING UP BOTTOM NAV
 
@@ -41,32 +39,34 @@ class StartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvLocations.apply {
-            adapter = LocationAdapter(viewModel.getMockData())
+            val navControl = findNavController()
+            adapter = LocationAdapter(viewModel.getMockData(), navControl)
             layoutManager = LinearLayoutManager(context)
         }
     }
 
-    private fun setUpBottomNav() {
-        val bottomNav = this.activity?.findViewById<BottomNavigationView>(R.id.bottomNav)
-        val navCon = findNavController()
-        bottomNav?.setOnItemSelectedListener {
-            when(it.itemId) {
-                R.id.miList -> navCon.popBackStack(R.id.startFragment, false)
-                R.id.miCamera -> {
-                    navCon.popBackStack(R.id.startFragment, false)
-                    navCon.navigate(StartFragmentDirections.actionStartFragmentToCameraFragment())
-                }
-                R.id.miMap -> {
-                    navCon.popBackStack(R.id.startFragment, false)
-                    navCon.navigate(StartFragmentDirections.actionStartFragmentToMapFragment())
-                }
-                R.id.miLiveSensors -> {
-                    navCon.popBackStack(R.id.startFragment, false)
-                    navCon.navigate(StartFragmentDirections.actionStartFragmentToLiveSensorDataFragment())
-                }
-            }
-            true
-        }
+//    private fun setUpBottomNav() {
+//        val bottomNav = this.activity?.findViewById<BottomNavigationView>(R.id.bottomNav)
+//        val navCon = findNavController()
+//        bottomNav?.setOnItemSelectedListener {
+//            when(it.itemId) {
+//                R.id.miList -> navCon.popBackStack(R.id.startFragment, false)
+//                R.id.miCamera -> {
+//                    navCon.popBackStack(R.id.startFragment, false)
+//                    navCon.navigate(StartFragmentDirections.actionStartFragmentToCameraFragment())
+//                }
+//                R.id.miMap -> {
+//                    navCon.popBackStack(R.id.startFragment, false)
+//                    navCon.navigate(StartFragmentDirections.actionStartFragmentToMapFragment())
+//                }
+//                R.id.miLiveSensors -> {
+//                    navCon.popBackStack(R.id.startFragment, false)
+//                    navCon.navigate(StartFragmentDirections.actionStartFragmentToLiveSensorDataFragment())
+//                }
+//            }
+//            true
+//        }
+//
+//    }
 
-    }
 }
