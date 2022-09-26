@@ -6,10 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
-import com.example.turapp.R
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
-import com.example.turapp.ShowPointOfInterest.startPage.Location
+import com.example.turapp.startPage.Location
 
 
 class PointOfInterestFragment : Fragment() {

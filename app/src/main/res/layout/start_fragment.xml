@@ -2,11 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ShowPointOfInterest.startPage.StartFragment">
+    tools:context=".startPage.StartFragment">
     <data>
         <variable
             name="viewModel"
-            type="com.example.turapp.ShowPointOfInterest.startPage.StartViewModel" />
+            type="com.example.turapp.startPage.StartViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

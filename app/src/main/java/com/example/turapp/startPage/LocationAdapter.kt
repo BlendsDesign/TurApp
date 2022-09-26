@@ -1,13 +1,10 @@
-package com.example.turapp.ShowPointOfInterest.startPage
+package com.example.turapp.startPage
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.turapp.databinding.RvItemLocationBinding
-import com.example.turapp.startPage.StartFragmentDirections
 import kotlinx.android.synthetic.main.rv_item_location.view.*
 
 // BASED ON https://youtu.be/HtwDXRWjMcU

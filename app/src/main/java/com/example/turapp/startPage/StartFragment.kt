@@ -1,18 +1,14 @@
-package com.example.turapp.ShowPointOfInterest.startPage
+package com.example.turapp.startPage
 
-import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.turapp.R
 import com.example.turapp.databinding.StartFragmentBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class StartFragment : Fragment() {
 

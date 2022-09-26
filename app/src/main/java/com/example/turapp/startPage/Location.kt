@@ -1,4 +1,4 @@
-package com.example.turapp.ShowPointOfInterest.startPage
+package com.example.turapp.startPage
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

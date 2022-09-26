@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/startFragment"
-        android:name="com.example.turapp.ShowPointOfInterest.startPage.StartFragment"
+        android:name="com.example.turapp.startPage.StartFragment"
         android:label="start_fragment"
         tools:layout="@layout/start_fragment" >
         <action
