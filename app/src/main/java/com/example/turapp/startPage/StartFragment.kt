@@ -1,5 +1,6 @@
 package com.example.turapp.startPage
 
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.widget.Toast
@@ -23,14 +24,14 @@ class StartFragment : Fragment() {
     private var _binding: StartFragmentBinding? = null
     private val binding get() = _binding!!
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
-
-        setUpBottomNav()
-
         _binding = StartFragmentBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+
+        //setUpBottomNav()
 
         // SETTING UP BOTTOM NAV
 
@@ -48,27 +49,28 @@ class StartFragment : Fragment() {
         }
     }
 
-    private fun setUpBottomNav() {
-        val bottomNav = this.activity?.findViewById<BottomNavigationView>(R.id.bottomNav)
-        val navCon = findNavController()
-        bottomNav?.setOnItemSelectedListener {
-            when(it.itemId) {
-                R.id.miList -> navCon.popBackStack(R.id.startFragment, false)
-                R.id.miCamera -> {
-                    navCon.popBackStack(R.id.startFragment, false)
-                    navCon.navigate(StartFragmentDirections.actionStartFragmentToCameraFragment())
-                }
-                R.id.miMap -> {
-                    navCon.popBackStack(R.id.startFragment, false)
-                    navCon.navigate(StartFragmentDirections.actionStartFragmentToMapFragment())
-                }
-                R.id.miLiveSensors -> {
-                    navCon.popBackStack(R.id.startFragment, false)
-                    navCon.navigate(StartFragmentDirections.actionStartFragmentToLiveSensorDataFragment())
-                }
-            }
-            true
-        }
+//    private fun setUpBottomNav() {
+//        val bottomNav = this.activity?.findViewById<BottomNavigationView>(R.id.bottomNav)
+//        val navCon = findNavController()
+//        bottomNav?.setOnItemSelectedListener {
+//            when(it.itemId) {
+//                R.id.miList -> navCon.popBackStack(R.id.startFragment, false)
+//                R.id.miCamera -> {
+//                    navCon.popBackStack(R.id.startFragment, false)
+//                    navCon.navigate(StartFragmentDirections.actionStartFragmentToCameraFragment())
+//                }
+//                R.id.miMap -> {
+//                    navCon.popBackStack(R.id.startFragment, false)
+//                    navCon.navigate(StartFragmentDirections.actionStartFragmentToMapFragment())
+//                }
+//                R.id.miLiveSensors -> {
+//                    navCon.popBackStack(R.id.startFragment, false)
+//                    navCon.navigate(StartFragmentDirections.actionStartFragmentToLiveSensorDataFragment())
+//                }
+//            }
+//            true
+//        }
+//
+//    }
 
-    }
 }

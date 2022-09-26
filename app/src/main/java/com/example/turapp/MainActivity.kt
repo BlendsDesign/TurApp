@@ -12,13 +12,24 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.ListFragment
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
+import com.example.turapp.cameraView.CameraFragment
 import com.example.turapp.databinding.ActivityMainBinding
+import com.example.turapp.mapView.MapFragment
+import com.example.turapp.seeLiveSensorData.LiveSensorDataFragment
+import com.example.turapp.startPage.StartFragment
+import com.example.turapp.startPage.StartFragmentDirections
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,10 +41,28 @@ class MainActivity : AppCompatActivity() {
 
         checkPrefs()
 
+        setUpBottomNav()
+
 
 
         //val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
         setSupportActionBar(binding.turToolbar)
+
+    }
+
+    private fun setUpBottomNav() {
+        binding.bottomNav.setOnItemSelectedListener {
+            when(it.itemId) {
+                R.id.miList -> {
+                    // Weird error led to this implementation. Probably connected to this being the base nav_graph in the fragment
+                    startActivity(Intent(this, MainActivity::class.java))
+                }
+                R.id.miCamera -> supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, CameraFragment()).commit()
+                R.id.miMap -> supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, MapFragment()).commit()
+                R.id.miLiveSensors -> supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, LiveSensorDataFragment()).commit()
+            }
+            true
+        }
 
     }
 
