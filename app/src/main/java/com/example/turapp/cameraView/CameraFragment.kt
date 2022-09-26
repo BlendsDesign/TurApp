@@ -22,7 +22,6 @@ class CameraFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Toast.makeText(context, arguments.toString(), Toast.LENGTH_SHORT).show()
         binding = FragmentCameraBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
 
