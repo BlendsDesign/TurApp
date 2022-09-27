@@ -13,8 +13,8 @@ import com.example.turapp.databinding.StartFragmentBinding
 class StartFragment : Fragment() {
 
     private val viewModel: StartViewModel by lazy {
-        val test = "Her er HOME med en LISTE AV Points of Interest"
-        ViewModelProvider(this, StartViewModel.Factory(test))[StartViewModel::class.java]
+        val app = requireNotNull(activity).application
+        ViewModelProvider(this, StartViewModel.Factory(app))[StartViewModel::class.java]
     }
 
     private var _binding: StartFragmentBinding? = null

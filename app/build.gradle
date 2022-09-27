@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs'
     id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -59,4 +60,10 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
     // Room
     implementation 'androidx.room:room-runtime:2.4.3'
+    kapt "androidx.room:room-compiler:2.4.3"
+    // Kotlin extensions and Coroutines support for Room
+    implementation 'androidx.room:room-ktx:2.4.3'
+
+
+
 }

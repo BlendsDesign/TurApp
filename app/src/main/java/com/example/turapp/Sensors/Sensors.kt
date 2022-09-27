@@ -30,3 +30,4 @@ class GyroscopeSensor(
     sensorFeature = PackageManager.FEATURE_SENSOR_GYROSCOPE,
     sensorType = Sensor.TYPE_GYROSCOPE
 )
+
