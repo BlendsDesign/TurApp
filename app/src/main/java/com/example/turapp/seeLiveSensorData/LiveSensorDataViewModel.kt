@@ -23,6 +23,7 @@ class LiveSensorDataViewModel(private val app: Application): ViewModel()  {
     private val _gyroSensorData = MutableLiveData<List<Float>>()
     val gyroSensorData: LiveData<List<Float>> get() = _gyroSensorData
 
+
     private val magnetoSensor = MagnetoMeterSensor(app)
     private val _magnetoSensorData = MutableLiveData<List<Float>>()
     val magnetoSensorData: LiveData<List<Float>> get() = _magnetoSensorData
@@ -30,30 +31,33 @@ class LiveSensorDataViewModel(private val app: Application): ViewModel()  {
     private val rotationMatrix = FloatArray(9)
     private val orientationAngles = FloatArray(3)
 
+    private val _orientation = MutableLiveData<List<Float>>()
+    val orientation: LiveData<List<Float>> get() = _orientation
 
-    // TEMP FAKE database
-    val dbFake = MutableLiveData<String>()
 
-    init {
-        accSensor.startListening()
-        accSensor.setOnSensorValuesChangedListener {
-            _accSensorData.value = it
-        }
-        gyroSensor.startListening()
-        gyroSensor.setOnSensorValuesChangedListener {
-            _gyroSensorData.value = it
-            var temp: String = dbFake.value + it.toString()
-            dbFake.value = temp
-        }
-        magnetoSensor.startListening()
-        magnetoSensor.setOnSensorValuesChangedListener {
+        // TEMP FAKE database
+        val dbFake = MutableLiveData<String>()
+
+        init {
+            accSensor.startListening()
+            accSensor.setOnSensorValuesChangedListener {
+                _accSensorData.value = it
+            }
+            gyroSensor.startListening()
+            gyroSensor.setOnSensorValuesChangedListener {
+                _gyroSensorData.value = it
+                var temp: String = dbFake.value + it.toString()
+                dbFake.value = temp
+            }
+            magnetoSensor.startListening()
+            magnetoSensor.setOnSensorValuesChangedListener {
             _magnetoSensorData.value = it
-            updateOrientationAngles()
+            updateOrientationAngles() //check: no crash when function is called
         }
     }
 
     //https://developer.android.com/guide/topics/sensors/sensors_position#sensors-pos-orient
-    fun updateOrientationAngles() {
+    private fun updateOrientationAngles() {
         // Update rotation matrix, which is needed to update orientation angles.
         SensorManager.getRotationMatrix(
             rotationMatrix,
@@ -64,7 +68,7 @@ class LiveSensorDataViewModel(private val app: Application): ViewModel()  {
 
         // "rotationMatrix" now has up-to-date information.
 
-        SensorManager.getOrientation(rotationMatrix, orientationAngles)
+        _orientation.value = SensorManager.getOrientation(rotationMatrix, orientationAngles).asList()
 
         // "orientationAngles" now has up-to-date information.
     }
