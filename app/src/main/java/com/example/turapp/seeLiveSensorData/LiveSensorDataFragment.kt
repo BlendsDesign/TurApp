@@ -1,5 +1,6 @@
 package com.example.turapp.seeLiveSensorData
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -31,8 +32,35 @@ class LiveSensorDataFragment : Fragment() {
             binding.tvGyroSensor.text = it.toString()
         })
 
-        viewModel.dbFake.observe(viewLifecycleOwner, Observer {
-            binding.tvOtherSensors.text = it
+        viewModel.tempSensorData.observe(viewLifecycleOwner, Observer {
+            binding.tvOtherSensors.text = it.toString()
+        })
+        binding.btRecord.apply {
+            setBackgroundColor(Color.BLUE)
+            text = "RECORD"
+            setOnClickListener {
+                viewModel.startRec()
+            }
+        }
+        viewModel.recording.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                binding.btRecord.apply {
+                    setBackgroundColor(Color.RED)
+                    text = "STOP RECORDING"
+                }
+                binding.btRecord.setOnClickListener {
+                    viewModel.stopRec()
+                }
+            } else {
+                binding.btRecord.apply {
+                    setBackgroundColor(Color.BLUE)
+                    text = "RECORD"
+                }
+
+                binding.btRecord.setOnClickListener {
+                    viewModel.startRec()
+                }
+            }
         })
 
         return binding.root

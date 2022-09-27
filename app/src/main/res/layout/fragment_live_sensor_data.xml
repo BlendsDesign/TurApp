@@ -22,7 +22,6 @@
             android:text="TEMP-TEXT"
             android:textAlignment="center"
             android:textSize="23sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -35,17 +34,19 @@
             android:textSize="23sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvAccSensor" />
+            app:layout_constraintTop_toBottomOf="@+id/tvAccSensor"
+            />
 
         <ScrollView
             android:id="@+id/svOtherSensors"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:text="TextView"
             android:textSize="23sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvGyroSensor" >
+            app:layout_constraintTop_toBottomOf="@+id/tvGyroSensor"
+            app:layout_constraintBottom_toTopOf="@id/btRecord">
 
             <TextView
                 android:id="@+id/tvOtherSensors"
@@ -55,6 +56,18 @@
             </TextView>
 
         </ScrollView>
+
+        <Button
+            android:id="@+id/btRecord"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
+            android:text="RECORD"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
