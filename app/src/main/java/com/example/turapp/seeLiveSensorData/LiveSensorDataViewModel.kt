@@ -14,7 +14,7 @@ import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
 
 
-class LiveSensorDataViewModel(private val app: Application) : ViewModel() {
+class LiveSensorDataViewModel(app: Application) : ViewModel() {
 
     private val accSensor = AccelerometerSensor(app)
     private val _accSensorData = MutableLiveData<List<Float>>()
@@ -72,14 +72,13 @@ class LiveSensorDataViewModel(private val app: Application) : ViewModel() {
     }
 
     private fun storeRecording() {
-        val data = _tempSensorData.value
         viewModelScope.launch {
             val poi = PointOfInterest(poiTime = LocalDateTime.now().toString(), poiLengt =  0F,
                 poiName =  "TEST REC", poiLong =  0F, poiLat =  0F)
             val id = dao.insertPoi(poi)
 
-            dao.insertRecording(Recording(poiId = poi.poiId, sensorType = Sensor.TYPE_ACCELEROMETER,
-                recording = data.toString()))
+            dao.insertRecording(Recording(poiId = id.toInt(), sensorType = Sensor.TYPE_ACCELEROMETER,
+                recording = _tempSensorData.value.toString()))
         }
     }
 

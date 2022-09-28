@@ -10,7 +10,7 @@ import com.example.turapp.mapView.roomDb.entities.relations.PoiWithRecordings
 @Dao
 interface PoiDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPoi(poi: PointOfInterest)
+    suspend fun insertPoi(poi: PointOfInterest): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecording(recording: Recording)
@@ -18,6 +18,10 @@ interface PoiDao {
     @Transaction
     @Query("SELECT * FROM point_of_interest WHERE poiId = :poiId")
     suspend fun getPoiWithRecordings(poiId: Int): List<PoiWithRecordings>
+
+    @Transaction
+    @Query("SELECT * FROM recording")
+    suspend fun getAllRecordings(): List<Recording>
 
     @Transaction
     @Query("SELECT * FROM point_of_interest")
