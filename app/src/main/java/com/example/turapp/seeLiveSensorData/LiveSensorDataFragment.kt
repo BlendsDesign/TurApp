@@ -26,7 +26,7 @@ class LiveSensorDataFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel.accSensorData.observe(viewLifecycleOwner, Observer {
-            binding.tvAccSensor.text = it.toString()
+            //binding.tvAccSensor.text = it.toString()
         })
 
         viewModel.gyroSensorData.observe(viewLifecycleOwner, Observer {
@@ -72,7 +72,7 @@ class LiveSensorDataFragment : Fragment() {
         })
 
         viewModel.orientation.observe(viewLifecycleOwner, Observer {
-            binding.tvMagnetoSensor.text = it.toString()
+            binding.tvAccSensor.text = it.toString()
         })
 
 
