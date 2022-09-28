@@ -6,20 +6,20 @@
         android:id="@+id/miSettings"
         android:title="@string/settings"
         android:icon="@drawable/ic_settings"
-        app:showAsAction="always"/>
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/miHelp"
         android:title="@string/help"
         android:icon="@drawable/ic_help"
-        app:showAsAction="always"
+        app:showAsAction="never"
         />
 
     <item
         android:id="@+id/miInfo"
         android:title="@string/info"
         android:icon="@drawable/ic_info"
-        app:showAsAction="always"
+        app:showAsAction="never"
         />
 
     <item
