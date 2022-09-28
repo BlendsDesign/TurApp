@@ -12,8 +12,8 @@ class PointOfInterestViewModel(app: Application, poiId: Int): ViewModel() {
 
     private val _dao: PoiDao = PoiDatabase.getInstance(app).poiDao
 
-    private val _poi = MutableLiveData<PoiWithRecordings>()
-    val poi : LiveData<PoiWithRecordings> get() = _poi
+    private val _poi = MutableLiveData<List<PoiWithRecordings>>()
+    val poi : LiveData<List<PoiWithRecordings>> get() = _poi
 
     init {
         viewModelScope.launch {
