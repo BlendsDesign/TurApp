@@ -25,20 +25,7 @@ class LiveSensorDataFragment : Fragment() {
         val binding = FragmentLiveSensorDataBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel.accSensorData.observe(viewLifecycleOwner, Observer {
-            //binding.tvAccSensor.text = it.toString()
-        })
 
-        viewModel.gyroSensorData.observe(viewLifecycleOwner, Observer {
-            binding.tvGyroSensor.text = it.toString()
-        })
-
-        viewModel.tempAccSensorRec.observe(viewLifecycleOwner, Observer {
-            binding.tvAccSensorRecording.text = it.toString()
-        })
-        viewModel.tempGyroSensorRec.observe(viewLifecycleOwner, Observer {
-            binding.tvGyroSensorRecording.text = it.toString()
-        })
         binding.btRecord.apply {
             setBackgroundColor(Color.BLUE)
             text = getString(R.string.record)
@@ -46,6 +33,23 @@ class LiveSensorDataFragment : Fragment() {
                 viewModel.startRec()
             }
         }
+
+        viewModel.accSensorData.observe(viewLifecycleOwner, Observer {
+            binding.tvAccSensor.text = it.toString()
+        })
+
+        viewModel.gyroSensorData.observe(viewLifecycleOwner, Observer {
+            binding.tvGyroSensor.text = it.toString()
+        })
+
+        viewModel.magnetoSensorData.observe(viewLifecycleOwner, Observer {
+            binding.tvMagnetoSensor.text = it.toString()
+        })
+
+        viewModel.orientationData.observe(viewLifecycleOwner, Observer {
+            binding.tvOrientationData.text = it.toString()
+        })
+
         viewModel.recording.observe(viewLifecycleOwner, Observer {
             if(it) {
                 binding.btRecord.apply {
@@ -66,15 +70,6 @@ class LiveSensorDataFragment : Fragment() {
                 }
             }
         })
-
-        viewModel.magnetoSensorData.observe(viewLifecycleOwner, Observer {
-            //binding.tvMagnetoSensor.text = it.toString()
-        })
-
-        viewModel.orientation.observe(viewLifecycleOwner, Observer {
-            binding.tvAccSensor.text = it.toString()
-        })
-
 
 
         return binding.root

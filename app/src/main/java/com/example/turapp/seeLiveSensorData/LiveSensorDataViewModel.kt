@@ -57,8 +57,8 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     private val rotationMatrix = FloatArray(9)
     private val orientationAngles = FloatArray(3)
 
-    private val _orientation = MutableLiveData<List<Float>>()
-    val orientation: LiveData<List<Float>> get() = _orientation
+    private val _orientationData = MutableLiveData<List<Float>>()
+    val orientationData: LiveData<List<Float>> get() = _orientationData
     private val _orientationRec = MutableLiveData<List<List<Float>>>()
     val orientationRec : LiveData<List<List<Float>>> get() = _orientationRec
 
@@ -168,7 +168,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
 
             // "rotationMatrix" now has up-to-date information.
 
-            _orientation.value = SensorManager.getOrientation(rotationMatrix, orientationAngles).asList()
+            _orientationData.value = SensorManager.getOrientation(rotationMatrix, orientationAngles).asList()
 
             // "orientationAngles" now has up-to-date information.
         }

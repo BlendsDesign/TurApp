@@ -14,87 +14,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tvAccHeader"
-            style="@style/heading_textSize"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/accelerometer"
-            app:layout_constraintEnd_toStartOf="@+id/accSwitch"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/accSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBaseline_toBaselineOf="@+id/tvAccHeader"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5" />
-
-        <TextView
-            android:id="@+id/tvAccSensor"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            style="@style/heading_textSize"
-            app:layout_constraintTop_toBottomOf="@+id/tvAccHeader"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <!-- Start GYROSENSOR VIEW -->
-        <TextView
-            android:id="@+id/tvGyroHeader"
-            style="@style/heading_textSize"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/gyroscope"
-            app:layout_constraintEnd_toStartOf="@+id/gyroSwitch"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvAccSensor" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/gyroSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBaseline_toBaselineOf="@+id/tvGyroHeader"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/tvGyroHeader" />
-
-        <TextView
-            android:id="@+id/tvGyroSensor"
-            style="@style/heading_textSize"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            app:layout_constraintTop_toBottomOf="@id/tvGyroHeader"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/tvMagnetoSensor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="23sp"
-            app:layout_constraintBottom_toTopOf="@+id/svOtherSensors"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvGyroSensor" />
 
         <ScrollView
             android:id="@+id/svOtherSensors"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/btRecord"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvMagnetoSensor">
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -106,9 +34,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/accelerator_data" />
-
                 <TextView
-                    android:id="@+id/tvAccSensorRecording"
+                    android:id="@+id/tvAccSensor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -118,11 +45,32 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/gyroscope_data" />
-
                 <TextView
-                    android:id="@+id/tvGyroSensorRecording"
+                    android:id="@+id/tvGyroSensor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/heading_textSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/magnemotmeter" />
+                <TextView
+                    android:id="@+id/tvMagnetoSensor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+                <TextView
+                    style="@style/heading_textSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/computed_orientation" />
+                <TextView
+                    android:id="@+id/tvOrientationData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
             </LinearLayout>
         </ScrollView>
 
