@@ -2,6 +2,7 @@ package com.example.turapp.seeLiveSensorData
 
 import android.app.Application
 import android.hardware.Sensor
+import android.hardware.SensorEvent
 import androidx.lifecycle.*
 import android.hardware.SensorManager
 import androidx.lifecycle.LiveData
@@ -57,29 +58,32 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     private val _orientation = MutableLiveData<List<Float>>()
     val orientation: LiveData<List<Float>> get() = _orientation
 
-    private val _tempSensorData = MutableLiveData<MutableList<MutableList<Float>>>()
-    val tempSensorData: LiveData<MutableList<MutableList<Float>>> get() = _tempSensorData
+//    private val _tempSensorData = MutableLiveData<MutableList<MutableList<Float>>>()
+//    val tempSensorData: LiveData<MutableList<MutableList<Float>>> get() = _tempSensorData
 
+    private val _orientationData = MutableLiveData<MutableList<MutableList<Float>>>()
+    val orientationData: LiveData<MutableList<MutableList<Float>>> get() = _orientationData
 
-        // TEMP FAKE database
-        val dbFake = MutableLiveData<String>()
+    private var gravity = listOf<Float>()
 
     init {
         accSensor.startListening()
         accSensor.setOnSensorValuesChangedListener {
             _accSensorData.value = it
         }
+
+        gravity = _accSensorData.value?: mutableListOf<Float>()
+
         gyroSensor.startListening()
         gyroSensor.setOnSensorValuesChangedListener {
             _gyroSensorData.value = it
         }
-            magnetoSensor.startListening()
-            magnetoSensor.setOnSensorValuesChangedListener {
-            _magnetoSensorData.value = it
-            updateOrientationAngles() //check: no crash when function is called
+
+        magnetoSensor.startListening()
+        magnetoSensor.setOnSensorValuesChangedListener {
+        _magnetoSensorData.value = it
         }
     }
-
 
     fun startRec() {
         startTime = System.currentTimeMillis()
@@ -101,7 +105,6 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             temp.add(it as MutableList<Float>)
             _tempGyroSensorRec.value = temp
         }
-
     }
 
     fun stopRec() {
@@ -117,7 +120,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
         val timeTaken = endTime - (startTime?: endTime)
         startTime = null
         storeRecording(timeTaken)
-        val rec = filter(_tempSensorData)
+        updateOrientationAngles()
     }
 
     private fun storeRecording(timeTaken: Long) {
@@ -150,7 +153,68 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
         // "orientationAngles" now has up-to-date information.
     }
 
-    fun filter(listOfRecording : MutableList<MutableList<Float>>) : MutableList<MutableList<Float>>
+    //  Fra leksjon:
+    //  Low-pass: Yn=B*Y2+(1-B)y
+    //  (Gravity new) = alpha * (gravity old) + (1-alpha)*event.values
+    //  gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0] *
+    //  gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1]
+    //  gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2]
+
+    //  High-pass: Y = a*y1+ a*(x2 - x1)
+    //  (Gravity new) = alpha * (gravity old) + alpha * (event.values old - event.values new)
+    //  gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0]
+    //  gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1]
+    //  gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2]
+
+
+    fun accelerometerFilterLowPass(accListRecording : MutableList<List<Float>>) {
+        val alpha: Float = 0.8f
+
+        var lastX : Float = 0F
+        var lastY : Float = 0F
+        var lastZ : Float = 0F
+
+        accListRecording.forEach {
+            lastX = alpha * it[0] + (1 - alpha) * event.values[0] //*
+            lastY = it[1]
+            lastZ = it[2]
+
+            if(it[0] - lastX > 1)
+            {
+                it[0] = lastX + ((it[0] - lastX) * filterWeight)
+            }
+        }
+
+    }
+
+    fun gyroFilter() {
+
+    }
+
+
+
+    //https://developer.android.com/guide/topics/sensors/sensors_motion#sensors-raw-data
+    // getting rid of gravity from raw acc data
+        fun sensorFilter(event: SensorEvent) {
+            // In this example, alpha is calculated as t / (t + dT),
+            // where t is the low-pass filter's time-constant and
+            // dT is the event delivery rate.
+
+            val alpha: Float = 0.8f
+
+            // Isolate the force of gravity with the low-pass filter.
+            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0]
+            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1]
+            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2]
+
+            // Remove the gravity contribution with the high-pass filter.
+//            linear_acceleration[0] = event.values[0] - gravity[0]
+//            linear_acceleration[1] = event.values[1] - gravity[1]
+//            linear_acceleration[2] = event.values[2] - gravity[2]
+        }
+
+    fun generalFilter(listOfRecording : MutableList<MutableList<Float>>) :
+            MutableList<MutableList<Float>>
     {
         var lastX : Float = 0F
         var lastY : Float = 0F
@@ -169,11 +233,9 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             }
         }
         return listOfRecording
+
+
     }
-
-
-
-
 
 
     class Factory(private val app: Application) : ViewModelProvider.Factory {
