@@ -26,11 +26,11 @@ class LiveSensorDataFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel.accSensorData.observe(viewLifecycleOwner, Observer {
-            binding.tvAccSensor.text = it.toString()
+            binding.tvAccSensor.text = String.format("X: ${it[0]} Y: ${it[1]} Z: ${it[2]}")
         })
 
         viewModel.gyroSensorData.observe(viewLifecycleOwner, Observer {
-            binding.tvGyroSensor.text = it.toString()
+            binding.tvGyroSensor.text = String.format("X: ${it[0]} Y: ${it[1]} Z: ${it[2]}")
         })
 
         viewModel.tempAccSensorRec.observe(viewLifecycleOwner, Observer {
