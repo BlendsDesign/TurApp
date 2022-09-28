@@ -1,11 +1,11 @@
-package com.example.turapp.mapView.roomDb.entities
+package com.example.turapp.roomDb.entities
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.example.turapp.mapView.roomDb.entities.relations.PoiWithRecordings
+import com.example.turapp.roomDb.entities.relations.PoiWithRecordings
 
 @Dao
 interface PoiDao {

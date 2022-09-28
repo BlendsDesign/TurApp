@@ -1,9 +1,9 @@
-package com.example.turapp.mapView.roomDb.entities.relations
+package com.example.turapp.roomDb.entities.relations
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.example.turapp.mapView.roomDb.entities.PointOfInterest
-import com.example.turapp.mapView.roomDb.entities.Recording
+import com.example.turapp.roomDb.entities.PointOfInterest
+import com.example.turapp.roomDb.entities.Recording
 
 data class PoiWithRecordings(
     @Embedded val poi: PointOfInterest,

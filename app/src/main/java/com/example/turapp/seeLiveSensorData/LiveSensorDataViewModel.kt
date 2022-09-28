@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.Sensors.AccelerometerSensor
 import com.example.turapp.Sensors.GyroscopeSensor
-import com.example.turapp.mapView.roomDb.PoiDatabase
-import com.example.turapp.mapView.roomDb.entities.PoiDao
-import com.example.turapp.mapView.roomDb.entities.PointOfInterest
-import com.example.turapp.mapView.roomDb.entities.Recording
+import com.example.turapp.roomDb.PoiDatabase
+import com.example.turapp.roomDb.entities.PoiDao
+import com.example.turapp.roomDb.entities.PointOfInterest
+import com.example.turapp.roomDb.entities.Recording
 import kotlinx.coroutines.launch
 import com.example.turapp.Sensors.MagnetoMeterSensor
 
@@ -129,10 +129,14 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
                 poiName =  "TEST REC", poiLong =  0F, poiLat =  0F)
             val id = dao.insertPoi(poi)
 
-            dao.insertRecording(Recording(poiId = id.toInt(), sensorType = Sensor.TYPE_ACCELEROMETER,
-                recording = _tempAccSensorRec.value.toString()))
-            dao.insertRecording(Recording(poiId = id.toInt(), sensorType = Sensor.TYPE_GYROSCOPE,
-                recording = _tempGyroSensorRec.value.toString()))
+            dao.insertRecording(
+                Recording(poiId = id.toInt(), sensorType = Sensor.TYPE_ACCELEROMETER,
+                recording = _tempAccSensorRec.value.toString())
+            )
+            dao.insertRecording(
+                Recording(poiId = id.toInt(), sensorType = Sensor.TYPE_GYROSCOPE,
+                recording = _tempGyroSensorRec.value.toString())
+            )
         }
     }
 
@@ -167,25 +171,25 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     //  gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2]
 
 
-    fun accelerometerFilterLowPass(accListRecording : MutableList<List<Float>>) {
-        val alpha: Float = 0.8f
-
-        var lastX : Float = 0F
-        var lastY : Float = 0F
-        var lastZ : Float = 0F
-
-        accListRecording.forEach {
-            lastX = alpha * it[0] + (1 - alpha) * event.values[0] //*
-            lastY = it[1]
-            lastZ = it[2]
-
-            if(it[0] - lastX > 1)
-            {
-                it[0] = lastX + ((it[0] - lastX) * filterWeight)
-            }
-        }
-
-    }
+//    fun accelerometerFilterLowPass(accListRecording : MutableList<List<Float>>) {
+//        val alpha: Float = 0.8f
+//
+//        var lastX : Float = 0F
+//        var lastY : Float = 0F
+//        var lastZ : Float = 0F
+//
+//        accListRecording.forEach {
+//            lastX = alpha * it[0] + (1 - alpha) * event.values[0] //*
+//            lastY = it[1]
+//            lastZ = it[2]
+//
+//            if(it[0] - lastX > 1)
+//            {
+//                it[0] = lastX + ((it[0] - lastX) * filterWeight)
+//            }
+//        }
+//
+//    }
 
     fun gyroFilter() {
 

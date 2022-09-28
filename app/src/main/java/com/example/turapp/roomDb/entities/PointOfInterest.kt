@@ -1,4 +1,4 @@
-package com.example.turapp.mapView.roomDb.entities
+package com.example.turapp.roomDb.entities
 
 import android.os.Parcel
 import android.os.Parcelable
