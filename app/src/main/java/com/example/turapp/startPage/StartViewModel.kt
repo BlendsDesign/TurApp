@@ -2,9 +2,9 @@ package com.example.turapp.startPage
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.turapp.mapView.roomDb.PoiDatabase
-import com.example.turapp.mapView.roomDb.entities.PoiDao
-import com.example.turapp.mapView.roomDb.entities.PointOfInterest
+import com.example.turapp.roomDb.PoiDatabase
+import com.example.turapp.roomDb.entities.PoiDao
+import com.example.turapp.roomDb.entities.PointOfInterest
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 

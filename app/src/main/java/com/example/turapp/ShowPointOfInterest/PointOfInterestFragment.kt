@@ -1,6 +1,5 @@
 package com.example.turapp.ShowPointOfInterest
 
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
-import com.example.turapp.startPage.Location
 
 
 class PointOfInterestFragment : Fragment() {
@@ -43,7 +40,7 @@ class PointOfInterestFragment : Fragment() {
         // Inflate the layout for this fragment
         viewModel.poi.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                binding.tvTest.text = it.toString()
+                binding.tvTest.text = it[0].recordings.get(0).recording
             }
         })
 

@@ -1,12 +1,12 @@
-package com.example.turapp.mapView.roomDb
+package com.example.turapp.roomDb
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.turapp.mapView.roomDb.entities.PoiDao
-import com.example.turapp.mapView.roomDb.entities.PointOfInterest
-import com.example.turapp.mapView.roomDb.entities.Recording
+import com.example.turapp.roomDb.entities.PoiDao
+import com.example.turapp.roomDb.entities.PointOfInterest
+import com.example.turapp.roomDb.entities.Recording
 
 @Database(
     entities = [

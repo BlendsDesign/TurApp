@@ -2,10 +2,9 @@ package com.example.turapp.ShowPointOfInterest
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.turapp.mapView.roomDb.PoiDatabase
-import com.example.turapp.mapView.roomDb.entities.PoiDao
-import com.example.turapp.mapView.roomDb.entities.Recording
-import com.example.turapp.mapView.roomDb.entities.relations.PoiWithRecordings
+import com.example.turapp.roomDb.PoiDatabase
+import com.example.turapp.roomDb.entities.PoiDao
+import com.example.turapp.roomDb.entities.relations.PoiWithRecordings
 import kotlinx.coroutines.launch
 
 class PointOfInterestViewModel(app: Application, poiId: Int): ViewModel() {

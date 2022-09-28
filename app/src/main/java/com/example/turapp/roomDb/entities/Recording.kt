@@ -1,4 +1,4 @@
-package com.example.turapp.mapView.roomDb.entities
+package com.example.turapp.roomDb.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -5,10 +5,10 @@ import android.hardware.Sensor
 import androidx.lifecycle.*
 import com.example.turapp.Sensors.AccelerometerSensor
 import com.example.turapp.Sensors.GyroscopeSensor
-import com.example.turapp.mapView.roomDb.PoiDatabase
-import com.example.turapp.mapView.roomDb.entities.PoiDao
-import com.example.turapp.mapView.roomDb.entities.PointOfInterest
-import com.example.turapp.mapView.roomDb.entities.Recording
+import com.example.turapp.roomDb.PoiDatabase
+import com.example.turapp.roomDb.entities.PoiDao
+import com.example.turapp.roomDb.entities.PointOfInterest
+import com.example.turapp.roomDb.entities.Recording
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
@@ -97,10 +97,14 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
                 poiName =  "TEST REC", poiLong =  0F, poiLat =  0F)
             val id = dao.insertPoi(poi)
 
-            dao.insertRecording(Recording(poiId = id.toInt(), sensorType = Sensor.TYPE_ACCELEROMETER,
-                recording = _tempAccSensorRec.value.toString()))
-            dao.insertRecording(Recording(poiId = id.toInt(), sensorType = Sensor.TYPE_GYROSCOPE,
-                recording = _tempGyroSensorRec.value.toString()))
+            dao.insertRecording(
+                Recording(poiId = id.toInt(), sensorType = Sensor.TYPE_ACCELEROMETER,
+                recording = _tempAccSensorRec.value.toString())
+            )
+            dao.insertRecording(
+                Recording(poiId = id.toInt(), sensorType = Sensor.TYPE_GYROSCOPE,
+                recording = _tempGyroSensorRec.value.toString())
+            )
         }
     }
 
