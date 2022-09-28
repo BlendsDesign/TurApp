@@ -1,13 +1,18 @@
 package com.example.turapp.seeLiveSensorData
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import android.hardware.Sensor
+import androidx.lifecycle.*
 import com.example.turapp.Sensors.AccelerometerSensor
 import com.example.turapp.Sensors.GyroscopeSensor
+import com.example.turapp.mapView.roomDb.PoiDatabase
+import com.example.turapp.mapView.roomDb.entities.PoiDao
+import com.example.turapp.mapView.roomDb.entities.PointOfInterest
+import com.example.turapp.mapView.roomDb.entities.Recording
+import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
+import java.time.LocalDateTime
+
 
 class LiveSensorDataViewModel(private val app: Application) : ViewModel() {
 
@@ -24,6 +29,9 @@ class LiveSensorDataViewModel(private val app: Application) : ViewModel() {
 
     // TEMP FAKE database
     val dbFake = MutableLiveData<String>()
+
+    // ACTUAL DB
+    private val dao: PoiDao = PoiDatabase.getInstance(app).poiDao
 
     private val _recording = MutableLiveData<Boolean>()
     val recording: LiveData<Boolean> get() = _recording
@@ -59,7 +67,20 @@ class LiveSensorDataViewModel(private val app: Application) : ViewModel() {
         _recording.value = false
         accSensor.stopListening()
         accSensor.setOnSensorValuesChangedListener { }
+        storeRecording()
         // SendDataToDb(rec)
+    }
+
+    private fun storeRecording() {
+        val data = _tempSensorData.value
+        viewModelScope.launch {
+            val poi = PointOfInterest(poiTime = LocalDateTime.now().toString(), poiLengt =  0F,
+                poiName =  "TEST REC", poiLong =  0F, poiLat =  0F)
+            val id = dao.insertPoi(poi)
+
+            dao.insertRecording(Recording(poiId = poi.poiId, sensorType = Sensor.TYPE_ACCELEROMETER,
+                recording = data.toString()))
+        }
     }
 
     fun filter(listOfRecording: MutableList<MutableList<Float>>): MutableList<MutableList<Float>> {

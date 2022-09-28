@@ -8,6 +8,7 @@ import com.example.turapp.mapView.roomDb.entities.PointOfInterest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.IllegalArgumentException
+import java.time.LocalDateTime
 
 class StartViewModel(app: Application) : ViewModel() {
 
@@ -15,20 +16,18 @@ class StartViewModel(app: Application) : ViewModel() {
     private val _test = MutableLiveData<String>()
     val test: LiveData<String> get() = _test
 
+    private val dao : PoiDao = PoiDatabase.getInstance(app).poiDao
+    private val _points = MutableLiveData<List<PointOfInterest>>()
+    val points : LiveData<List<PointOfInterest>> get() = _points
+
 
     init {
+        _points.value = listOf()
         _test.value = "REMOVE THIS LATER"
 
-        // Set up application
-        val dao: PoiDao = PoiDatabase.getInstance(app.applicationContext).poiDao
-
         viewModelScope.launch {
-            val pointsOfInterest = getMockPoiData()
-            pointsOfInterest.forEach {
-                dao.insertPoi(it)
-            }
+            _points.value = dao.getAllPointOfInterest()
         }
-
     }
 
 
@@ -45,27 +44,6 @@ class StartViewModel(app: Application) : ViewModel() {
             Location("Hunting ground", 999 ),
             Location("Steep Hill", 132 ),
         )
-    }
-    fun getMockPoiData(): List<PointOfInterest> {
-        return listOf(
-            PointOfInterest(poiName = "Test1", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test2", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test3", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test4", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test5", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test6", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test7", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test8", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test9", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test10", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test11", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test12", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test13", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test14", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test15", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-            PointOfInterest(poiName = "Test16", poiLengt = 0F, poiLat = 0.3214F, poiLong = 0F, poiTime = 0F),
-        )
-
     }
 
 

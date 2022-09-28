@@ -40,7 +40,7 @@ class StartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.rvLocations.apply {
             val navControl = findNavController()
-            adapter = LocationAdapter(viewModel.getMockData(), navControl)
+            adapter = LocationAdapter(viewModel.points.value ?: listOf(), navControl)
             layoutManager = LinearLayoutManager(context)
         }
     }
