@@ -17,7 +17,7 @@ interface PoiDao {
 
     @Transaction
     @Query("SELECT * FROM point_of_interest WHERE poiId = :poiId")
-    suspend fun getPoiWithRecordings(poiId: Int): List<PoiWithRecordings>
+    suspend fun getPoiWithRecordings(poiId: Int): PoiWithRecordings
 
     @Transaction
     @Query("SELECT * FROM recording")
