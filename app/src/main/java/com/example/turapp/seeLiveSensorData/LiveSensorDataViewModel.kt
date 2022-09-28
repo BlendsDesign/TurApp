@@ -59,9 +59,9 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
 
     private val _orientation = MutableLiveData<List<Float>>()
     val orientation: LiveData<List<Float>> get() = _orientation
+    private val _orientationRec = MutableLiveData<List<List<Float>>>()
+    val orientationRec : LiveData<List<List<Float>>> get() = _orientationRec
 
-    private val _orientationData = MutableLiveData<MutableList<MutableList<Float>>>()
-    val orientationData: LiveData<MutableList<MutableList<Float>>> get() = _orientationData
 
     private var gravity = listOf<Float>()
 
