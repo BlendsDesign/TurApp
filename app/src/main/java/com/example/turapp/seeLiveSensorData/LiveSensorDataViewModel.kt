@@ -55,6 +55,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     fun startRec() {
         startTime = System.currentTimeMillis()
         _recording.value = true
+        // This nullifies list
         _tempAccSensorRec.value = mutableListOf()
         _tempGyroSensorRec.value = mutableListOf()
         accSensor.setOnSensorValuesChangedListener {
