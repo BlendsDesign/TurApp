@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.turapp.R
 import com.example.turapp.databinding.FragmentLiveSensorDataBinding
 
 class LiveSensorDataFragment : Fragment() {
@@ -32,12 +33,15 @@ class LiveSensorDataFragment : Fragment() {
             binding.tvGyroSensor.text = it.toString()
         })
 
-        viewModel.tempSensorData.observe(viewLifecycleOwner, Observer {
-            binding.tvOtherSensors.text = it.toString()
+        viewModel.tempAccSensorRec.observe(viewLifecycleOwner, Observer {
+            binding.tvAccSensorRecording.text = it.toString()
+        })
+        viewModel.tempGyroSensorRec.observe(viewLifecycleOwner, Observer {
+            binding.tvGyroSensorRecording.text = it.toString()
         })
         binding.btRecord.apply {
             setBackgroundColor(Color.BLUE)
-            text = "RECORD"
+            text = getString(R.string.record)
             setOnClickListener {
                 viewModel.startRec()
             }
@@ -46,7 +50,7 @@ class LiveSensorDataFragment : Fragment() {
             if(it) {
                 binding.btRecord.apply {
                     setBackgroundColor(Color.RED)
-                    text = "STOP RECORDING"
+                    text = getString(R.string.stop_recording)
                 }
                 binding.btRecord.setOnClickListener {
                     viewModel.stopRec()
@@ -54,7 +58,7 @@ class LiveSensorDataFragment : Fragment() {
             } else {
                 binding.btRecord.apply {
                     setBackgroundColor(Color.BLUE)
-                    text = "RECORD"
+                    text = getString(R.string.record)
                 }
 
                 binding.btRecord.setOnClickListener {
