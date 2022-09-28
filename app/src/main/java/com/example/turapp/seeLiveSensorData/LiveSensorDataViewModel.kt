@@ -28,6 +28,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     private val _tempGyroSensorRec = MutableLiveData<MutableList<MutableList<Float>>>()
     val tempGyroSensorRec: LiveData<MutableList<MutableList<Float>>> get() = _tempGyroSensorRec
 
+
     // DB DAO
     private val dao: PoiDao = PoiDatabase.getInstance(app).poiDao
 

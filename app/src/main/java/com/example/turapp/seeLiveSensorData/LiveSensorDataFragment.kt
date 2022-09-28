@@ -1,6 +1,7 @@
 package com.example.turapp.seeLiveSensorData
 
 import android.graphics.Color
+import android.hardware.SensorEvent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -32,6 +33,8 @@ class LiveSensorDataFragment : Fragment() {
         viewModel.gyroSensorData.observe(viewLifecycleOwner, Observer {
             binding.tvGyroSensor.text = String.format("X: ${it[0]} Y: ${it[1]} Z: ${it[2]}")
         })
+
+        fun test(event: SensorEvent) {}
 
         viewModel.tempAccSensorRec.observe(viewLifecycleOwner, Observer {
             binding.tvAccSensorRecording.text = it.toString()
