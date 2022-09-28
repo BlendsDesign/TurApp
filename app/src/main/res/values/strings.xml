@@ -6,4 +6,10 @@
     <string name="help">Help</string>
     <string name="info">Info</string>
     <string name="close">Close App</string>
+    <string name="record">Record</string>
+    <string name="accelerometer">ACCELEROMETER</string>
+    <string name="gyroscope">GYROSCOPE</string>
+    <string name="stop_recording">STOP RECORDING</string>
+    <string name="accelerator_data">ACCELERATOR DATA</string>
+    <string name="gyroscope_data">GYROSCOPE DATA</string>
 </resources>

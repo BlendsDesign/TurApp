@@ -1,44 +1,45 @@
 package com.example.turapp.startPage
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import android.app.Application
+import androidx.lifecycle.*
+import com.example.turapp.mapView.roomDb.PoiDatabase
+import com.example.turapp.mapView.roomDb.entities.PoiDao
+import com.example.turapp.mapView.roomDb.entities.PointOfInterest
+import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
-class StartViewModel(testText: String) : ViewModel() {
+
+class StartViewModel(app: Application) : ViewModel() {
+
     // TODO: Implement the ViewModel
     private val _test = MutableLiveData<String>()
     val test: LiveData<String> get() = _test
 
+    private val dao : PoiDao = PoiDatabase.getInstance(app).poiDao
+    private val _points = MutableLiveData<List<PointOfInterest>>()
+    val points : LiveData<List<PointOfInterest>> get() = _points
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading : LiveData<Boolean> get() = _isLoading
+
+
     init {
-        _test.value = testText
-    }
+        _test.value = "REMOVE THIS LATER"
+        _isLoading.value = true
 
-
-    fun getMockData(): MutableList<Location> {
-        return  mutableListOf(
-            Location("Canary River", 111 ),
-            Location("Sweet Canyon", 222 ),
-            Location("Country Road", 333 ),
-            Location("Cotton Fields", 444 ),
-            Location("Death Valley", 555 ),
-            Location("Scary Forest", 666 ),
-            Location("Twin Peaks", 777 ),
-            Location("Fishing Spot", 888 ),
-            Location("Hunting ground", 999 ),
-            Location("Steep Hill", 132 ),
-        )
+        viewModelScope.launch {
+            _points.value = dao.getAllPointOfInterest()
+            _isLoading.value = false
+        }
     }
 
 
 
 
-    class Factory(val testText: String) : ViewModelProvider.Factory {
+    class Factory(val app: Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(StartViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return StartViewModel(testText) as T
+                return StartViewModel(app) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

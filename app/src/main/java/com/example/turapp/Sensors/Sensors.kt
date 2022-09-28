@@ -38,11 +38,3 @@ context: Context
     sensorFeature = PackageManager.FEATURE_SENSOR_COMPASS,
     sensorType = Sensor.TYPE_MAGNETIC_FIELD
 )
-
-//class LocationSensor(
-//    context: Context
-//): AndroidSensor(
-//    context = context,
-//    sensorFeature = PackageManager.FEATURE_LOCATION,
-//    sensorType = Sensor.????
-//)

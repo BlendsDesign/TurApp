@@ -5,12 +5,13 @@ import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.turapp.databinding.RvItemLocationBinding
+import com.example.turapp.mapView.roomDb.entities.PointOfInterest
 import kotlinx.android.synthetic.main.rv_item_location.view.*
 
 // BASED ON https://youtu.be/HtwDXRWjMcU
 
 class LocationAdapter(
-    var locations: List<Location>,
+    var locations: List<PointOfInterest>,
     val nav: NavController
 ) : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
@@ -29,12 +30,13 @@ class LocationAdapter(
     //Take the data from each item and set it to each corresponding view
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         holder.itemView.apply {
-            tvLocationName.text = locations[position].title
-            tvDistance.text = locations[position].distance.toString()
+            val loc = locations[position]
+            tvLocationName.text = loc.poiName + loc.poiId.toString()
+            tvDistance.text = loc.poiLengt.toString()
             setOnClickListener {
                 nav.navigate(
                     StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(
-                        locations[position]
+                        loc.poiId
                     )
                 )
             }
