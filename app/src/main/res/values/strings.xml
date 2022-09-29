@@ -12,7 +12,8 @@
     <string name="stop_recording">STOP RECORDING</string>
     <string name="accelerator_data">ACCELERATOR DATA</string>
     <string name="gyroscope_data">GYROSCOPE DATA</string>
-    <string name="magnemotmeter">MAGNEMOTMETER</string>
     <string name="heading_data">HEADING DATA</string>
     <string name="computed_orientation">COMPUTED ORIENTATION</string>
+    <string name="filtered_gyro_data">FILTERED GYRO DATA</string>
+    <string name="magnetometer">MAGNETOMETER</string>
 </resources>

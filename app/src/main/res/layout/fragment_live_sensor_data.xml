@@ -40,6 +40,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <TextView
+                    style="@style/heading_textSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTERED ACCELERATION" />
+                <TextView
+                    android:id="@+id/tvFilteredAccData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchGyroRec"
@@ -57,7 +69,17 @@
                     style="@style/heading_textSize"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/magnemotmeter" />
+                    android:text="@string/filtered_gyro_data" />
+                <TextView
+                    android:id="@+id/tvFilteredGyroData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/heading_textSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/magnetometer" />
                 <TextView
                     android:id="@+id/tvMagnetoSensor"
                     android:layout_width="match_parent"

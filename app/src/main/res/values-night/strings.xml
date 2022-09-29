@@ -5,4 +5,5 @@
     <string name="info">Info</string>
     <string name="close">Close App</string>
     <string name="record">Record</string>
+    <string name="filtered_gyro_data">FILTERED GYRO DATA</string>
 </resources>
