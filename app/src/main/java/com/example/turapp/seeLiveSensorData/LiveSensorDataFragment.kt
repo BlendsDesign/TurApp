@@ -15,25 +15,47 @@ class LiveSensorDataFragment : Fragment() {
 
     private val viewModel: LiveSensorDataViewModel by lazy {
         val app = requireNotNull(activity).application
-        ViewModelProvider(this, LiveSensorDataViewModel.Factory(app)).get(LiveSensorDataViewModel::class.java)
+        ViewModelProvider(
+            this,
+            LiveSensorDataViewModel.Factory(app)
+        ).get(LiveSensorDataViewModel::class.java)
+
     }
+
+    private var _binding: FragmentLiveSensorDataBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentLiveSensorDataBinding.inflate(inflater)
+        // Set up DataBinding
+        _binding = FragmentLiveSensorDataBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-
-
-        binding.btRecord.apply {
-            setBackgroundColor(Color.BLUE)
-            text = getString(R.string.record)
-            setOnClickListener {
-                viewModel.startRec()
+        binding.viewModel = viewModel
+        // Set up initial bindings
+        binding.apply {
+            btRecord.apply {
+                setBackgroundColor(Color.BLUE)
+                text = getString(R.string.record)
+                setOnClickListener {
+                    viewModel?.startRec()
+                }
+            }
+            switchAccRec.setOnClickListener {
+                viewModel?.setRecAccSensorData()
+            }
+            switchGyroRec.setOnClickListener {
+                viewModel?.setRecGyroSensorData()
+            }
+            switchMagnetoRec.setOnClickListener {
+                viewModel?.setRecMagnetoSensorData()
+            }
+            switchOrientationRec.setOnClickListener {
+                viewModel?.setRecOrientationSensorData()
             }
         }
-
+        // Setting up observers to give LiveData to the textViews
         viewModel.accSensorData.observe(viewLifecycleOwner, Observer {
             binding.tvAccSensor.text = it.toString()
         })
@@ -50,8 +72,9 @@ class LiveSensorDataFragment : Fragment() {
             binding.tvOrientationData.text = it.toString()
         })
 
+        // Setting up Observer to know if we are recording or not
         viewModel.recording.observe(viewLifecycleOwner, Observer {
-            if(it) {
+            if (it) {
                 binding.btRecord.apply {
                     setBackgroundColor(Color.RED)
                     text = getString(R.string.stop_recording)
@@ -70,7 +93,7 @@ class LiveSensorDataFragment : Fragment() {
                 }
             }
         })
-
+        //Set up connection between the switches in xml and the viewModel
 
         return binding.root
     }

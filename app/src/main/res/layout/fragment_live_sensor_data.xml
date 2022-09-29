@@ -29,28 +29,31 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchAccRec"
                     style="@style/heading_textSize"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/accelerator_data" />
+                    android:text="@string/accelerator_data"/>
                 <TextView
                     android:id="@+id/tvAccSensor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
 
-                <TextView
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchGyroRec"
                     style="@style/heading_textSize"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/gyroscope_data" />
+                    android:text="@string/gyroscope_data"/>
                 <TextView
                     android:id="@+id/tvGyroSensor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <TextView
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchMagnetoRec"
                     style="@style/heading_textSize"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -61,11 +64,12 @@
                     android:layout_height="wrap_content" />
 
 
-                <TextView
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchOrientationRec"
                     style="@style/heading_textSize"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/computed_orientation" />
+                    android:text="@string/computed_orientation"/>
                 <TextView
                     android:id="@+id/tvOrientationData"
                     android:layout_width="match_parent"
