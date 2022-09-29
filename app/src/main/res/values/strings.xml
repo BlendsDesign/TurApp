@@ -16,4 +16,5 @@
     <string name="computed_orientation">COMPUTED ORIENTATION</string>
     <string name="filtered_gyro_data">FILTERED GYRO DATA</string>
     <string name="magnetometer">MAGNETOMETER</string>
+    <string name="filtered_acceleration">FILTERED ACCELERATION</string>
 </resources>
