@@ -57,27 +57,27 @@ class LiveSensorDataFragment : Fragment() {
         }
         // Setting up observers to give LiveData to the textViews
         viewModel.accSensorData.observe(viewLifecycleOwner, Observer {
-            binding.tvAccSensor.text = it.toString()
+            binding.tvAccSensor.text = String.format("X: %.2f Y: %.2f Z: %.2f", it[0], it[1], it[2])
         })
 
         viewModel.accSensorDataFiltered.observe(viewLifecycleOwner, Observer {
-            binding.tvFilteredAccData.text = it.toString()
+            binding.tvFilteredAccData.text = String.format("X: %.2f Y: %.2f Z: %.2f", it[0], it[1], it[2])
         })
 
         viewModel.gyroSensorData.observe(viewLifecycleOwner, Observer {
-            binding.tvGyroSensor.text = it.toString()
+            binding.tvGyroSensor.text = String.format("X: %.2f Y: %.2f Z: %.2f", it[0], it[1], it[2])
         })
 
         viewModel.gyroSensorDataFiltered.observe(viewLifecycleOwner, Observer {
-            binding.tvFilteredGyroData.text = it.toString()
+            binding.tvFilteredGyroData.text = String.format("X: %.2f Y: %.2f Z: %.2f", it[0], it[1], it[2])
         })
 
         viewModel.magnetoSensorData.observe(viewLifecycleOwner, Observer {
-            binding.tvMagnetoSensor.text = it.toString()
+            binding.tvMagnetoSensor.text = String.format("X: %.2f Y: %.2f Z: %.2f", it[0], it[1], it[2])
         })
 
         viewModel.orientationData.observe(viewLifecycleOwner, Observer {
-            binding.tvOrientationData.text = it.toString()
+            binding.tvOrientationData.text = String.format("X: %.2f Y: %.2f Z: %.2f", it[0], it[1], it[2])
         })
 
         // Setting up Observer to know if we are recording or not
