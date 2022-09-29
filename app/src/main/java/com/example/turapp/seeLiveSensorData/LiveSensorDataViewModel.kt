@@ -2,7 +2,6 @@ package com.example.turapp.seeLiveSensorData
 
 import android.app.Application
 import android.hardware.Sensor
-import android.hardware.SensorEvent
 import androidx.lifecycle.*
 import android.hardware.SensorManager
 import androidx.lifecycle.LiveData
@@ -17,11 +16,8 @@ import com.example.turapp.roomDb.entities.PointOfInterest
 import com.example.turapp.roomDb.entities.Recording
 import kotlinx.coroutines.launch
 import com.example.turapp.Sensors.MagnetoMeterSensor
-
-
 import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
-
 
 class LiveSensorDataViewModel(app: Application) : ViewModel() {
 
@@ -33,11 +29,19 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
 
     private val _prevAccData = MutableLiveData<MutableList<Float>>()
 
+    private val _accSensorDataFiltered = MutableLiveData<MutableList<Float>>()
+    val accSensorDataFiltered: LiveData<MutableList<Float>> get() = _accSensorDataFiltered
+
     private val gyroSensor = GyroscopeSensor(app)
-    private val _gyroSensorData = MutableLiveData<List<Float>>()
-    val gyroSensorData: LiveData<List<Float>> get() = _gyroSensorData
+    private val _gyroSensorData = MutableLiveData<MutableList<Float>>()
+    val gyroSensorData: LiveData<MutableList<Float>> get() = _gyroSensorData
     private val _tempGyroSensorRec = MutableLiveData<MutableList<MutableList<Float>>>()
     val tempGyroSensorRec: LiveData<MutableList<MutableList<Float>>> get() = _tempGyroSensorRec
+
+    private val _prevGyroData = MutableLiveData<MutableList<Float>>()
+
+    private val _gyroSensorDataFiltered = MutableLiveData<MutableList<Float>>()
+    val gyroSensorDataFiltered: LiveData<MutableList<Float>> get() = _gyroSensorDataFiltered
 
     // DB DAO
     private val dao: PoiDao = PoiDatabase.getInstance(app).poiDao
@@ -49,10 +53,9 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     // Used to time the recording
     private var startTime: Long? = null
 
-
     private val magnetoSensor = MagnetoMeterSensor(app)
-    private val _magnetoSensorData = MutableLiveData<List<Float>>()
-    val magnetoSensorData: LiveData<List<Float>> get() = _magnetoSensorData
+    private val _magnetoSensorData = MutableLiveData<MutableList<Float>>()
+    val magnetoSensorData: LiveData<MutableList<Float>> get() = _magnetoSensorData
 
     private val rotationMatrix = FloatArray(9)
     private val orientationAngles = FloatArray(3)
@@ -62,16 +65,12 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     private val _orientationRec = MutableLiveData<List<List<Float>>>()
     val orientationRec : LiveData<List<List<Float>>> get() = _orientationRec
 
-
     private var gravity = listOf<Float>()
-
-    private val _filteredAccData = MutableLiveData<MutableList<Float>>()
-    val filteredAccData : LiveData<MutableList<Float>> get() = _filteredAccData
 
     init {
         magnetoSensor.startListening()
         magnetoSensor.setOnSensorValuesChangedListener {
-            _magnetoSensorData.value = it
+            _magnetoSensorData.value = it as MutableList<Float>
             updateOrientationAngles()
         }
 
@@ -80,7 +79,9 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             // STORE OLD VALUE FOR FILTER
             _prevAccData.value = _accSensorData.value  ?: it as MutableList<Float>
             // Record new value
-            _accSensorData.value = filterOutGravity(it as MutableList<Float>, _prevAccData.value ?: mutableListOf())
+            _accSensorData.value = it as MutableList<Float>
+
+            _accSensorDataFiltered.value = filterOutGravity(it as MutableList<Float>, _prevAccData.value ?: mutableListOf())
             updateOrientationAngles()
         }
 
@@ -88,9 +89,11 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
 
         gyroSensor.startListening()
         gyroSensor.setOnSensorValuesChangedListener {
-            _gyroSensorData.value = it
-        }
+            _prevGyroData.value = _gyroSensorData.value  ?: it as MutableList<Float>
+            _gyroSensorData.value = it as MutableList<Float>
 
+            _gyroSensorDataFiltered.value = gyroFilter(it, _prevGyroData.value ?: mutableListOf())
+        }
 
     }
 
@@ -110,7 +113,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             updateOrientationAngles()
         }
         gyroSensor.setOnSensorValuesChangedListener {
-            _gyroSensorData.value = it
+            _gyroSensorData.value = it as MutableList<Float>
             val temp: MutableList<MutableList<Float>> = _tempGyroSensorRec.value ?: mutableListOf()
             temp.add(it as MutableList<Float>)
             _tempGyroSensorRec.value = temp
@@ -125,7 +128,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             updateOrientationAngles()
         }
         gyroSensor.setOnSensorValuesChangedListener {
-            _gyroSensorData.value = it
+            _gyroSensorData.value = it as MutableList<Float>
         }
         val endTime = System.currentTimeMillis()
         val timeTaken = endTime - (startTime ?: endTime)
@@ -157,7 +160,6 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     private fun updateOrientationAngles() {
         if(_magnetoSensorData.value != null && _accSensorData.value != null) {
 
-
             // Update rotation matrix, which is needed to update orientation angles.
             SensorManager.getRotationMatrix(
                 rotationMatrix,
@@ -168,56 +170,36 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
 
             // "rotationMatrix" now has up-to-date information.
 
+            //convert to degrees from radians
+            val orientationArr = _orientationData.value?.toFloatArray()
+
+            var azimuth = (orientationArr!![0]*180/ Math.PI)+180 //hvorfor !! her?
+            var pitch = (orientationArr[1] * 180/Math.PI)+90 // men ikke her?
+            var roll = orientationArr[2]*180/Math.PI
+
             _orientationData.value = SensorManager.getOrientation(rotationMatrix, orientationAngles).asList()
 
             // "orientationAngles" now has up-to-date information.
         }
     }
+    private fun gyroFilter(event: MutableList<Float>, previousEvent: MutableList<Float>): MutableList<Float> {
+        // high-pass filter. From lecture on filtering: Y = a*y1+ a*(x2 - x1)
+        //(Gravity new) = alpha * (gravity old) + alpha * (event.values old - event.values new)
+        val alpha = 0.8F
 
-    //  Fra leksjon:
-    //  Low-pass: Yn=B*Y2+(1-B)y
-    //  (Gravity new) = alpha * (gravity old) + (1-alpha)*event.values
-    //  gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0] *
-    //  gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1]
-    //  gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2]
+        previousEvent[0] = alpha * previousEvent[0] + alpha * (previousEvent[0] - event[0])
+        previousEvent[1] = alpha * previousEvent[1] + alpha * (previousEvent[1] - event[0])
+        previousEvent[2] = alpha * previousEvent[2] + alpha * (previousEvent[2] - event[0])
 
-    //  High-pass: Y = a*y1+ a*(x2 - x1)
-    //  (Gravity new) = alpha * (gravity old) + alpha * (event.values old - event.values new)
-    //  gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0]
-    //  gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1]
-    //  gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2]
-
-
-//    fun accelerometerFilterLowPass(accListRecording : MutableList<List<Float>>) {
-//        val alpha: Float = 0.8f
-//
-//        var lastX : Float = 0F
-//        var lastY : Float = 0F
-//        var lastZ : Float = 0F
-//
-//        accListRecording.forEach {
-//            lastX = alpha * it[0] + (1 - alpha) * event.values[0] //*
-//            lastY = it[1]
-//            lastZ = it[2]
-//
-//            if(it[0] - lastX > 1)
-//            {
-//                it[0] = lastX + ((it[0] - lastX) * filterWeight)
-//            }
-//        }
-//
-//    }
-
-    fun gyroFilter() {
-
+        return previousEvent
     }
 
     //https://developer.android.com/guide/topics/sensors/sensors_motion#sensors-raw-data
     // getting rid of gravity from raw acc data
-    fun filterOutGravity(event: MutableList<Float>, previousEvent: MutableList<Float>) : MutableList<Float> {
+    private fun filterOutGravity(event: MutableList<Float>, previousEvent: MutableList<Float>) : MutableList<Float> {
 
         val alpha: Float = 0.8f
-        val linear_acceleration = mutableListOf<Float>()
+        val linearAcceleration = mutableListOf<Float>()
 
         // Isolate the force of previousEvent with the low-pass filter.
         previousEvent[0] = alpha * previousEvent[0] + (1 - alpha) * event[0]
@@ -225,11 +207,11 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
         previousEvent[2] = alpha * previousEvent[2] + (1 - alpha) * event[2]
 
          //Remove the gravity contribution with the high-pass filter.
-        linear_acceleration.add(event[0] - previousEvent[0])
-        linear_acceleration.add(event[1] - previousEvent[1])
-        linear_acceleration.add(event[2] - previousEvent[2])
+        linearAcceleration.add(event[0] - previousEvent[0])
+        linearAcceleration.add(event[1] - previousEvent[1])
+        linearAcceleration.add(event[2] - previousEvent[2])
 
-        return linear_acceleration
+        return linearAcceleration
     }
 
     fun generalFilter(listOfRecording: MutableList<MutableList<Float>>):
@@ -238,7 +220,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
         var lastY: Float = 0F
         var lastZ: Float = 0F
 
-        var filterWeight: Float = 0.1F
+        val filterWeight: Float = 0.1F
 
         listOfRecording.forEach {
             lastX = it[0]
@@ -250,7 +232,6 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             }
         }
         return listOfRecording
-
 
     }
 

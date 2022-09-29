@@ -38,8 +38,16 @@ class LiveSensorDataFragment : Fragment() {
             binding.tvAccSensor.text = it.toString()
         })
 
+        viewModel.accSensorDataFiltered.observe(viewLifecycleOwner, Observer {
+            binding.tvFilteredAccData.text = it.toString()
+        })
+
         viewModel.gyroSensorData.observe(viewLifecycleOwner, Observer {
             binding.tvGyroSensor.text = it.toString()
+        })
+
+        viewModel.gyroSensorDataFiltered.observe(viewLifecycleOwner, Observer {
+            binding.tvFilteredGyroData.text = it.toString()
         })
 
         viewModel.magnetoSensorData.observe(viewLifecycleOwner, Observer {
@@ -49,6 +57,8 @@ class LiveSensorDataFragment : Fragment() {
         viewModel.orientationData.observe(viewLifecycleOwner, Observer {
             binding.tvOrientationData.text = it.toString()
         })
+
+
 
         viewModel.recording.observe(viewLifecycleOwner, Observer {
             if(it) {
