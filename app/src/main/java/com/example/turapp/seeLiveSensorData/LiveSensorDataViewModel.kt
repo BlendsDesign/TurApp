@@ -173,9 +173,9 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             //convert to degrees from radians
             val orientationArr = _orientationData.value?.toFloatArray()
 
-            var azimuth = (orientationArr!![0]*180/ Math.PI)+180 //hvorfor !! her?
-            var pitch = (orientationArr[1] * 180/Math.PI)+90 // men ikke her?
-            var roll = orientationArr[2]*180/Math.PI
+//            var azimuth = (orientationArr!![0]*180/ Math.PI)+180 //hvorfor !! her?
+//            var pitch = (orientationArr[1] * 180/Math.PI)+90 // men ikke her?
+//            var roll = orientationArr[2]*180/Math.PI
 
             _orientationData.value = SensorManager.getOrientation(rotationMatrix, orientationAngles).asList()
 
