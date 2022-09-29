@@ -108,7 +108,9 @@ class LiveSensorDataFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.stopRec()
+        if (viewModel.recording.value == true) {
+            viewModel.stopRec()
+        }
     }
 
 }
