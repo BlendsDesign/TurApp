@@ -1,6 +1,7 @@
 package com.example.turapp.roomDb.entities
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -18,6 +19,12 @@ interface PoiDao {
     @Transaction
     @Query("SELECT * FROM point_of_interest WHERE poiId = :poiId")
     suspend fun getPoiWithRecordings(poiId: Int): List<PoiWithRecordings>
+
+    @Delete
+    suspend fun deletePoi(poi: PointOfInterest)
+
+    @Delete
+    suspend fun deleteRec(rec: Recording)
 
     @Transaction
     @Query("SELECT * FROM recording")

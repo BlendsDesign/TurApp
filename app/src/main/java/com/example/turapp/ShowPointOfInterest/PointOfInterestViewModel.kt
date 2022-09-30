@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.turapp.roomDb.PoiDatabase
 import com.example.turapp.roomDb.entities.PoiDao
-import com.example.turapp.roomDb.entities.Recording
 import com.example.turapp.roomDb.entities.relations.PoiWithRecordings
 import kotlinx.coroutines.launch
 
@@ -12,12 +11,30 @@ class PointOfInterestViewModel(app: Application, poiId: Int): ViewModel() {
 
     private val _dao: PoiDao = PoiDatabase.getInstance(app).poiDao
 
-    private val _poi = MutableLiveData<List<PoiWithRecordings>>()
-    val poi : LiveData<List<PoiWithRecordings>> get() = _poi
+    private val _poi = MutableLiveData<PoiWithRecordings>()
+    val poi : LiveData<PoiWithRecordings> get() = _poi
 
     init {
         viewModelScope.launch {
-            _poi.value = _dao.getPoiWithRecordings(poiId)
+            val poi = _dao.getPoiWithRecordings(poiId)
+            if (poi.size > 0) {
+                _poi.value = poi[0]
+            }
+        }
+    }
+
+    private val _finishedDeleting = MutableLiveData<Boolean>()
+    val finishedDeleting: LiveData<Boolean> get() = _finishedDeleting
+    fun deletePoi() {
+        viewModelScope.launch {
+            val poi: PoiWithRecordings? = _poi.value
+            if (poi != null) {
+                poi.recording.forEach {
+                    _dao.deleteRec(it)
+                }
+                _dao.deletePoi(poi.poi)
+                _finishedDeleting.value = true
+            }
         }
     }
 

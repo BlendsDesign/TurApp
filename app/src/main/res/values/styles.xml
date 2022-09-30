@@ -4,4 +4,12 @@
     <style name="heading_textSize">
         <item name="android:textSize">23sp</item>
     </style>
+
+    <style name="see_poi_recording_button">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">23sp</item>
+        <item name="android:background">@color/theme_orange</item>
+        <item name="android:textColor">@color/theme_blue</item>
+    </style>
 </resources>

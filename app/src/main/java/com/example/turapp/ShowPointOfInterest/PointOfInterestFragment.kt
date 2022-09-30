@@ -1,6 +1,5 @@
 package com.example.turapp.ShowPointOfInterest
 
-
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,7 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
+import java.sql.Timestamp
+import java.util.*
 
 
 class PointOfInterestFragment : Fragment() {
@@ -38,10 +40,39 @@ class PointOfInterestFragment : Fragment() {
     ): View? {
         _binding = FragmentPointOfInterestBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        // Inflate the layout for this fragment
+
+
         viewModel.poi.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                binding.tvTest.text = it[0].recording[0].recording.get(5).toString()
+                //Set up POI textviews
+                binding.apply {
+                    tvPoiName.text = it.poi.poiName
+                    tvPoiDate.text =
+                        String.format("Recorded at: ${Date(Timestamp(it.poi.createdAt).time)}")
+                    tvPoiLength.text = String.format("Length: ${it.poi.poiLengt} milliseconds")
+                    btCloseRecordingView.setOnClickListener {
+                        binding.showRecordingView.visibility = View.GONE
+                    }
+                    btDelete.setOnClickListener {
+                        binding.statusImage.visibility = View.VISIBLE
+                        viewModel.deletePoi()
+                    }
+                }
+                binding.rvRecordings.apply {
+                    val linear = binding.showRecordingView
+                    val tv = binding.tvRecording
+                    adapter = RecordingListAdapter(it.recording, linear, tv)
+                }
+            } else {
+                findNavController().navigate(PointOfInterestFragmentDirections.actionPointOfInterestFragmentToStartFragment())
+            }
+
+
+        })
+
+        viewModel.finishedDeleting.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                findNavController().navigate(PointOfInterestFragmentDirections.actionPointOfInterestFragmentToStartFragment())
             }
         })
 

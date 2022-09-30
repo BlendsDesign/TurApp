@@ -47,6 +47,11 @@
         <argument
             android:name="poiId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_pointOfInterestFragment_to_startFragment"
+            app:destination="@id/startFragment"
+            app:popUpTo="@id/startFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
 
