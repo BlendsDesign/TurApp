@@ -83,8 +83,13 @@ class MainActivity : AppCompatActivity() {
                 alertDialog.show()
             }
             R.id.miInfo -> {
-                val toast = Toast.makeText(this, "Information...", Toast.LENGTH_LONG)
-                toast.show()
+                val alertDialog = AlertDialog.Builder(this@MainActivity).create()
+                alertDialog.setTitle("Help")
+                alertDialog.setMessage(getString(R.string.info_text))
+                alertDialog.setButton(
+                        AlertDialog.BUTTON_NEUTRAL, "OK"
+                ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+                alertDialog.show()
             }
             else -> {
                 val btnQuit = findViewById<Button>(R.id.miClose)
