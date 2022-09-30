@@ -41,9 +41,19 @@ class RecordingListAdapter(
             tvRecordingSize.text = String.format("Size: ${rec.recording.toString().toByteArray().size} bytes")
             tvSensorName.setOnClickListener {
                 showRecordingView.visibility = View.VISIBLE
-                textView.text = recordings[position].recording.toString()
+                textView.text = getSensorDataXYZstring(rec)
             }
         }
+    }
+    private fun getSensorDataXYZstring(rec: Recording): String {
+        var res = ""
+        var counter = 1
+
+        rec.recording.forEach {
+            res = res + String.format("Data# ${counter++} :  X: ${it[0]} Y: ${it[1]} Z: ${it[2]}\n")
+        }
+
+        return res
     }
 
     private fun getSensorName(sensorType: Int): String {

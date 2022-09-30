@@ -54,12 +54,14 @@
             android:id="@+id/btDelete"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
+            android:background="@color/theme_blue"
+            android:textColor="@color/white"
             android:text="DELETE POI"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <!-- This is what shows the recording data on top of the other data -->
         <LinearLayout
             android:id="@+id/showRecordingView"
             android:layout_width="match_parent"
@@ -76,7 +78,9 @@
                 android:id="@+id/btCloseRecordingView"
                 android:text="Close"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:background="@color/theme_blue"/>
             <ScrollView
                 android:id="@+id/svRecording"
                 android:layout_width="match_parent"
