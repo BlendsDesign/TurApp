@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.turapp.roomDb.entities.PoiDao
 import com.example.turapp.roomDb.entities.PointOfInterest
 import com.example.turapp.roomDb.entities.Recording
@@ -15,6 +16,7 @@ import com.example.turapp.roomDb.entities.Recording
     ],
     version = 1
 )
+@TypeConverters(Converters::class)
 abstract class PoiDatabase: RoomDatabase() {
 
     abstract val poiDao: PoiDao

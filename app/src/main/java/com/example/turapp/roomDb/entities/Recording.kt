@@ -9,5 +9,5 @@ data class Recording(
     val recId: Int = 0,
     val poiId: Int,
     val sensorType: Int,
-    val recording: String
+    val recording: MutableList<MutableList<Float>>
 )

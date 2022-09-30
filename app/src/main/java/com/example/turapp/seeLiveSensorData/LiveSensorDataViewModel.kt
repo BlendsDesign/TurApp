@@ -17,7 +17,6 @@ import com.example.turapp.roomDb.entities.Recording
 import kotlinx.coroutines.launch
 import com.example.turapp.Sensors.MagnetoMeterSensor
 import java.lang.IllegalArgumentException
-import java.time.LocalDateTime
 
 
 class LiveSensorDataViewModel(app: Application) : ViewModel() {
@@ -184,16 +183,14 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
 
     private fun storeRecording(timeTaken: Long) {
         viewModelScope.launch {
-            val poi = PointOfInterest(
-                poiTime = LocalDateTime.now().toString(), poiLengt = timeTaken.toFloat(),
-                poiName = "TEST REC", poiLong = 0F, poiLat = 0F
+            val poi = PointOfInterest( poiLengt = timeTaken
             )
             val id = dao.insertPoi(poi)
             if (_tempAccSensorRec.size > 0) {
                 dao.insertRecording(
                     Recording(
                         poiId = id.toInt(), sensorType = Sensor.TYPE_ACCELEROMETER,
-                        recording = _tempAccSensorRec.toString()
+                        recording = _tempAccSensorRec
                     )
                 )
             }
@@ -201,7 +198,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
                 dao.insertRecording(
                     Recording(
                         poiId = id.toInt(), sensorType = Sensor.TYPE_GYROSCOPE,
-                        recording = _tempGyroSensorRec.toString()
+                        recording = _tempGyroSensorRec
                     )
                 )
             }
@@ -209,7 +206,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
                 dao.insertRecording(
                     Recording(
                         poiId = id.toInt(), sensorType = Sensor.TYPE_MAGNETIC_FIELD,
-                        recording = _tempMagnetoSensorRec.toString()
+                        recording = _tempMagnetoSensorRec
                     )
                 )
             }
@@ -217,7 +214,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
                 dao.insertRecording(
                     Recording(
                         poiId = id.toInt(), sensorType = Sensor.TYPE_ORIENTATION,
-                        recording = _orientationRec.toString()
+                        recording = _orientationRec as MutableList<MutableList<Float>>
                     )
                 )
             }
