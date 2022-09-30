@@ -9,5 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="theme_orange">#F7941D</color>
     <color name="theme_blue">#2E3192</color>
-    <color name="transparent_white">#B3FFFFFF</color>
+    <color name="transparent_theme_blue">#E62E3192</color>
 </resources>
