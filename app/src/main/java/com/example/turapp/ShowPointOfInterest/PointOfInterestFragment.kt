@@ -53,6 +53,7 @@ class PointOfInterestFragment : Fragment() {
                     tvPoiDate.text =
                         String.format("Recorded at: ${Date(Timestamp(it.poi.createdAt).time)}")
                     tvPoiLength.text = String.format("Length: ${it.poi.poiLengt} milliseconds")
+                    tvTotalPoiWithRecordingsSize.text = String.format("Total size: ${it.toString().toByteArray().size} bytes")
                     btCloseRecordingView.setOnClickListener {
                         binding.showRecordingView.visibility = View.GONE
                     }
