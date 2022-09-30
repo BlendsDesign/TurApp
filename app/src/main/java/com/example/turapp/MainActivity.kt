@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.miInfo -> {
                 val alertDialog = AlertDialog.Builder(this@MainActivity).create()
-                alertDialog.setTitle("Help")
+                alertDialog.setTitle(getString(R.string.about_app))
                 alertDialog.setMessage(getString(R.string.info_text))
                 alertDialog.setButton(
                         AlertDialog.BUTTON_NEUTRAL, "OK"
