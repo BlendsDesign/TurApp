@@ -9,45 +9,44 @@
         android:layout_height="match_parent">
 
 
+        <TextView
+            android:id="@+id/tvPoiName"
+            style="@style/heading_textSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tvPoiName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    style="@style/heading_textSize"
-                    />
-                <TextView
-                    android:id="@+id/tvPoiDate"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvPoiName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
-                <TextView
-                    android:id="@+id/tvPoiLength"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvPoiDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
+        <TextView
+            android:id="@+id/tvPoiDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvPoiName" />
+
+        <TextView
+            android:id="@+id/tvPoiLength"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvPoiDate" />
+
         <TextView
             android:id="@+id/tvTotalPoiWithRecordingsSize"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/tvPoiLength"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvPoiLength" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvRecordings"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/tvTotalPoiWithRecordingsSize"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/btDelete"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTotalPoiWithRecordingsSize" />
 
 
         <Button
@@ -55,8 +54,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@color/theme_blue"
-            android:textColor="@color/white"
             android:text="DELETE POI"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -66,30 +65,33 @@
             android:id="@+id/showRecordingView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/btDelete"
             android:layout_margin="16dp"
-            android:orientation="vertical"
             android:background="@color/transparent_theme_blue"
-            android:visibility="gone">
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/btDelete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
             <Button
                 android:id="@+id/btCloseRecordingView"
-                android:text="Close"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:background="@color/theme_blue"/>
+                android:background="@color/theme_blue"
+                android:text="Close"
+                android:textColor="@color/white" />
+
             <ScrollView
                 android:id="@+id/svRecording"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/tvRecording"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="@color/theme_orange"/>
+
+                <TextView
+                    android:id="@+id/tvRecording"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/theme_orange" />
             </ScrollView>
         </LinearLayout>
 
@@ -97,15 +99,14 @@
             android:id="@+id/status_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/black"
             android:contentDescription="Deleting in progress image"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/loading_animation"
-            android:visibility="gone"
-            android:background="@color/black"
-            />
+            app:srcCompat="@drawable/loading_animation" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

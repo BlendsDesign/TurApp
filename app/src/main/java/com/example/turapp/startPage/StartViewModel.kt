@@ -11,10 +11,6 @@ import java.lang.IllegalArgumentException
 
 class StartViewModel(app: Application) : ViewModel() {
 
-    // TODO: Implement the ViewModel
-    private val _test = MutableLiveData<String>()
-    val test: LiveData<String> get() = _test
-
     private val dao : PoiDao = PoiDatabase.getInstance(app).poiDao
     private val _points = MutableLiveData<List<PointOfInterest>>()
     val points : LiveData<List<PointOfInterest>> get() = _points
@@ -23,7 +19,6 @@ class StartViewModel(app: Application) : ViewModel() {
 
 
     init {
-        _test.value = "REMOVE THIS LATER"
         _isLoading.value = true
 
         viewModelScope.launch {
