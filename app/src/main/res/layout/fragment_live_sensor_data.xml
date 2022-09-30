@@ -102,10 +102,11 @@
 
         <Button
             android:id="@+id/btRecord"
+            android:text="@string/record"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:text="@string/record"
+            android:background="@color/theme_blue"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
