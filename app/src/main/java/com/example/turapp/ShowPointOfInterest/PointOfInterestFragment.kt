@@ -1,5 +1,7 @@
 package com.example.turapp.ShowPointOfInterest
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +10,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.turapp.R
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
 import java.sql.Timestamp
 import java.util.*
@@ -54,8 +57,15 @@ class PointOfInterestFragment : Fragment() {
                         binding.showRecordingView.visibility = View.GONE
                     }
                     btDelete.setOnClickListener {
-                        binding.statusImage.visibility = View.VISIBLE
-                        viewModel.deletePoi()
+                        val alertDialog = AlertDialog.Builder(context).create()
+                        alertDialog.setTitle(getString(R.string.delete_are_you_sure))
+                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") {
+                                dialog: DialogInterface, _: Int -> viewModel.deletePoi()
+                        }
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "No") {
+                                dialog: DialogInterface, _: Int -> dialog.dismiss()
+                        }
+                        alertDialog.show()
                     }
                 }
                 binding.rvRecordings.apply {
@@ -68,6 +78,14 @@ class PointOfInterestFragment : Fragment() {
             }
 
 
+        })
+
+        viewModel.loadingImage.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                binding.statusImage.visibility = View.VISIBLE
+            } else {
+                binding.statusImage.visibility = View.GONE
+            }
         })
 
         viewModel.finishedDeleting.observe(viewLifecycleOwner, Observer {

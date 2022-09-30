@@ -13,19 +13,24 @@ class PointOfInterestViewModel(app: Application, poiId: Int): ViewModel() {
 
     private val _poi = MutableLiveData<PoiWithRecordings>()
     val poi : LiveData<PoiWithRecordings> get() = _poi
+    private val _loadingImage = MutableLiveData<Boolean>()
+    val loadingImage : LiveData<Boolean> get() = _loadingImage
 
     init {
         viewModelScope.launch {
+            _loadingImage.value = true
             val poi = _dao.getPoiWithRecordings(poiId)
             if (poi.size > 0) {
                 _poi.value = poi[0]
             }
+            _loadingImage.value = false
         }
     }
 
     private val _finishedDeleting = MutableLiveData<Boolean>()
     val finishedDeleting: LiveData<Boolean> get() = _finishedDeleting
     fun deletePoi() {
+        _loadingImage.value = true
         viewModelScope.launch {
             val poi: PoiWithRecordings? = _poi.value
             if (poi != null) {

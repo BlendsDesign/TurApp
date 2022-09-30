@@ -17,4 +17,5 @@
     <string name="filtered_gyro_data">FILTERED GYRO DATA</string>
     <string name="magnetometer">MAGNETOMETER</string>
     <string name="filtered_acceleration">FILTERED ACCELERATION</string>
+    <string name="delete_are_you_sure">Are you sure you want to delete this POI</string>
 </resources>
