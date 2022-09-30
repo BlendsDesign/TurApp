@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         //val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
         setSupportActionBar(binding.turToolbar)
+        setUpBottomNav()
 
     }
 
