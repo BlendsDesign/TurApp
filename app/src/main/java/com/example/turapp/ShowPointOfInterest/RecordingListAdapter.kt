@@ -38,7 +38,7 @@ class RecordingListAdapter(
             val rec = recordings[position]
             Log.i("RV", rec.toString())
             tvSensorName.text = getSensorName(rec.sensorType)
-            tvRecordingSize.text = String.format("Size: ${rec.recording.toString().toByteArray().size} bytes")
+            tvRecordingSize.text = String.format("Events recorded: ${rec.recording.size}    Size: ${rec.recording.toString().toByteArray().size} bytes")
             tvSensorName.setOnClickListener {
                 showRecordingView.visibility = View.VISIBLE
                 textView.text = getSensorDataXYZstring(rec)
