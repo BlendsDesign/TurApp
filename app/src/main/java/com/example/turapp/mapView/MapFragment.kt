@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.hardware.Sensor
 import android.location.Geocoder
 import android.location.Location
@@ -22,11 +23,14 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.turapp.BuildConfig
 import com.example.turapp.Helper
 import com.example.turapp.databinding.FragmentMapBinding
 import com.google.android.gms.maps.model.LatLng
+import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants
 import org.osmdroid.tileprovider.tilesource.ITileSource
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
@@ -60,6 +64,7 @@ class MapFragment : Fragment(), LocationListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        org.osmdroid.config.Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
     }
 
     @SuppressLint("MissingPermission")
@@ -91,9 +96,7 @@ class MapFragment : Fragment(), LocationListener {
         map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
         map.setMultiTouchControls(true) //3
 
-        val tiles: ITileSource = TileSourceFactory.MAPNIK //different types of overlays
-
-        map.setTileSource(tiles)
+        map.setTileSource(TileSourceFactory.MAPNIK)
         map.setMultiTouchControls(true)
 
         val compass = CompassOverlay(
@@ -170,10 +173,8 @@ class MapFragment : Fragment(), LocationListener {
         if (!startPosition /*&& location.getAccuracy() < 15*/) {
             //my current location
             val startPoint = GeoPoint(locLL!!.latitude, locLL!!.longitude)
-            val mc = map.controller
             Log.d("MapFragment", startPoint.toString())
-            mc.setCenter(startPoint)
-            mc.setZoom(17.0)
+
             startPosition = true
             tracking = true
             val startPosMarker = Marker(map)
@@ -183,6 +184,10 @@ class MapFragment : Fragment(), LocationListener {
             startPosMarker.subDescription = "We are starting our hike from here"
             map.overlays.add(startPosMarker) //a Marker is an overlay
             trackedPath.add(startPoint)
+            map.controller.apply {
+                setZoom(17.0)
+                setCenter(startPoint)
+            }
         }
         if (tracking) {
             val currPos = GeoPoint(locLL!!.latitude, locLL!!.longitude)
