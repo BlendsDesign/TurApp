@@ -185,7 +185,7 @@ class MapFragment : Fragment(), LocationListener {
             map.overlays.add(startPosMarker) //a Marker is an overlay
             trackedPath.add(startPoint)
             map.controller.apply {
-                setZoom(17.0)
+                setZoom(20.0)
                 setCenter(startPoint)
             }
         }
