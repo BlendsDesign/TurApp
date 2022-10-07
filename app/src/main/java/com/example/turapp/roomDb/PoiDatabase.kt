@@ -1,6 +1,7 @@
 package com.example.turapp.roomDb
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -14,7 +15,9 @@ import com.example.turapp.roomDb.entities.Recording
         PointOfInterest::class,
         Recording::class,
     ],
-    version = 1
+    autoMigrations = [AutoMigration(from = 1, to = 2) ],
+    version = 2,
+    exportSchema = true
 )
 @TypeConverters(Converters::class)
 abstract class PoiDatabase: RoomDatabase() {
@@ -31,7 +34,7 @@ abstract class PoiDatabase: RoomDatabase() {
                     context.applicationContext,
                     PoiDatabase::class.java,
                     "poi_db"
-                ).build().also {
+                ).fallbackToDestructiveMigration().build().also {
                     INSTANCE = it
                 }
             }

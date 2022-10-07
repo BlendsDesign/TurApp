@@ -183,8 +183,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
 
     private fun storeRecording(timeTaken: Long) {
         viewModelScope.launch {
-            val poi = PointOfInterest( poiLengt = timeTaken
-            )
+            val poi = PointOfInterest( poiLengt = timeTaken)
             val id = dao.insertPoi(poi)
             if (_tempAccSensorRec.size > 0) {
                 dao.insertRecording(
