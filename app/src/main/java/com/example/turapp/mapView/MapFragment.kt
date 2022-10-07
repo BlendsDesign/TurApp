@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.PackageManager
 import android.hardware.Sensor
-import android.hardware.SensorManager
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
@@ -45,10 +44,10 @@ class MapFragment : Fragment(), LocationListener {
 
 
     private val REQUEST_CODE = 123
-    var lm: LocationManager? = null
+    private lateinit var lm: LocationManager
     var locLL: LatLng? = null
 
-    var map : MapView? = null // 3
+    private lateinit var map : MapView // 3
 
     private val trackedPath = mutableListOf<GeoPoint>()
 
@@ -59,51 +58,50 @@ class MapFragment : Fragment(), LocationListener {
         ViewModelProvider(this, MapViewModel.Factory())[MapViewModel::class.java]
     }
 
-    @SuppressLint("MissingPermission")
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         Helper.suggestedFix(contextWrapper = ContextWrapper(context))
+        binding = FragmentMapBinding.inflate(inflater)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+
+        map = binding.mvMap
+
         lm = requireNotNull(context).getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
         if (!checkPermissions()) {
             Log.d("MainActivity", "Asking for permissions")
             requestAllPermission()
         } else {
             Log.d("MainActivity", "Permissions already granted, started location updates")
             Toast.makeText(context, "Starting location updates", Toast.LENGTH_SHORT).show()
-            lm!!.requestLocationUpdates(
+            lm.requestLocationUpdates(
                 LocationManager.FUSED_PROVIDER,  //GPS_PROVIDER,
                 1000, 0f, this
             )
         }
-    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentMapBinding.inflate(inflater)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = viewModel
+        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
+        map.setMultiTouchControls(true) //3
 
-        //map = binding.mvMap //3
-        //map!!.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
-        //map!!.setMultiTouchControls(true) //3
         val tiles: ITileSource = TileSourceFactory.MAPNIK //different types of overlays
+
+        map.setTileSource(tiles)
+        map.setMultiTouchControls(true)
+
         val compass = CompassOverlay(
             context,
-            InternalCompassOrientationProvider(context), binding.mvMap
+            InternalCompassOrientationProvider(context), map
         )
         compass.enableCompass()
-        binding.mvMap.apply {
-            zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT)
-            setMultiTouchControls(true)
-            setTileSource(tiles)
-            overlays.add(compass)
-        }
-        val mapController = binding.mvMap.controller
-        mapController.setZoom(7.0)
-
+        map.overlays.add(compass)
 
         // Inflate the layout for this fragment
         return binding.root
@@ -134,18 +132,46 @@ class MapFragment : Fragment(), LocationListener {
                 )
     }
 
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+
+        when (requestCode) {
+            REQUEST_CODE -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("MapFragment", "Permissions granted, started location updates")
+                    Toast.makeText(context, "Starting location updates", Toast.LENGTH_SHORT).show()
+                    lm.requestLocationUpdates(
+                        LocationManager.FUSED_PROVIDER,
+                        1000, 0F, this
+                    )
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Permissions not granted, degraded version available",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
 
 
     override fun onLocationChanged(location: Location) {
         locLL = LatLng(location.latitude, location.longitude)
-        Log.d("MainActivity", location.accuracy.toString())
-        Log.d("MainActivity", getLocationInformation(locLL!!)!!)
+        Log.d("MapFragment", location.accuracy.toString())
+        Log.d("MapFragment", getLocationInformation(locLL!!)!!)
         val addressView: TextView = binding.tvMapViewTop
         addressView.text = getLocationInformation(locLL!!)
         if (!startPosition /*&& location.getAccuracy() < 15*/) {
             //my current location
             val startPoint = GeoPoint(locLL!!.latitude, locLL!!.longitude)
-            val mc = map!!.controller
+            val mc = map.controller
+            Log.d("MapFragment", startPoint.toString())
             mc.setCenter(startPoint)
             mc.setZoom(17.0)
             startPosition = true
@@ -155,7 +181,7 @@ class MapFragment : Fragment(), LocationListener {
             startPosMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             startPosMarker.title = "My Starting position"
             startPosMarker.subDescription = "We are starting our hike from here"
-            map!!.overlays.add(startPosMarker) //a Marker is an overlay
+            map.overlays.add(startPosMarker) //a Marker is an overlay
             trackedPath.add(startPoint)
         }
         if (tracking) {
@@ -163,8 +189,8 @@ class MapFragment : Fragment(), LocationListener {
             trackedPath.add(currPos)
             val path = Polyline()
             path.setPoints(trackedPath)
-            map!!.overlayManager.add(path)
-            map!!.invalidate() //make sure the map is redrawn
+            map.overlayManager.add(path)
+            map.invalidate() //make sure the map is redrawn
         }
     }
 
