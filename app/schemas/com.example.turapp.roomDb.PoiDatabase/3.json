@@ -1,0 +1,108 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "3658e27ae1547d0b18454377379444f5",
+    "entities": [
+      {
+        "tableName": "point_of_interest",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`poiId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createdAt` INTEGER NOT NULL, `poiLengt` INTEGER NOT NULL, `poiName` TEXT NOT NULL, `poiLat` REAL NOT NULL, `poiLong` REAL NOT NULL, `poiDescription` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "poiId",
+            "columnName": "poiId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "poiLengt",
+            "columnName": "poiLengt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "poiName",
+            "columnName": "poiName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "poiLat",
+            "columnName": "poiLat",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "poiLong",
+            "columnName": "poiLong",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "poiDescription",
+            "columnName": "poiDescription",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "poiId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Recording",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `poiId` INTEGER NOT NULL, `sensorType` INTEGER NOT NULL, `recording` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "recId",
+            "columnName": "recId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "poiId",
+            "columnName": "poiId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sensorType",
+            "columnName": "sensorType",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recording",
+            "columnName": "recording",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "recId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3658e27ae1547d0b18454377379444f5')"
+    ]
+  }
+}
