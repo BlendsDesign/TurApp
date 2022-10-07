@@ -13,6 +13,7 @@ import com.example.turapp.R
 import com.example.turapp.databinding.FragmentMapBinding
 import com.example.turapp.startPage.StartFragmentDirections
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.turapp.mapView.MapViewModel
 
 
 class MapFragment : Fragment() {

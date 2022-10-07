@@ -15,8 +15,8 @@ import com.example.turapp.roomDb.entities.Recording
         PointOfInterest::class,
         Recording::class,
     ],
-    autoMigrations = [AutoMigration(from = 1, to = 2) ],
-    version = 2,
+    autoMigrations = [AutoMigration(from = 2, to = 3) ],
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
