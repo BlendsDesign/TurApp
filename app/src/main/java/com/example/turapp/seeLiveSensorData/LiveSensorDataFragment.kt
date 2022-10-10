@@ -6,10 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentLiveSensorDataBinding
+import java.lang.Math.abs
 
 class LiveSensorDataFragment : Fragment() {
 
@@ -79,6 +82,20 @@ class LiveSensorDataFragment : Fragment() {
         viewModel.orientationData.observe(viewLifecycleOwner, Observer {
             binding.tvOrientationData.text = String.format("X: %.2f Y: %.2f Z: %.2f", it[0], it[1], it[2])
         })
+        if (kotlin.math.abs(viewModel.distData.value!!) > 0.01f) {
+         //   Toast.makeText(context, "Change in movement!", Toast.LENGTH_SHORT).show()
+            viewModel.distData.observe(viewLifecycleOwner, Observer {
+                binding.tvMovementData.text = String.format("Moving: %.2f",it)
+            })
+        }
+       else{
+            Toast.makeText(context, "No movement detected!", Toast.LENGTH_SHORT).show()
+            viewModel.distData.observe(viewLifecycleOwner, Observer {
+                binding.tvOrientationData.text = "No change in movement"
+            })
+//
+        }
+
 
         // Setting up Observer to know if we are recording or not
         viewModel.recording.observe(viewLifecycleOwner, Observer {

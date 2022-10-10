@@ -4,6 +4,8 @@ import android.app.Application
 import android.hardware.Sensor
 import androidx.lifecycle.*
 import android.hardware.SensorManager
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,6 +19,9 @@ import com.example.turapp.roomDb.entities.Recording
 import kotlinx.coroutines.launch
 import com.example.turapp.Sensors.MagnetoMeterSensor
 import java.lang.IllegalArgumentException
+import kotlin.math.sqrt
+import android.content.Context
+import com.example.turapp.MainActivity
 
 
 class LiveSensorDataViewModel(app: Application) : ViewModel() {
@@ -99,8 +104,8 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             _recOrientationSensorData.value = false
         }
     }
-
-
+    private var _distData = MutableLiveData<Float>(0.0f)
+    val distData: LiveData<Float> get() = _distData
 
     init {
         magnetoSensor.startListening()
@@ -117,6 +122,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             _accSensorData.value = it as MutableList<Float>
             _accSensorDataFiltered.value = filterOutGravity(it, _prevAccData)
             updateOrientationAngles()
+            calcAcc(it)
         }
         gyroSensor.startListening()
         gyroSensor.setOnSensorValuesChangedListener {
@@ -125,6 +131,10 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             _gyroSensorDataFiltered.value = gyroFilter(it, _prevGyroData)
         }
 
+    }
+
+    private fun calcAcc(input: List<Float>) {
+        _distData.value = sqrt(input[0]*input[0]+input[1]*input[1]+input[2]*input[2]) - 9.81f
     }
 
     fun startRec() {
