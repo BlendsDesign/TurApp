@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.hardware.Sensor
 import android.location.Geocoder
 import android.location.Location
@@ -27,13 +26,12 @@ import com.example.turapp.BuildConfig
 import com.example.turapp.Helper
 import com.example.turapp.databinding.FragmentMapBinding
 import com.google.android.gms.maps.model.LatLng
-import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants
-import org.osmdroid.tileprovider.tilesource.ITileSource
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.compass.CompassOverlay
@@ -106,6 +104,9 @@ class MapFragment : Fragment(), LocationListener {
         compass.enableCompass()
         map.overlays.add(compass)
 
+
+        map.overlays.add(MapEventsOverlay(getEventsReceiver()))
+
         // Inflate the layout for this fragment
         return binding.root
     }
@@ -119,6 +120,24 @@ class MapFragment : Fragment(), LocationListener {
                 Manifest.permission.HIGH_SAMPLING_RATE_SENSORS
             ), REQUEST_CODE
         ) //2
+    }
+
+    private fun getEventsReceiver(): MapEventsReceiver {
+        return object: MapEventsReceiver {
+            override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
+                return false
+            }
+
+            override fun longPressHelper(p: GeoPoint): Boolean {
+                val selectedPosMarker = Marker(map)
+                selectedPosMarker.position = p
+                selectedPosMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                selectedPosMarker.title = "My Selected Point ${getLocationInformation(LatLng(p.latitude, p.longitude))}"
+                selectedPosMarker.subDescription = "Testing if user can select a point"
+                map.overlays.add(selectedPosMarker)
+                return false
+            }
+        }
     }
 
 
