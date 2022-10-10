@@ -196,6 +196,9 @@ class MapFragment : Fragment(), LocationListener {
             path.setPoints(trackedPath)
             map.overlayManager.add(path)
             map.invalidate() //make sure the map is redrawn
+            map.controller.apply {
+                setCenter(currPos)
+            }
         }
     }
 
