@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Recording(
-    var poiId: Int,
+    var poiId: Int = -1,
     var sensorType: Int,
     var recording: MutableList<MutableList<Float>>
 ) {
     @PrimaryKey(autoGenerate = true)
-    val recId: Int? = null
+    var recId: Int? = null
 }

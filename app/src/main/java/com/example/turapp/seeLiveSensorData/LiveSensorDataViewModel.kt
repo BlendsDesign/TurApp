@@ -16,13 +16,16 @@ import com.example.turapp.roomDb.entities.PointOfInterest
 import com.example.turapp.roomDb.entities.Recording
 import kotlinx.coroutines.launch
 import com.example.turapp.Sensors.MagnetoMeterSensor
+import com.example.turapp.roomDb.MyRepository
 import java.lang.IllegalArgumentException
 
 
+@Suppress("UNCHECKED_CAST")
 class LiveSensorDataViewModel(app: Application) : ViewModel() {
 
     // DB DAO
     private val dao: PoiDao = PoiDatabase.getInstance(app).poiDao
+    private val repository = MyRepository(dao)
 
     // Are we currently recording
     private val _recording = MutableLiveData<Boolean>()
@@ -177,46 +180,43 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
         }
         val endTime = System.currentTimeMillis()
         val timeTaken = endTime - (startTime ?: endTime)
+        storeRecording(startTime?: endTime, timeTaken)
         startTime = null
-        storeRecording(timeTaken)
     }
 
-    private fun storeRecording(timeTaken: Long) {
+    private fun storeRecording(startT: Long, timeTaken: Long) {
         viewModelScope.launch {
-            val poi = PointOfInterest( poiLengt = timeTaken)
-            val id = dao.insertPoi(poi)
+            val poi = PointOfInterest( poiLengt = timeTaken, createdAt = startT)
+            val recs = mutableListOf<Recording>()
             if (_tempAccSensorRec.size > 0) {
-                dao.insertRecording(
-                    Recording(
-                        poiId = id.toInt(), sensorType = Sensor.TYPE_ACCELEROMETER,
+                recs.add(
+                    Recording( sensorType = Sensor.TYPE_ACCELEROMETER,
                         recording = _tempAccSensorRec
                     )
                 )
             }
             if (_tempGyroSensorRec.size > 0) {
-                dao.insertRecording(
-                    Recording(
-                        poiId = id.toInt(), sensorType = Sensor.TYPE_GYROSCOPE,
+                recs.add(
+                    Recording( sensorType = Sensor.TYPE_GYROSCOPE,
                         recording = _tempGyroSensorRec
                     )
                 )
             }
             if (_tempMagnetoSensorRec.size > 0) {
-                dao.insertRecording(
-                    Recording(
-                        poiId = id.toInt(), sensorType = Sensor.TYPE_MAGNETIC_FIELD,
+                recs.add(
+                    Recording( sensorType = Sensor.TYPE_MAGNETIC_FIELD,
                         recording = _tempMagnetoSensorRec
                     )
                 )
             }
             if (_orientationRec.size > 0) {
-                dao.insertRecording(
-                    Recording(
-                        poiId = id.toInt(), sensorType = Sensor.TYPE_ORIENTATION,
+                recs.add(
+                    Recording( sensorType = Sensor.TYPE_ORIENTATION,
                         recording = _orientationRec as MutableList<MutableList<Float>>
                     )
                 )
             }
+            repository.addPoiAndRecordings(poi, recs)
         }
     }
 

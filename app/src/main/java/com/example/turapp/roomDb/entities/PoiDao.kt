@@ -55,6 +55,7 @@ interface PoiDao {
     @Delete
     suspend fun deleteRecordedActivity(recordedActivity: RecordedActivity)
 
+    @Transaction
     @Query("SELECT * FROM recorded_activity_table WHERE activityId = :activityId")
     fun getActivity(activityId: Int): LiveData<RecordedActivity>
 
@@ -64,7 +65,7 @@ interface PoiDao {
 
     @Transaction
     @Query("SELECT * FROM recorded_activity_table WHERE (startingLat BETWEEN :minLat AND :maxLat) AND (startingLng BETWEEN :minLng AND :maxLng)")
-    fun loadAllActivityWithinRange(minLat: Float, maxLat: Float, minLng: Float, maxLng: Float): LiveData<List<PoiWithRecordings>>
+    fun loadAllActivityWithinRange(minLat: Float, maxLat: Float, minLng: Float, maxLng: Float): LiveData<List<ActivityWithGeoData>>
 
     @Transaction
     @Query("SELECT * FROM recorded_activity_table ORDER BY distance DESC")

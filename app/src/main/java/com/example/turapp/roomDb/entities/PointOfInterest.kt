@@ -15,5 +15,5 @@ data class PointOfInterest(
     var poiDescription: String = ""
 ) {
     @PrimaryKey(autoGenerate = true)
-    val poiId: Int? = null
+    var poiId: Int? = null
 }

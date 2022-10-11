@@ -36,7 +36,7 @@ class LocationAdapter(
             setOnClickListener {
                 nav.navigate(
                     StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(
-                        loc.poiId
+                        loc.poiId?: -1
                     )
                 )
             }
