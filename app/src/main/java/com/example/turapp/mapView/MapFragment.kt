@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.hardware.Sensor
 import android.location.Geocoder
 import android.location.Location
@@ -212,6 +213,7 @@ class MapFragment : Fragment(), LocationListener {
             val currPos = GeoPoint(locLL!!.latitude, locLL!!.longitude)
             trackedPath.add(currPos)
             val path = Polyline()
+            path.color = Color.RED
             path.setPoints(trackedPath)
             map.overlayManager.add(path)
             map.invalidate() //make sure the map is redrawn

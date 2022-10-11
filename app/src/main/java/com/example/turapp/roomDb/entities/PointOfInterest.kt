@@ -1,16 +1,19 @@
 package com.example.turapp.roomDb.entities
 
+import android.graphics.Bitmap
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "point_of_interest")
 data class PointOfInterest(
-    @PrimaryKey(autoGenerate = true)
-    val poiId: Int = 0,
     val createdAt: Long = System.currentTimeMillis(),
-    val poiLengt: Long,
-    val poiName: String = "Unnamed POI",
-    val poiLat: Float = -1F,
-    val poiLong: Float = -1F,
-    val poiDescription: String = ""
-)
+    var image: Bitmap? = null,
+    var poiLengt: Long = 0,
+    var poiName: String = "Unnamed POI",
+    var poiLat: Float = -1F,
+    var poiLng: Float = -1F,
+    var poiDescription: String = ""
+) {
+    @PrimaryKey(autoGenerate = true)
+    val poiId: Int? = null
+}

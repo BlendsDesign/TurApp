@@ -6,17 +6,17 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.turapp.roomDb.entities.PoiDao
-import com.example.turapp.roomDb.entities.PointOfInterest
-import com.example.turapp.roomDb.entities.Recording
+import com.example.turapp.roomDb.entities.*
 
 @Database(
     entities = [
         PointOfInterest::class,
         Recording::class,
+        RecordedActivity::class,
+        ActivityGeoData::class
     ],
-    autoMigrations = [AutoMigration(from = 2, to = 3) ],
-    version = 3,
+    autoMigrations = [AutoMigration(from = 3, to = 4) ],
+    version = 4,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
