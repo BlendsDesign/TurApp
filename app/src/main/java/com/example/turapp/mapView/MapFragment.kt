@@ -260,7 +260,7 @@ class MapFragment : Fragment(), LocationListener {
 
 
     override fun onLocationChanged(location: Location) {
-        viewModel.addRoutePoint(location)
+
         locLL = LatLng(location.latitude, location.longitude)
         Log.d("MapFragment", location.accuracy.toString())
         Log.d("MapFragment", getLocationInformation(locLL!!)!!)
@@ -276,7 +276,8 @@ class MapFragment : Fragment(), LocationListener {
                 setCenter(startPoint)
             }
         }
-        if (tracking) {
+        if (viewModel.tracking.value == true) {
+            viewModel.addRoutePoint(location)
             map.controller.apply {
                 setCenter(GeoPoint(location.latitude, location.longitude, location.altitude))
             }
