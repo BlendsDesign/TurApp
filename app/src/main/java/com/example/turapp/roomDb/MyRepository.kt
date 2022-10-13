@@ -13,6 +13,10 @@ class MyRepository(private val poiDao: PoiDao) {
         }
     }
 
+    suspend fun addSinglePoi(poi: PointOfInterest) {
+        poiDao.insertPoi(poi)
+    }
+
     suspend fun deletePoiAndRecordings(poi: PointOfInterest) {
         poiDao.deleteAssociatedRecordings(poi.poiId?: -1)
         poiDao.deletePoi(poi)

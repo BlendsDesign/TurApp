@@ -15,8 +15,8 @@ import com.example.turapp.roomDb.entities.*
         RecordedActivity::class,
         ActivityGeoData::class
     ],
-    autoMigrations = [AutoMigration(from = 4, to = 5) ],
-    version = 5,
+    autoMigrations = [AutoMigration(from = 8, to = 9) ],
+    version = 9,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

@@ -8,11 +8,11 @@ import androidx.room.PrimaryKey
 data class PointOfInterest(
     val createdAt: Long = System.currentTimeMillis(),
     var image: Bitmap? = null,
-    var poiLengt: Long = 0,
+    var poiLengt: Long? = null,
     var poiName: String = "Unnamed POI",
-    var poiLat: Float = -1F,
-    var poiLng: Float = -1F,
-    var poiDescription: String = ""
+    var poiLat: Float? = null,
+    var poiLng: Float? = null,
+    var poiDescription: String? = null
 ) {
     @PrimaryKey(autoGenerate = true)
     var poiId: Int? = null

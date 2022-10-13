@@ -2,6 +2,7 @@ package com.example.turapp.startPage
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.example.turapp.roomDb.MyRepository
 import com.example.turapp.roomDb.PoiDatabase
 import com.example.turapp.roomDb.entities.PoiDao
 import com.example.turapp.roomDb.entities.PointOfInterest
@@ -12,6 +13,7 @@ import java.lang.IllegalArgumentException
 class StartViewModel(app: Application) : ViewModel() {
 
     private val dao : PoiDao = PoiDatabase.getInstance(app).poiDao
+    private val repository = MyRepository(dao)
     private val _points = MutableLiveData<List<PointOfInterest>>()
     val points : LiveData<List<PointOfInterest>> get() = _points
     private val _isLoading = MutableLiveData<Boolean>()

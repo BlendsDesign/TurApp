@@ -17,7 +17,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -45,7 +44,6 @@ class MapFragment : Fragment(), LocationListener {
 
     private lateinit var binding : FragmentMapBinding
 
-
     private val REQUEST_CODE = 123
     private lateinit var lm: LocationManager
     var locLL: LatLng? = null
@@ -58,7 +56,8 @@ class MapFragment : Fragment(), LocationListener {
     private var tracking = false //3
 
     private val viewModel: MapViewModel by lazy {
-        ViewModelProvider(this, MapViewModel.Factory())[MapViewModel::class.java]
+        val app = requireNotNull(activity).application
+        ViewModelProvider(this, MapViewModel.Factory(app))[MapViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +65,7 @@ class MapFragment : Fragment(), LocationListener {
         org.osmdroid.config.Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission", "NewApi")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -105,6 +104,11 @@ class MapFragment : Fragment(), LocationListener {
         compass.enableCompass()
         map.overlays.add(compass)
 
+        viewModel.trackedLocations.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it.isNotEmpty()) {
+                TODO("Still needs to be implemented")
+            }
+        })
 
         map.overlays.add(MapEventsOverlay(getEventsReceiver()))
 
@@ -130,14 +134,23 @@ class MapFragment : Fragment(), LocationListener {
             }
 
             override fun longPressHelper(p: GeoPoint): Boolean {
-                val selectedPosMarker = Marker(map)
-                selectedPosMarker.position = p
-                selectedPosMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                selectedPosMarker.title = "My Selected Point ${getLocationInformation(LatLng(p.latitude, p.longitude))}"
-                selectedPosMarker.subDescription = "Testing if user can select a point"
-                map.overlays.add(selectedPosMarker)
-                return false
-            }
+                viewModel.addPointOfInterest(p)
+//                    val selectedPosMarker = Marker(map)
+//                    selectedPosMarker.position = p
+//                    selectedPosMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+//                    selectedPosMarker.title = "My Selected Point ${
+//                        getLocationInformation(
+//                            LatLng(
+//                                p.latitude,
+//                                p.longitude
+//                            )
+//                        )
+//                    }"
+//                    selectedPosMarker.subDescription = "Testing if user can select a point"
+//                    val test = PointOfInterest(poiName = "Hello")
+//                    map.overlays.add(selectedPosMarker)
+                    return false
+                }
         }
     }
 
@@ -185,11 +198,11 @@ class MapFragment : Fragment(), LocationListener {
 
 
     override fun onLocationChanged(location: Location) {
+        viewModel.addRoutePoint(location)
         locLL = LatLng(location.latitude, location.longitude)
         Log.d("MapFragment", location.accuracy.toString())
         Log.d("MapFragment", getLocationInformation(locLL!!)!!)
-        val addressView: TextView = binding.tvMapViewTop
-        addressView.text = getLocationInformation(locLL!!)
+        binding.tvMapViewTop.text = getLocationInformation(locLL!!)
         if (!startPosition /*&& location.getAccuracy() < 15*/) {
             //my current location
             val startPoint = GeoPoint(locLL!!.latitude, locLL!!.longitude)
@@ -241,10 +254,10 @@ class MapFragment : Fragment(), LocationListener {
 //
 //    }
 
-//    private boolean distanceBetween(GeoPoint curr, GeoPoint next) {
-//        //potentially use Helper for storage
-//        return curr - next;
-//    }
+    private fun distanceBetween(curr: GeoPoint, next: GeoPoint): Double {
+        //potentially use Helper for storage
+        return curr.distanceToAsDouble(next)
+    }
 
     //    private void analyzePath(List<GeoPoint> trackedPath)
     //    {
