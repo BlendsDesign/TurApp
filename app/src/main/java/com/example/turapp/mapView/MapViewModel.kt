@@ -1,9 +1,7 @@
 package com.example.turapp.mapView
 
 import android.app.Application
-import android.content.Context
 import android.location.Location
-import android.location.LocationManager
 import androidx.lifecycle.*
 import com.example.turapp.roomDb.MyRepository
 import com.example.turapp.roomDb.PoiDatabase
@@ -20,11 +18,15 @@ class MapViewModel(app: Application) : ViewModel() {
 
     private val _trackedLocations = MutableLiveData<MutableList<Location>>()
     val trackedLocations: LiveData<MutableList<Location>> get() = _trackedLocations
+
     private val _tracking = MutableLiveData<Boolean>()
     val tracking : LiveData<Boolean> get() = _tracking
+
     private var paused: Boolean = false
+
     private var pauseStartTime: Long? = null
-    fun switchTracking() {
+
+    fun switchTracking() { // This starts and stops tracking
         _tracking.value = _tracking.value != true
     }
     fun switchPaused() {
@@ -41,9 +43,6 @@ class MapViewModel(app: Application) : ViewModel() {
         _editPointOfInterest.value = _editPointOfInterest.value != true
         refreshPointOfInterest()
     }
-
-    private val _recordingActivity = MutableLiveData<Boolean>()
-    val recordingActivity : LiveData<Boolean> get() = _recordingActivity
 
 
     init {
@@ -62,7 +61,7 @@ class MapViewModel(app: Application) : ViewModel() {
 
     // Let user set a series of points points
     fun addRoutePoint(point: Location) {
-        if (_recordingActivity.value == true) {
+        if (_tracking.value == true) {
             val list: MutableList<Location> =
                 _trackedLocations.value ?: mutableListOf()
             list.add(point)

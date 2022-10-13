@@ -8,7 +8,6 @@ import android.content.ContextWrapper
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.hardware.Sensor
 import android.location.Geocoder
 import android.location.Location
@@ -18,7 +17,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -56,10 +54,6 @@ class MapFragment : Fragment(), LocationListener {
     var locLL: LatLng? = null
 
     private lateinit var map: MapView // 3
-
-    private val trackedPath = mutableListOf<GeoPoint>()
-
-    private val ourPOI = mutableListOf<GeoPoint>()
 
     var startPosition = false //3
     private var tracking = false //3
@@ -174,7 +168,15 @@ class MapFragment : Fragment(), LocationListener {
 
         viewModel.trackedLocations.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if (it.isNotEmpty()) {
-                TODO("Still needs to be implemented")
+                val list = mutableListOf<GeoPoint>()
+                it.forEach { loc ->
+                    list.add(GeoPoint(loc.latitude, loc.longitude, loc.altitude))
+                }
+                val path = Polyline()
+                path.color = Color.RED
+                path.setPoints(list)
+                map.overlayManager.add(path)
+                map.invalidate() //make sure the map is redrawn
             }
         })
 
@@ -269,29 +271,14 @@ class MapFragment : Fragment(), LocationListener {
             Log.d("MapFragment", startPoint.toString())
 
             startPosition = true
-            tracking = true
-            val startPosMarker = Marker(map)
-            startPosMarker.position = startPoint
-            startPosMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            startPosMarker.title = "My Starting position"
-            startPosMarker.subDescription = "We are starting our hike from here"
-            map.overlays.add(startPosMarker) //a Marker is an overlay
-            trackedPath.add(startPoint)
             map.controller.apply {
                 setZoom(20.0)
                 setCenter(startPoint)
             }
         }
         if (tracking) {
-            val currPos = GeoPoint(locLL!!.latitude, locLL!!.longitude)
-            trackedPath.add(currPos)
-            val path = Polyline()
-            path.color = Color.RED
-            path.setPoints(trackedPath)
-            map.overlayManager.add(path)
-            map.invalidate() //make sure the map is redrawn
             map.controller.apply {
-                //setCenter(currPos)
+                setCenter(GeoPoint(location.latitude, location.longitude, location.altitude))
             }
         }
     }
