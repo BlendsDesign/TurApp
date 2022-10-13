@@ -39,6 +39,7 @@ class MapViewModel(app: Application) : ViewModel() {
     val editPointOfInterest : LiveData<Boolean> get() = _editPointOfInterest
     fun switchEditPointOfInterest(){
         _editPointOfInterest.value = _editPointOfInterest.value != true
+        refreshPointOfInterest()
     }
 
     private val _recordingActivity = MutableLiveData<Boolean>()
@@ -81,6 +82,20 @@ class MapViewModel(app: Application) : ViewModel() {
             repository.addSinglePoi(poi)
         }
         refreshPointOfInterest()
+    }
+
+    fun deletePointOfInterest(poi: PointOfInterest) {
+        viewModelScope.launch {
+            repository.deletePoiAndRecordings(poi)
+            refreshPointOfInterest()
+        }
+    }
+
+    fun replacePointOfInterest(poi: PointOfInterest) {
+        viewModelScope.launch {
+            repository.addSinglePoi(poi)
+            refreshPointOfInterest()
+        }
     }
 
     fun savePointsOnRoute() {
