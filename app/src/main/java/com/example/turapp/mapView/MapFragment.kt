@@ -422,12 +422,30 @@ class MapFragment : Fragment(), LocationListener {
                 }
 
                 override fun onMarkerDragEnd(marker: Marker?) {
+
                     if(marker != null) {
-                        poi.poiLat = marker.position.latitude.toFloat()
-                        poi.poiLng = marker.position.longitude.toFloat()
-                        poi.poiAltitude = marker.position.altitude.toFloat()
-                        viewModel.replacePointOfInterest(poi)
+                        val alertDialog = AlertDialog.Builder(context).create()
+                        alertDialog.setTitle(getString(R.string.change_poi_location_warning))
+                        alertDialog.setButton(
+                            AlertDialog.BUTTON_POSITIVE,
+                            "Yes"
+                        ) { dialog: DialogInterface,
+                            _: Int ->
+                            poi.poiLat = marker.position.latitude.toFloat()
+                            poi.poiLng = marker.position.longitude.toFloat()
+                            poi.poiAltitude = marker.position.altitude.toFloat()
+                            viewModel.replacePointOfInterest(poi)
+                        }
+                        alertDialog.setButton(
+                            AlertDialog.BUTTON_NEGATIVE,
+                            "No"
+                        ) { dialog: DialogInterface, _: Int ->
+                            viewModel.refreshPointOfInterest()
+                            dialog.dismiss()
+                        }
+                        alertDialog.show()
                     }
+                    else Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
                 }
 
 
