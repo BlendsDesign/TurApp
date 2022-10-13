@@ -24,7 +24,7 @@ class StartViewModel(app: Application) : ViewModel() {
         _isLoading.value = true
 
         viewModelScope.launch {
-            _points.value = dao.getAllPointOfInterest()
+            _points.value = repository.getAllPoi()
             _isLoading.value = false
         }
     }

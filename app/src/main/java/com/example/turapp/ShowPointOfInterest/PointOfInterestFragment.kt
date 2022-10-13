@@ -2,6 +2,7 @@ package com.example.turapp.ShowPointOfInterest
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.location.Geocoder
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
+import com.example.turapp.mapView.MapFragment
+import com.google.android.gms.maps.model.LatLng
+import java.io.IOException
 import java.sql.Timestamp
 import java.util.*
 
@@ -52,7 +56,8 @@ class PointOfInterestFragment : Fragment() {
                     tvPoiName.text = it.poi.poiName
                     tvPoiDate.text =
                         String.format("Recorded at: ${Date(Timestamp(it.poi.createdAt).time)}")
-                    tvPoiLength.text = String.format("Length: ${it.poi.poiLengt} milliseconds")
+                    val loc = getLocationInformation(it.poi.poiLat, it.poi.poiLng)
+                    tvPoiLength.text = String.format("Location: ${loc}")
                     tvTotalPoiWithRecordingsSize.text = String.format("Total size: ${it.toString().toByteArray().size} bytes")
                     btCloseRecordingView.setOnClickListener {
                         binding.showRecordingView.visibility = View.GONE
@@ -96,5 +101,17 @@ class PointOfInterestFragment : Fragment() {
         })
 
         return binding.root
+    }
+    private fun getLocationInformation(lat: Float?, lng: Float?): String {
+        if(lat == null || lng == null) return "No Location Data"
+        val gc = Geocoder(requireContext(), Locale.getDefault())
+        try {
+            val adrs = gc.getFromLocation(lat.toDouble(), lng.toDouble(), 1)
+            val ads = adrs!![0]
+            return ads.getAddressLine(0)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return ""
     }
 }

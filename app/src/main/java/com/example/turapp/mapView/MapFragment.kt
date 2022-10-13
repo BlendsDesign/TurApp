@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.hardware.Sensor
 import android.location.Geocoder
 import android.location.Location
@@ -52,6 +53,8 @@ class MapFragment : Fragment(), LocationListener {
     private lateinit var map : MapView // 3
 
     private val trackedPath = mutableListOf<GeoPoint>()
+
+    private val ourPOI = mutableListOf<GeoPoint>()
 
     var startPosition = false //3
     private var tracking = false //3
@@ -104,6 +107,39 @@ class MapFragment : Fragment(), LocationListener {
         )
         compass.enableCompass()
         map.overlays.add(compass)
+
+        viewModel.pointsOfInterest.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it != null) {
+                map.overlays.clear()
+                map.overlays.add(compass)
+                map.overlays.add(MapEventsOverlay(getEventsReceiver()))
+                it.forEach { poi ->
+                    if (poi.poiLat != null && poi.poiLng != null) {
+                        val posMarker = Marker(map)
+                        if(poi.poiAltitude != null) {
+                            posMarker.position = GeoPoint(
+                                poi.poiLat!!.toDouble(),
+                                poi.poiLng!!.toDouble(),
+                                poi.poiAltitude!!.toDouble()
+                            )
+                        } else {
+                            posMarker.position = GeoPoint(
+                                poi.poiLat!!.toDouble(),
+                                poi.poiLng!!.toDouble()
+                            )
+                        }
+                        posMarker.apply{
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                            title = poi.poiName
+                            subDescription = poi.poiDescription
+                        }
+                        map.overlays.add(posMarker)
+                    }
+                }
+
+
+            }
+        })
 
         viewModel.trackedLocations.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if (it.isNotEmpty()) {

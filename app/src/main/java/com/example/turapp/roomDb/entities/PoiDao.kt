@@ -40,12 +40,15 @@ interface PoiDao {
     suspend fun getAllPoiWithRecordings(): List<PoiWithRecordings>
 
     @Transaction
+    @Query("SELECT * FROM point_of_interest")
+    suspend fun getAllPois(): List<PointOfInterest>
+
+    @Transaction
     @Query("SELECT * FROM point_of_interest WHERE (poiLat BETWEEN :minLat AND :maxLat) AND (poiLng BETWEEN :minLng AND :maxLng)")
     fun loadAllPoiWithinRange(minLat: Float, maxLat: Float, minLng: Float, maxLng: Float): List<PoiWithRecordings>
 
-    @Transaction
     @Query("SELECT * FROM point_of_interest")
-    suspend fun getAllPointOfInterest(): List<PointOfInterest>
+    fun getAllPointOfInterest(): List<PointOfInterest>
 
 
     // ACTIVITY
@@ -68,7 +71,7 @@ interface PoiDao {
     fun loadAllActivityWithinRange(minLat: Float, maxLat: Float, minLng: Float, maxLng: Float): LiveData<List<ActivityWithGeoData>>
 
     @Transaction
-    @Query("SELECT * FROM recorded_activity_table ORDER BY distance DESC")
+    @Query("SELECT * FROM recorded_activity_table ORDER BY totalDistance DESC")
     fun getAllActivityOrderedByDistance(): LiveData<List<ActivityWithGeoData>>
 
     @Transaction
@@ -84,13 +87,13 @@ interface PoiDao {
     @Query("SELECT SUM(timeInMillis) FROM recorded_activity_table")
     fun getTotalTimeInMillis(): LiveData<Long>
 
-    @Query("SELECT SUM(distance) FROM recorded_activity_table")
+    @Query("SELECT SUM(totalDistance) FROM recorded_activity_table")
     fun getTotalDistance(): LiveData<Int>
 
     @Query("SELECT AVG(avgSpeed) FROM recorded_activity_table")
     fun getAvgSpeed(): LiveData<Float>
 
-    @Query("SELECT AVG(distance) FROM recorded_activity_table")
+    @Query("SELECT AVG(totalDistance) FROM recorded_activity_table")
     fun getAvgDistance(): LiveData<Int>
 
     @Query("SELECT AVG(timeInMillis) FROM recorded_activity_table")

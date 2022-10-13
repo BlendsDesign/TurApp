@@ -6,10 +6,12 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "activity_lat_lng")
 class ActivityGeoData(
-    var activityId: Int = 0,
-    var lat: Float = 0f,
-    var lng: Float = 0f,
+    var activityId: Int? = null,
+    var lat: Float? = null,
+    var lng: Float? = null,
+    var altitude: Float? = null,
     var distanceToPrev: Float? = null,
+    var personalBestFromPrev: Long? = null,
     var title: String? = null,
     var description: String? = null,
 ) {

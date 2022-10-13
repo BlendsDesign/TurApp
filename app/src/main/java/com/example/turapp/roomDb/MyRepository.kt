@@ -1,6 +1,7 @@
 package com.example.turapp.roomDb
 
 import android.location.Location
+import androidx.lifecycle.LiveData
 import com.example.turapp.roomDb.entities.*
 
 class MyRepository(private val poiDao: PoiDao) {
@@ -11,6 +12,10 @@ class MyRepository(private val poiDao: PoiDao) {
             it.poiId = poiId
             poiDao.insertRecording(it)
         }
+    }
+
+    suspend fun getAllPoi(): List<PointOfInterest> {
+        return poiDao.getAllPois()
     }
 
     suspend fun addSinglePoi(poi: PointOfInterest) {

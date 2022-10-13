@@ -3,9 +3,12 @@ package com.example.turapp.roomDb
 import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.RenameColumn
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.turapp.roomDb.entities.*
 
 @Database(
@@ -15,14 +18,24 @@ import com.example.turapp.roomDb.entities.*
         RecordedActivity::class,
         ActivityGeoData::class
     ],
-    autoMigrations = [AutoMigration(from = 8, to = 9) ],
-    version = 9,
+    version = 10,
+    autoMigrations = [AutoMigration(
+        from = 9,
+        to = 10,
+        spec = PoiDatabase.MyExampleAutoMigration::class
+    )],
     exportSchema = true
 )
 @TypeConverters(Converters::class)
 abstract class PoiDatabase: RoomDatabase() {
 
     abstract val poiDao: PoiDao
+    @RenameColumn(
+        tableName = "recorded_activity_table",
+        fromColumnName = "distance",
+        toColumnName = "totalDistance")
+    class MyExampleAutoMigration : AutoMigrationSpec {}
+
 
     companion object {
         @Volatile
@@ -39,5 +52,6 @@ abstract class PoiDatabase: RoomDatabase() {
                 }
             }
         }
+
     }
 }

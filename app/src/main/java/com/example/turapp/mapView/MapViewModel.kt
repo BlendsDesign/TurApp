@@ -15,8 +15,8 @@ class MapViewModel(app: Application) : ViewModel() {
 
     private val repository = MyRepository(PoiDatabase.getInstance(app.applicationContext).poiDao)
 
-    private val _pointsOfInterest = MutableLiveData<MutableList<PointOfInterest>>()
-    val pointsOfInterest: LiveData<MutableList<PointOfInterest>> get() = _pointsOfInterest
+    private var _pointsOfInterest = MutableLiveData<List<PointOfInterest>>()
+    val pointsOfInterest: LiveData<List<PointOfInterest>> get() = _pointsOfInterest
 
     private val _trackedLocations = MutableLiveData<MutableList<Location>>()
     val trackedLocations: LiveData<MutableList<Location>> get() = _trackedLocations
@@ -44,11 +44,20 @@ class MapViewModel(app: Application) : ViewModel() {
     private val _recordingActivity = MutableLiveData<Boolean>()
     val recordingActivity : LiveData<Boolean> get() = _recordingActivity
 
+
     init {
         _trackedLocations.value = mutableListOf<Location>()
         _tracking.value = false
         _editPointOfInterest.value = false
+        refreshPointOfInterest()
     }
+
+    fun refreshPointOfInterest(){
+        viewModelScope.launch{
+            _pointsOfInterest.value = repository.getAllPoi()
+        }
+    }
+
 
     // Let user set a series of points points
     fun addRoutePoint(point: Location) {
@@ -60,15 +69,18 @@ class MapViewModel(app: Application) : ViewModel() {
         }
     }
 
-    fun addPointOfInterest(point: GeoPoint, title: String? = null, desc: String? = null) {
+    fun addPointOfInterest(point: GeoPoint) {
         viewModelScope.launch {
-            repository.addSinglePoi(PointOfInterest(
-                poiName= title?: "Testing map POI",
-                poiDescription = desc,
+            val poi = PointOfInterest(
+                poiName=  "Testing map POI",
+                poiDescription = "Still a test",
                 poiLat = point.latitude.toFloat(),
-                poiLng = point.longitude.toFloat()
-            ))
+                poiLng = point.longitude.toFloat(),
+                poiAltitude = point.altitude.toFloat()
+            )
+            repository.addSinglePoi(poi)
         }
+        refreshPointOfInterest()
     }
 
     fun savePointsOnRoute() {

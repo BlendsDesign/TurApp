@@ -12,6 +12,7 @@ data class PointOfInterest(
     var poiName: String = "Unnamed POI",
     var poiLat: Float? = null,
     var poiLng: Float? = null,
+    var poiAltitude: Float? = null,
     var poiDescription: String? = null
 ) {
     @PrimaryKey(autoGenerate = true)

@@ -7,11 +7,12 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "recorded_activity_table")
 data class RecordedActivity(
     var image: Bitmap? = null,
-    var startingLat: Float? = 0F,
-    var startingLng: Float = 0F,
+    var startingLat: Float? = null,
+    var startingLng: Float? = null,
+    var startingAltitude: Float? = null,
     var timestamp: Long = 0L,
     var avgSpeed: Float = 0f,
-    var distance: Int = 0,
+    var totalDistance: Int? = null,
     var timeInMillis: Long = 0L,
     var title: String? = null,
     var description: String? = null,
