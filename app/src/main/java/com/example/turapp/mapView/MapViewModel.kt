@@ -22,9 +22,24 @@ class MapViewModel(app: Application) : ViewModel() {
     val trackedLocations: LiveData<MutableList<Location>> get() = _trackedLocations
     private val _tracking = MutableLiveData<Boolean>()
     val tracking : LiveData<Boolean> get() = _tracking
+    private var paused: Boolean = false
+    private var pauseStartTime: Long? = null
+    fun switchTracking() {
+        _tracking.value = _tracking.value != true
+    }
+    fun switchPaused() {
+        if (_tracking.value == true) {
+            pauseStartTime = System.currentTimeMillis()
+            paused = true
+            _tracking.value = false
+        } else paused = false
+    }
 
-    private val _makingPointOfInterest = MutableLiveData<Boolean>()
-    val makingPointOfInterest : LiveData<Boolean> get() = _makingPointOfInterest
+    private val _editPointOfInterest = MutableLiveData<Boolean>()
+    val editPointOfInterest : LiveData<Boolean> get() = _editPointOfInterest
+    fun switchEditPointOfInterest(){
+        _editPointOfInterest.value = _editPointOfInterest.value != true
+    }
 
     private val _recordingActivity = MutableLiveData<Boolean>()
     val recordingActivity : LiveData<Boolean> get() = _recordingActivity
@@ -32,7 +47,7 @@ class MapViewModel(app: Application) : ViewModel() {
     init {
         _trackedLocations.value = mutableListOf<Location>()
         _tracking.value = false
-        _makingPointOfInterest.value = false
+        _editPointOfInterest.value = false
     }
 
     // Let user set a series of points points
@@ -45,16 +60,10 @@ class MapViewModel(app: Application) : ViewModel() {
         }
     }
 
-    fun switchTracking() {
-        _tracking.value = _tracking.value != true
-    }
-
-
-
     fun addPointOfInterest(point: GeoPoint, title: String? = null, desc: String? = null) {
         viewModelScope.launch {
             repository.addSinglePoi(PointOfInterest(
-                poiName= title?: "Unnamed POI",
+                poiName= title?: "Testing map POI",
                 poiDescription = desc,
                 poiLat = point.latitude.toFloat(),
                 poiLng = point.longitude.toFloat()

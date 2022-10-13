@@ -6,15 +6,15 @@
         android:icon="@drawable/ic_track_changes">
 
     </item>
-    <item
+<!--    <item
         android:id="@+id/miCreatePoint"
         android:title="Create POI"
         android:icon="@drawable/ic_add_location_24">
 
-    </item>
+    </item> -->
     <item
         android:id="@+id/miEditPoint"
-        android:title="Edit POI's"
+        android:title="@string/edit_pois"
         android:icon="@drawable/ic_edit_24">
     </item>
 </menu>

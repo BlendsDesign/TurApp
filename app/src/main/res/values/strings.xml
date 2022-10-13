@@ -23,5 +23,6 @@
 </string>
     <string name="pause_run">Pause Run</string>
     <string name="resume_tracking">Resume tracking</string>
+    <string name="edit_pois">Edit POI\'s</string>
 
 </resources>

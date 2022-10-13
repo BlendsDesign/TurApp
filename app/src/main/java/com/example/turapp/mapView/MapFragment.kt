@@ -310,11 +310,15 @@ class MapFragment : Fragment(), LocationListener {
                     if (viewModel.tracking.value == true) {
                         it.setIcon(R.drawable.ic_play_arrow)
                         it.title = getString(R.string.resume_tracking)
-                        viewModel.switchTracking()
+                        viewModel.apply{
+                            switchPaused()
+                        }
                     } else {
                         it.setIcon(R.drawable.ic_pause)
                         it.title = getString(R.string.pause_run)
-                        viewModel.switchTracking()
+                        viewModel.apply{
+                            switchPaused()
+                        }
                     }
                 }
                 R.id.endTracking -> {
@@ -327,6 +331,20 @@ class MapFragment : Fragment(), LocationListener {
                         this.menu.clear()
                         this.inflateMenu(R.menu.map_fragment_bottom_nav)
                     }
+                }
+                R.id.miEditPoint -> {
+                    if (viewModel.editPointOfInterest.value != true) {
+                        it.setIcon(R.drawable.ic_edit_off_24)
+                        it.title = "Done editing"
+                    } else {
+                        it.setIcon(R.drawable.ic_edit_24)
+                        it.title = getString(R.string.edit_pois)
+                    }
+                    Toast.makeText(context,
+                        "Implement a Save changes to poi function in fun setUpMapFragmentBottomNav",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    viewModel.switchEditPointOfInterest()
                 }
             }
             true
