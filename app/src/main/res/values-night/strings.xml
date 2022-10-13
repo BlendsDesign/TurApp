@@ -7,4 +7,6 @@
     <string name="record">Record</string>
     <string name="filtered_gyro_data">FILTERED GYRO DATA</string>
     <string name="delete_are_you_sure">Are you sure you want to delete this POI</string>
+    <string name="pause_run">Pause Run</string>
+    <string name="resume_tracking">Resume tracking</string>
 </resources>

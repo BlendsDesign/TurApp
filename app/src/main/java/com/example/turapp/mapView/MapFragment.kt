@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.BuildConfig
 import com.example.turapp.Helper
+import com.example.turapp.R
 import com.example.turapp.databinding.FragmentMapBinding
 import com.google.android.gms.maps.model.LatLng
 import org.osmdroid.events.MapEventsReceiver
@@ -74,7 +75,7 @@ class MapFragment : Fragment(), LocationListener {
         binding = FragmentMapBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
-
+        setUpMapFragmentBottomNav()
         map = binding.mvMap
 
         lm = requireNotNull(context).getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -293,5 +294,42 @@ class MapFragment : Fragment(), LocationListener {
     }
 
     fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { //2
+    }
+
+    private fun setUpMapFragmentBottomNav() {
+        binding.bottomNavMapFragment.setOnItemSelectedListener {
+            when(it.itemId) {
+                R.id.miStartTracking -> {
+                    viewModel.switchTracking()
+                    binding.bottomNavMapFragment.apply{
+                        this.menu.clear()
+                        this.inflateMenu(R.menu.while_tracking_bottom_nav)
+                    }
+                }
+                R.id.miPauseTracking -> {
+                    if (viewModel.tracking.value == true) {
+                        it.setIcon(R.drawable.ic_play_arrow)
+                        it.title = getString(R.string.resume_tracking)
+                        viewModel.switchTracking()
+                    } else {
+                        it.setIcon(R.drawable.ic_pause)
+                        it.title = getString(R.string.pause_run)
+                        viewModel.switchTracking()
+                    }
+                }
+                R.id.endTracking -> {
+                    Toast.makeText(context,
+                        "Implement a Save run function in fun setUpMapFragmentBottomNav",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    viewModel.switchTracking()
+                    binding.bottomNavMapFragment.apply {
+                        this.menu.clear()
+                        this.inflateMenu(R.menu.map_fragment_bottom_nav)
+                    }
+                }
+            }
+            true
+        }
     }
 }

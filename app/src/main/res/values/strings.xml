@@ -21,5 +21,7 @@
     <string name="about_app">About this app</string>
     <string name="info_text">As a digital nomad, you know that the key to traveling the world is being able to stay connected. And with your busy lifestyle, you don\'t have time to research long lists of travel apps. That\'s why we built the world\'s most comprehensive app for digital nomads. With our app, you can visit places with visual descriptions of the areas (POI – points of interest)\n\n When the user is near the area he/she can take up the camera and observe graphics with associated text related to the place.\n\n App has built in features such as menu to edit settings, language, theme etc.\n\nTemporary views for: MAP, CAMERA, GRAPH, INFORMATION\n\nRaw and filtered Sensor recording of accelerometer, gyroscope\n\nComputed orientation using accelerometer and magnetometer\n\nVisualization of the sensor data with orientation\nThis app was developed during a student project by a team (Team ID=6) of three members:\n\nMagnus Roald Ree  \nTore Bjerkan Tore Bjerkan\nSharmila Ratnasingam\n
 </string>
+    <string name="pause_run">Pause Run</string>
+    <string name="resume_tracking">Resume tracking</string>
 
 </resources>

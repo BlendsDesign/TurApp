@@ -20,8 +20,9 @@ class MapViewModel(app: Application) : ViewModel() {
 
     private val _trackedLocations = MutableLiveData<MutableList<Location>>()
     val trackedLocations: LiveData<MutableList<Location>> get() = _trackedLocations
-    private val _makingRoute = MutableLiveData<Boolean>()
-    val makingRoute : LiveData<Boolean> get() = _makingRoute
+    private val _tracking = MutableLiveData<Boolean>()
+    val tracking : LiveData<Boolean> get() = _tracking
+
     private val _makingPointOfInterest = MutableLiveData<Boolean>()
     val makingPointOfInterest : LiveData<Boolean> get() = _makingPointOfInterest
 
@@ -30,7 +31,7 @@ class MapViewModel(app: Application) : ViewModel() {
 
     init {
         _trackedLocations.value = mutableListOf<Location>()
-        _makingRoute.value = false
+        _tracking.value = false
         _makingPointOfInterest.value = false
     }
 
@@ -43,6 +44,12 @@ class MapViewModel(app: Application) : ViewModel() {
             _trackedLocations.value = list
         }
     }
+
+    fun switchTracking() {
+        _tracking.value = _tracking.value != true
+    }
+
+
 
     fun addPointOfInterest(point: GeoPoint, title: String? = null, desc: String? = null) {
         viewModelScope.launch {
