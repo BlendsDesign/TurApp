@@ -19,7 +19,6 @@ class StartViewModel(app: Application) : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading : LiveData<Boolean> get() = _isLoading
 
-
     init {
         _isLoading.value = true
 
@@ -29,7 +28,12 @@ class StartViewModel(app: Application) : ViewModel() {
         }
     }
 
+    fun refreshList() {
 
+        viewModelScope.launch {
+            _points.value = repository.getAllPoi()
+        }
+    }
 
 
     class Factory(val app: Application) : ViewModelProvider.Factory {

@@ -294,27 +294,6 @@ class MapFragment : Fragment() {
         return curr.distanceToAsDouble(next)
     }
 
-    //    private void analyzePath(List<GeoPoint> trackedPath)
-    //    {
-    //        int i,j,k;
-    //        //loop points
-    //        GeoPoint curr = trackedPath.get(i);
-    //        GeoPoint next = trackedPath.get(j);
-    //        GeoPoint next_next = trackedPath.get(k);
-    //
-    //        if(!distanceBetween(curr,next) < 10.0
-    //        && !distanceBetween(next,next_next) < 10.0) //length between two geolocations
-    //        {
-    //
-    //        }
-    //
-    //
-    //
-    //    }
-    //    private boolean distanceBetween(GeoPoint curr, GeoPoint next) {
-    //        //potentially use Helper for storage
-    //        return curr - next;
-    //    }
     private fun getLocationInformation(lat: Double, lng: Double): String? {
         val gc = Geocoder(requireContext(), Locale.getDefault())
         try {
