@@ -29,9 +29,11 @@ class StartViewModel(app: Application) : ViewModel() {
     }
 
     fun refreshList() {
+        _isLoading.value = true
 
         viewModelScope.launch {
             _points.value = repository.getAllPoi()
+            _isLoading.value = false
         }
     }
 
