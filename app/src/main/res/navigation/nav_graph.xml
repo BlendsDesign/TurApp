@@ -11,15 +11,6 @@
         android:label="start_fragment"
         tools:layout="@layout/start_fragment" >
         <action
-            android:id="@+id/action_startFragment_to_liveSensorDataFragment"
-            app:destination="@id/liveSensorDataFragment" />
-        <action
-            android:id="@+id/action_startFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
-        <action
-            android:id="@+id/action_startFragment_to_cameraFragment"
-            app:destination="@id/cameraFragment" />
-        <action
             android:id="@+id/action_startFragment_to_pointOfInterestFragment"
             app:destination="@id/pointOfInterestFragment" />
     </fragment>

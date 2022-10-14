@@ -2,25 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/miList"
+        android:id="@+id/startFragment"
         android:title="List"
         android:icon="@drawable/ic_list">
 
     </item>
     <item
-        android:id="@+id/miMap"
+        android:id="@+id/mapFragment"
         android:title="Map"
         android:icon="@drawable/ic_map">
 
     </item>
     <item
-        android:id="@+id/miCamera"
+        android:id="@+id/cameraFragment"
         android:title="Camera"
         android:icon="@drawable/ic_camera">
     </item>
 
     <item
-        android:id="@+id/miLiveSensors"
+        android:id="@+id/liveSensorDataFragment"
         android:title="SensorData"
         android:icon="@drawable/ic_sensor">
     </item>
