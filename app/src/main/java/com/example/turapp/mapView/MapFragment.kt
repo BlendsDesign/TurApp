@@ -3,7 +3,6 @@ package com.example.turapp.mapView
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.content.ContextWrapper
 import android.content.DialogInterface
 import android.content.pm.PackageManager
@@ -11,8 +10,6 @@ import android.graphics.Color
 import android.hardware.Sensor
 import android.location.Geocoder
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -21,8 +18,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.BuildConfig
@@ -31,8 +26,10 @@ import com.example.turapp.R
 import com.example.turapp.databinding.FragmentMapBinding
 import com.example.turapp.roomDb.entities.PointOfInterest
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.android.synthetic.main.fragment_map.*
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.Distance
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
@@ -127,6 +124,7 @@ class MapFragment : Fragment() {
                     this.inflateMenu(R.menu.when_editing_poi_in_mapview)
                 }
                 binding.poiEditLayout.visibility = View.VISIBLE
+                binding.textViewPoiAdress.text = getLocationInformation(it.latitude, it.longitude)
             } else {
                 binding.bottomNavMapFragment.apply {
                     this.menu.clear()
@@ -152,6 +150,14 @@ class MapFragment : Fragment() {
                 path.setPoints(list)
                 map.overlayManager.add(path)
                 map.invalidate() //make sure the map is redrawn
+            }
+        })
+
+        viewModel.currentPos.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            val marker = viewModel.selectedMarker.value
+            if (marker != null) {
+                val distance = it.distanceToAsDouble(marker.position)
+                tvDistanceToPOI.text = String.format("Distance to \"${marker.title}\": %.2f m", distance)
             }
         })
 
@@ -188,6 +194,12 @@ class MapFragment : Fragment() {
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     title = poi.poiName
                     subDescription = poi.poiDescription
+                    posMarker.setOnMarkerClickListener { marker, mapView ->
+                        marker.showInfoWindow()
+                        viewModel.setSelectedPoiGeoPoint(marker)
+                        true
+                    }
+
                 }
                 if (viewModel.editPointOfInterest.value == true) {
 

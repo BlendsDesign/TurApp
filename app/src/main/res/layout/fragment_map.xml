@@ -74,6 +74,24 @@
                     android:layout_height="wrap_content"
                     android:textSize="18sp"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Distance to POI"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+
+                    />
+
+                <TextView
+                    android:id="@+id/tvDistanceToPOI"
+                    android:text="0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    />
+
+
             </LinearLayout>
 
         </ScrollView>
@@ -94,7 +112,7 @@
                 android:id="@+id/textViewPoiTitleDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="POI Title:"
+                android:text="@string/poi_title"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 />
@@ -102,8 +120,7 @@
             <EditText
                 android:id="@+id/etPoiTitle"
                 android:inputType="textPersonName"
-                android:text="REMOVE THIS"
-                android:hint="POI Title"
+                android:hint="@string/poi_title"
                 app:layout_constraintTop_toBottomOf="@+id/textViewPoiTitleDescription"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_width="match_parent"
@@ -114,7 +131,7 @@
                 android:id="@+id/textViewPoiDescDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="POI Title:"
+                android:text="@string/poi_description"
                 app:layout_constraintTop_toBottomOf="@+id/etPoiTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 />
@@ -122,8 +139,7 @@
             <EditText
                 android:id="@+id/etPoiDescription"
                 android:inputType="textPersonName"
-                android:text="REMOVE THIS"
-                android:hint="POI Title"
+                android:hint="@string/poi_description"
                 app:layout_constraintTop_toBottomOf="@+id/textViewPoiDescDescription"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_width="match_parent"
@@ -134,7 +150,7 @@
                 android:id="@+id/textViewPoiAdressDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="POI Title:"
+                android:text="POI Adress Information"
                 app:layout_constraintTop_toBottomOf="@+id/etPoiDescription"
                 app:layout_constraintStart_toStartOf="parent"
                 />
@@ -142,7 +158,6 @@
                 android:id="@+id/textViewPoiAdress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="POI Title:"
                 app:layout_constraintTop_toBottomOf="@id/textViewPoiAdressDescription"
                 app:layout_constraintStart_toStartOf="parent"
                 />

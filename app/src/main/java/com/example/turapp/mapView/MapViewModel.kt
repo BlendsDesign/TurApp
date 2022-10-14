@@ -19,6 +19,7 @@ import com.example.turapp.roomDb.entities.PointOfInterest
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Marker
 import java.io.IOException
 import java.util.*
 
@@ -53,6 +54,11 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
     val startingPos: LiveData<GeoPoint> get() = _startingPos
     private val _positionInformation = MutableLiveData<String>()
     val positionInformation: LiveData<String> get() = _positionInformation
+    private val _selectedMarker = MutableLiveData<Marker>()
+    val selectedMarker: LiveData<Marker> get() = _selectedMarker
+    fun setSelectedPoiGeoPoint(p: Marker) {
+        _selectedMarker.value = p
+    }
 
     private val repository = MyRepository(PoiDatabase.getInstance(app.applicationContext).poiDao)
 

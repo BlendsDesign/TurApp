@@ -29,5 +29,7 @@
     <string name="no_location_information">No Location Information</string>
     <string name="save_poi">Save POI</string>
     <string name="cancel">Cancel</string>
+    <string name="poi_title">POI Title</string>
+    <string name="poi_description">POI Description</string>
 
 </resources>
