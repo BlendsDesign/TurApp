@@ -18,6 +18,7 @@ import com.example.turapp.Sensors.StepCounterSensor
 import com.example.turapp.roomDb.MyRepository
 import com.example.turapp.roomDb.PoiDatabase
 import com.example.turapp.roomDb.entities.PointOfInterest
+import com.example.turapp.roomDb.entities.RecordedActivity
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
@@ -41,10 +42,10 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
     }
 
     // Setting up STEP COUNTER
-    private var _startingSteps : Float = 0f
+    private var _startingSteps: Float = 0f
     private val _stepCounterData = MutableLiveData<Float>()
     private val stepCounterSensor = StepCounterSensor(app)
-    val stepCounterData : LiveData<Float> get() = _stepCounterData
+    val stepCounterData: LiveData<Float> get() = _stepCounterData
     fun clearStepCount() {
         _startingSteps = _stepCounterData.value ?: 0f
     }
@@ -103,10 +104,9 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
     private val _tracking = MutableLiveData<Boolean>()
     val tracking: LiveData<Boolean> get() = _tracking
 
+    // PAUSE IS NOT REALLY IMPLEMENTED
     private var paused: Boolean = false
-
     private var pauseStartTime: Long? = null
-
     fun switchTracking() { // This starts and stops tracking
         _tracking.value = _tracking.value != true
     }
@@ -118,6 +118,28 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
             _tracking.value = false
         } else paused = false
     }
+
+    fun saveTrackedLocations(title: String, desc: String) {
+        viewModelScope.launch {
+            val geoList: List<Location> = _trackedLocations.value ?: listOf()
+            _trackedLocations.value = mutableListOf()
+            if (!geoList.isEmpty()) {
+                val timeTaken: Long = geoList[geoList.size - 1].time - geoList[0].time
+                var distance = 0.0
+                var temp = geoList[0]
+                geoList.forEach {
+                    distance += it.distanceTo(temp)
+                    temp = it
+                }
+                val ra = RecordedActivity(
+                    title = title, description = desc, timestamp = geoList.first().time,
+                    timeInMillis = timeTaken, totalDistance = distance.toInt()
+                )
+                repository.insertRecordedActivityAndGeoData(ra, geoList)
+            }
+        }
+    }
+
 
     private val _editPointOfInterest = MutableLiveData<Boolean>()
     val editPointOfInterest: LiveData<Boolean> get() = _editPointOfInterest
@@ -135,7 +157,7 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
         setUpLocationUpdates()
         stepCounterSensor.startListening()
         stepCounterSensor.setOnSensorValuesChangedListener {
-            if(_stepCounterData.value == null) {
+            if (_stepCounterData.value == null) {
                 _startingSteps = it[0]
             }
             _stepCounterData.value = it[0] - _startingSteps
@@ -157,20 +179,6 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
             list.add(point)
             _trackedLocations.value = list
         }
-    }
-
-    fun addPointOfInterest(point: GeoPoint) {
-        viewModelScope.launch {
-            val poi = PointOfInterest(
-                poiName = "Testing map POI",
-                poiDescription = "Still a test",
-                poiLat = point.latitude.toFloat(),
-                poiLng = point.longitude.toFloat(),
-                poiAltitude = point.altitude.toFloat()
-            )
-            repository.addSinglePoi(poi)
-        }
-        refreshPointOfInterest()
     }
 
     fun deletePointOfInterest(poi: PointOfInterest) {
@@ -198,8 +206,8 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
         if (_startingPos.value == null) {
             _startingPos.value = GeoPoint(loc.latitude, loc.longitude, loc.altitude)
         }
-        if (_tracking.value == true &&  !paused) {
-            val temp :MutableList<Location> = _trackedLocations.value?: mutableListOf()
+        if (_tracking.value == true && !paused) {
+            val temp: MutableList<Location> = _trackedLocations.value ?: mutableListOf()
             temp.add(loc)
             _trackedLocations.value = temp
         }

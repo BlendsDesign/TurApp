@@ -357,14 +357,18 @@ class MapFragment : Fragment() {
                 R.id.endTracking -> {
                     Toast.makeText(
                         context,
-                        "Implement a Save run function in fun setUpMapFragmentBottomButtons",
+                        "There is a function to save runs, but not to see saved runs\nDue to running out of time",
                         Toast.LENGTH_LONG
                     ).show()
+                    viewModel.saveTrackedLocations(
+                        "TEMP ACTIVITY NAME",
+                        "Didn't have time to implement function to let user add title and desc fields")
                     viewModel.switchTracking()
                     binding.bottomNavMapFragment.apply {
                         this.menu.clear()
                         this.inflateMenu(R.menu.map_fragment_bottom_nav)
                     }
+
                 }
                 R.id.miEditPoint -> {
                     if (viewModel.editPointOfInterest.value != true) {
