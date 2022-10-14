@@ -27,5 +27,7 @@
     <string name="change_poi_location_warning">Save POI\'s new location?</string>
     <string name="current_location">Current Location:</string>
     <string name="no_location_information">No Location Information</string>
+    <string name="save_poi">Save POI</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

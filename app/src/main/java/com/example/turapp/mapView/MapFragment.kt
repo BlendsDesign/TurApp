@@ -119,17 +119,25 @@ class MapFragment : Fragment() {
                 populateMapWithPois(it)
             }
         })
-        // TESTING SOMETHING
-        viewModel.editPointOfInterest.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            binding.etPoiTitle.apply {
-                isEnabled = it
-                setText(viewModel.positionInformation.value?: "")
+        // SHOWS THE EDIT TEXTS FOR A NEW POI
+        viewModel.addingPOI.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it != null) {
+                binding.bottomNavMapFragment.apply {
+                    this.menu.clear()
+                    this.inflateMenu(R.menu.when_editing_poi_in_mapview)
+                }
+                binding.poiEditLayout.visibility = View.VISIBLE
+            } else {
+                binding.bottomNavMapFragment.apply {
+                    this.menu.clear()
+                    this.inflateMenu(R.menu.when_editing_poi_in_mapview)
+                }
+                binding.poiEditLayout.visibility = View.GONE
             }
-            if (it == true)
-                binding.poiInfoLayout.visibility = View.VISIBLE
-            else
-                binding.poiInfoLayout.visibility = View.GONE
+        })
 
+        viewModel.stepCounterData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            binding.tvStepsensorData.text = it.toInt().toString()
         })
 
         // Livedata. List with Locations that is updated when tracking
@@ -229,7 +237,7 @@ class MapFragment : Fragment() {
             }
 
             override fun longPressHelper(p: GeoPoint): Boolean {
-                viewModel.addPointOfInterest(p)
+                viewModel.setAddingPOI(p)
                 return false
             }
         }
@@ -373,6 +381,24 @@ class MapFragment : Fragment() {
                         Toast.LENGTH_LONG
                     ).show()
                     viewModel.switchEditPointOfInterest()
+                }
+                R.id.miSaveNewPoi -> {
+                    if (viewModel.addingPOI.value != null) {
+                        val title = binding.etPoiTitle.text
+                        val desc = binding.etPoiDescription.text
+                        viewModel.addPoi(title.toString(), desc.toString())
+                    }
+                    binding.bottomNavMapFragment.apply {
+                        this.menu.clear()
+                        this.inflateMenu(R.menu.map_fragment_bottom_nav)
+                    }
+                }
+                R.id.miCancelAddingPoi -> {
+                    viewModel.addPoiCancel()
+                    binding.bottomNavMapFragment.apply {
+                        this.menu.clear()
+                        this.inflateMenu(R.menu.map_fragment_bottom_nav)
+                    }
                 }
             }
             true

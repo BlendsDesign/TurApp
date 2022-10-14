@@ -22,7 +22,6 @@ class AccelerometerSensor(
     sensorType = Sensor.TYPE_ACCELEROMETER
 )
 
-
 class GyroscopeSensor(
     context: Context
 ): AndroidSensor(
@@ -37,4 +36,12 @@ context: Context
     context = context,
     sensorFeature = PackageManager.FEATURE_SENSOR_COMPASS,
     sensorType = Sensor.TYPE_MAGNETIC_FIELD
+)
+
+class StepCounterSensor(
+    context: Context
+): AndroidSensor(
+    context = context,
+    sensorFeature = PackageManager.FEATURE_SENSOR_STEP_COUNTER,
+    sensorType = Sensor.TYPE_STEP_COUNTER
 )

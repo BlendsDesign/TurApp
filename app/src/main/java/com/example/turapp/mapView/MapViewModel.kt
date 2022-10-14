@@ -11,6 +11,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.*
+import com.example.turapp.Sensors.StepCounterSensor
 import com.example.turapp.roomDb.MyRepository
 import com.example.turapp.roomDb.PoiDatabase
 import com.example.turapp.roomDb.entities.PointOfInterest
@@ -35,24 +36,62 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
         }
     }
 
+    // Setting up STEP COUNTER
+    private val stepCounterSensor = StepCounterSensor(app)
+    private var _startingSteps : Float? = null
+    private val _stepCounterData = MutableLiveData<Float>()
+    val stepCounterData : LiveData<Float> get() = _stepCounterData
+    fun clearStepCount() {
+        _startingSteps = null
+    }
+
     // Livedata for starting position, current position and position information
     private val _currentPos = MutableLiveData<GeoPoint>()
     val currentPos: LiveData<GeoPoint> get() = _currentPos
     private val _startingPos = MutableLiveData<GeoPoint>()
-    val startingPos : LiveData<GeoPoint> get() = _startingPos
+    val startingPos: LiveData<GeoPoint> get() = _startingPos
     private val _positionInformation = MutableLiveData<String>()
-    val positionInformation : LiveData<String> get() = _positionInformation
+    val positionInformation: LiveData<String> get() = _positionInformation
 
     private val repository = MyRepository(PoiDatabase.getInstance(app.applicationContext).poiDao)
 
     private var _pointsOfInterest = MutableLiveData<List<PointOfInterest>>()
     val pointsOfInterest: LiveData<List<PointOfInterest>> get() = _pointsOfInterest
 
+    // Helpers to add a POI
+    private var _addingPOI = MutableLiveData<GeoPoint?>()
+    val addingPOI: LiveData<GeoPoint?> get() = _addingPOI
+    fun setAddingPOI(point: GeoPoint?) {
+        _addingPOI.value = point
+    }
+
+    fun addPoiCancel() {
+        _addingPOI.value = null
+    }
+
+    fun addPoi(title: String, desc: String) {
+        viewModelScope.launch {
+            val geo = _addingPOI.value
+            if (geo != null) {
+                val poi = PointOfInterest(
+                    poiName = title,
+                    poiDescription = desc,
+                    poiLat = geo.latitude.toFloat(),
+                    poiLng = geo.longitude.toFloat(),
+                    poiAltitude = geo.altitude.toFloat()
+                )
+                repository.addSinglePoi(poi)
+                refreshPointOfInterest()
+            }
+        }
+    }
+
+
     private val _trackedLocations = MutableLiveData<MutableList<Location>>()
     val trackedLocations: LiveData<MutableList<Location>> get() = _trackedLocations
 
     private val _tracking = MutableLiveData<Boolean>()
-    val tracking : LiveData<Boolean> get() = _tracking
+    val tracking: LiveData<Boolean> get() = _tracking
 
     private var paused: Boolean = false
 
@@ -61,6 +100,7 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
     fun switchTracking() { // This starts and stops tracking
         _tracking.value = _tracking.value != true
     }
+
     fun switchPaused() {
         if (_tracking.value == true) {
             pauseStartTime = System.currentTimeMillis()
@@ -70,8 +110,8 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
     }
 
     private val _editPointOfInterest = MutableLiveData<Boolean>()
-    val editPointOfInterest : LiveData<Boolean> get() = _editPointOfInterest
-    fun switchEditPointOfInterest(){
+    val editPointOfInterest: LiveData<Boolean> get() = _editPointOfInterest
+    fun switchEditPointOfInterest() {
         _editPointOfInterest.value = _editPointOfInterest.value != true
         refreshPointOfInterest()
     }
@@ -82,10 +122,16 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
         _tracking.value = false
         _editPointOfInterest.value = false
         refreshPointOfInterest()
+        stepCounterSensor.startListening()
+        stepCounterSensor.setOnSensorValuesChangedListener {
+            if (_startingSteps == null)
+                _startingSteps = it[0]
+            _stepCounterData.value = it[0] - (_startingSteps ?: it[0])
+        }
     }
 
-    fun refreshPointOfInterest(){
-        viewModelScope.launch{
+    fun refreshPointOfInterest() {
+        viewModelScope.launch {
             _pointsOfInterest.value = repository.getAllPoi()
         }
     }
@@ -104,7 +150,7 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
     fun addPointOfInterest(point: GeoPoint) {
         viewModelScope.launch {
             val poi = PointOfInterest(
-                poiName=  "Testing map POI",
+                poiName = "Testing map POI",
                 poiDescription = "Still a test",
                 poiLat = point.latitude.toFloat(),
                 poiLng = point.longitude.toFloat(),
@@ -176,8 +222,6 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
         }
         return ""
     }
-
-
 
 
     class Factory(private val app: Application) : ViewModelProvider.Factory {

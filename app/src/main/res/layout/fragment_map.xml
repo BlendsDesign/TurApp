@@ -15,15 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tvMapViewTop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No current location information"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <!-- This scrollview Holds the Information and edit views -->
         <org.osmdroid.views.MapView
             android:id="@+id/mvMap"
@@ -31,7 +22,7 @@
             android:layout_height="0dp"
             app:flow_horizontalBias="0.5"
             app:layout_constraintBottom_toTopOf="@+id/svMapFragment"
-            app:layout_constraintTop_toBottomOf="@+id/tvMapViewTop"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_weight="2"
             tools:layout_editor_absoluteX="47dp">
 
@@ -53,13 +44,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/infoLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
                 <TextView
-                    android:id="@+id/textViewCLdescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/current_location"
@@ -70,46 +55,101 @@
                 <TextView
                     android:id="@+id/tvCurrentLocationInformation"
                     android:text="@string/no_location_information"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewCLdescription"
-                    app:layout_constraintStart_toStartOf="parent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"/>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/poiInfoLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-
                 <TextView
-                    android:id="@+id/textViewPoiTitleDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/current_location"
+                    android:text="Current Step Counter"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     />
 
-                <EditText
-                    android:id="@+id/etPoiTitle"
-                    android:inputType="textPersonName"
-                    android:enabled="false"
-                    android:text="REMOVE THIS"
-                    android:hint="POI Title"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewPoiTitleDescription"
-                    app:layout_constraintStart_toStartOf="parent"
+                <TextView
+                    android:id="@+id/tvStepsensorData"
+                    android:text="0"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"/>
 
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
         </ScrollView>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/poiEditLayout"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavMapFragment"
+            android:layout_height="0dp"
+            android:layout_margin="16dp"
+            android:padding="8dp"
+            android:background="@color/cardview_light_background"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/textViewPoiTitleDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="POI Title:"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <EditText
+                android:id="@+id/etPoiTitle"
+                android:inputType="textPersonName"
+                android:text="REMOVE THIS"
+                android:hint="POI Title"
+                app:layout_constraintTop_toBottomOf="@+id/textViewPoiTitleDescription"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/textViewPoiDescDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="POI Title:"
+                app:layout_constraintTop_toBottomOf="@+id/etPoiTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <EditText
+                android:id="@+id/etPoiDescription"
+                android:inputType="textPersonName"
+                android:text="REMOVE THIS"
+                android:hint="POI Title"
+                app:layout_constraintTop_toBottomOf="@+id/textViewPoiDescDescription"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/textViewPoiAdressDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="POI Title:"
+                app:layout_constraintTop_toBottomOf="@+id/etPoiDescription"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+            <TextView
+                android:id="@+id/textViewPoiAdress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="POI Title:"
+                app:layout_constraintTop_toBottomOf="@id/textViewPoiAdressDescription"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavMapFragment"
