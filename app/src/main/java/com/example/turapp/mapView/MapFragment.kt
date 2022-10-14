@@ -44,19 +44,16 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 import java.io.IOException
 import java.util.*
 
-
-class MapFragment : Fragment(), LocationListener {
+private val REQUEST_CODE = 123
+class MapFragment : Fragment() {
 
     private lateinit var binding: FragmentMapBinding
 
-    private val REQUEST_CODE = 123
-    private lateinit var lm: LocationManager
     var locLL: LatLng? = null
 
     private lateinit var map: MapView // 3
 
-    var startPosition = false //3
-    private var tracking = false //3
+
 
     private val viewModel: MapViewModel by lazy {
         val app = requireNotNull(activity).application
@@ -73,33 +70,28 @@ class MapFragment : Fragment(), LocationListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         Helper.suggestedFix(contextWrapper = ContextWrapper(context))
+
         binding = FragmentMapBinding.inflate(inflater)
+
         binding.lifecycleOwner = viewLifecycleOwner
+
         binding.viewModel = viewModel
-        setUpMapFragmentBottomNav()
+
+        setUpMapFragmentBottomButtons()
+
+        // Setting up text window at top to show adress information as it comes in
+        viewModel.positionInformation.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            binding.tvMapViewTop.text = it
+        })
+
+        // Setting up mvMap
         map = binding.mvMap
-
-        lm = requireNotNull(context).getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        if (!checkPermissions()) {
-            Log.d("MainActivity", "Asking for permissions")
-            requestAllPermission()
-        } else {
-            Log.d("MainActivity", "Permissions already granted, started location updates")
-            Toast.makeText(context, "Starting location updates", Toast.LENGTH_SHORT).show()
-            lm.requestLocationUpdates(
-                LocationManager.FUSED_PROVIDER,  //GPS_PROVIDER,
-                1000, 0f, this
-            )
-        }
-
         map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
         map.setMultiTouchControls(true) //3
-
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setMultiTouchControls(true)
-
         val compass = CompassOverlay(
             context,
             InternalCompassOrientationProvider(context), map
@@ -107,65 +99,25 @@ class MapFragment : Fragment(), LocationListener {
         compass.enableCompass()
         map.overlays.add(compass)
 
+        // This LiveData is updated when
+        // override onLocationChanged in the viewModel gets its first Location
+        viewModel.startingPos.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            map.controller.apply {
+                setZoom(20.0)
+                setCenter(it)
+            }
+        })
+
+        // Observer to see if there are POIs loaded from the DB
         viewModel.pointsOfInterest.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if (it != null) {
                 map.overlays.clear()
                 map.overlays.add(compass)
-                if (viewModel.editPointOfInterest.value != true)
-                    map.overlays.add(MapEventsOverlay(getEventsReceiver()))
-
-                it.forEach { poi ->
-                    if (poi.poiLat != null && poi.poiLng != null) {
-                        val posMarker = Marker(map)
-                        if (poi.poiAltitude != null) {
-                            posMarker.position = GeoPoint(
-                                poi.poiLat!!.toDouble(),
-                                poi.poiLng!!.toDouble(),
-                                poi.poiAltitude!!.toDouble()
-                            )
-                        } else {
-                            posMarker.position = GeoPoint(
-                                poi.poiLat!!.toDouble(),
-                                poi.poiLng!!.toDouble()
-                            )
-                        }
-                        posMarker.apply {
-                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                            title = poi.poiName
-                            subDescription = poi.poiDescription
-                        }
-                        if (viewModel.editPointOfInterest.value == true) {
-
-                            posMarker.setOnMarkerClickListener { marker, mapView ->
-                                val alertDialog = AlertDialog.Builder(context).create()
-                                alertDialog.setTitle(getString(R.string.delete_are_you_sure))
-                                alertDialog.setButton(
-                                    AlertDialog.BUTTON_POSITIVE,
-                                    "Yes"
-                                ) { dialog: DialogInterface,
-                                    _: Int ->
-                                    viewModel.deletePointOfInterest(poi)
-                                }
-                                alertDialog.setButton(
-                                    AlertDialog.BUTTON_NEGATIVE,
-                                    "No"
-                                ) { dialog: DialogInterface, _: Int ->
-                                    dialog.dismiss()
-                                }
-                                alertDialog.show()
-                                false
-                            }
-                            posMarker.setOnMarkerDragListener(getMarkerDragListener(poi))
-                            posMarker.isDraggable = true
-                        }
-                        map.overlays.add(posMarker)
-                    }
-                }
-
-
+                populateMapWithPois(it)
             }
         })
 
+        // Livedata. List with Locations that is updated when tracking
         viewModel.trackedLocations.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if (it.isNotEmpty()) {
                 val list = mutableListOf<GeoPoint>()
@@ -180,10 +132,67 @@ class MapFragment : Fragment(), LocationListener {
             }
         })
 
+        // This adds an eventOverlay that lets us configure a longpress listener
         map.overlays.add(MapEventsOverlay(getEventsReceiver()))
+
+        requestAllPermission()
 
         // Inflate the layout for this fragment
         return binding.root
+    }
+
+    private fun populateMapWithPois(list: List<PointOfInterest>) {
+
+        if (viewModel.editPointOfInterest.value != true)
+            map.overlays.add(MapEventsOverlay(getEventsReceiver()))
+
+        list.forEach { poi ->
+            if (poi.poiLat != null && poi.poiLng != null) {
+                val posMarker = Marker(map)
+                if (poi.poiAltitude != null) {
+                    posMarker.position = GeoPoint(
+                        poi.poiLat!!.toDouble(),
+                        poi.poiLng!!.toDouble(),
+                        poi.poiAltitude!!.toDouble()
+                    )
+                } else {
+                    posMarker.position = GeoPoint(
+                        poi.poiLat!!.toDouble(),
+                        poi.poiLng!!.toDouble()
+                    )
+                }
+                posMarker.apply {
+                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    title = poi.poiName
+                    subDescription = poi.poiDescription
+                }
+                if (viewModel.editPointOfInterest.value == true) {
+
+                    posMarker.setOnMarkerClickListener { marker, mapView ->
+                        val alertDialog = AlertDialog.Builder(context).create()
+                        alertDialog.setTitle(getString(R.string.delete_are_you_sure))
+                        alertDialog.setButton(
+                            AlertDialog.BUTTON_POSITIVE,
+                            "Yes"
+                        ) { dialog: DialogInterface,
+                            _: Int ->
+                            viewModel.deletePointOfInterest(poi)
+                        }
+                        alertDialog.setButton(
+                            AlertDialog.BUTTON_NEGATIVE,
+                            "No"
+                        ) { dialog: DialogInterface, _: Int ->
+                            dialog.dismiss()
+                        }
+                        alertDialog.show()
+                        false
+                    }
+                    posMarker.setOnMarkerDragListener(getMarkerDragListener(poi))
+                    posMarker.isDraggable = true
+                }
+                map.overlays.add(posMarker)
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.S)
@@ -197,6 +206,7 @@ class MapFragment : Fragment(), LocationListener {
         ) //2
     }
 
+    // This works with the MapEventsOverlay to add clicklisteners and lets us add POIs
     private fun getEventsReceiver(): MapEventsReceiver {
         return object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
@@ -211,24 +221,7 @@ class MapFragment : Fragment(), LocationListener {
     }
 
 
-    private fun checkPermissions(): Boolean {
-        return (
-                ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-                        &&
-                        ActivityCompat.checkSelfPermission(
-                            requireContext(),
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        ) == PackageManager.PERMISSION_GRANTED
-                        &&
-                        ActivityCompat.checkSelfPermission(
-                            requireContext(),
-                            Manifest.permission.HIGH_SAMPLING_RATE_SENSORS
-                        ) == PackageManager.PERMISSION_GRANTED
-                )
-    }
+
 
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
@@ -242,10 +235,7 @@ class MapFragment : Fragment(), LocationListener {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("MapFragment", "Permissions granted, started location updates")
                     Toast.makeText(context, "Starting location updates", Toast.LENGTH_SHORT).show()
-                    lm.requestLocationUpdates(
-                        LocationManager.FUSED_PROVIDER,
-                        1000, 0F, this
-                    )
+                    viewModel.setUpLocationUpdates()
                 } else {
                     Toast.makeText(
                         context,
@@ -258,31 +248,6 @@ class MapFragment : Fragment(), LocationListener {
         }
     }
 
-
-    override fun onLocationChanged(location: Location) {
-
-        locLL = LatLng(location.latitude, location.longitude)
-        Log.d("MapFragment", location.accuracy.toString())
-        Log.d("MapFragment", getLocationInformation(locLL!!)!!)
-        binding.tvMapViewTop.text = getLocationInformation(locLL!!)
-        if (!startPosition /*&& location.getAccuracy() < 15*/) {
-            //my current location
-            val startPoint = GeoPoint(locLL!!.latitude, locLL!!.longitude)
-            Log.d("MapFragment", startPoint.toString())
-
-            startPosition = true
-            map.controller.apply {
-                setZoom(20.0)
-                setCenter(startPoint)
-            }
-        }
-        if (viewModel.tracking.value == true) {
-            viewModel.addRoutePoint(location)
-            map.controller.apply {
-                setCenter(GeoPoint(location.latitude, location.longitude, location.altitude))
-            }
-        }
-    }
 
 //    private void analyzePath(List<GeoPoint> trackedPath)
 //    {
@@ -328,10 +293,10 @@ class MapFragment : Fragment(), LocationListener {
     //        //potentially use Helper for storage
     //        return curr - next;
     //    }
-    private fun getLocationInformation(locLL: LatLng): String? {
+    private fun getLocationInformation(lat: Double, lng: Double): String? {
         val gc = Geocoder(requireContext(), Locale.getDefault())
         try {
-            val adrs = gc.getFromLocation(locLL.latitude, locLL.longitude, 1)
+            val adrs = gc.getFromLocation(lat, lng, 1)
             val ads = adrs!![0]
             return ads.getAddressLine(0)
         } catch (e: IOException) {
@@ -343,7 +308,8 @@ class MapFragment : Fragment(), LocationListener {
     fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { //2
     }
 
-    private fun setUpMapFragmentBottomNav() {
+    // This is the CONTROL buttons at the bottom of the Fragment. Uses a BottomNavView but does not navigate
+    private fun setUpMapFragmentBottomButtons() {
         binding.bottomNavMapFragment.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.miStartTracking -> {
@@ -371,7 +337,7 @@ class MapFragment : Fragment(), LocationListener {
                 R.id.endTracking -> {
                     Toast.makeText(
                         context,
-                        "Implement a Save run function in fun setUpMapFragmentBottomNav",
+                        "Implement a Save run function in fun setUpMapFragmentBottomButtons",
                         Toast.LENGTH_LONG
                     ).show()
                     viewModel.switchTracking()
@@ -390,7 +356,7 @@ class MapFragment : Fragment(), LocationListener {
                     }
                     Toast.makeText(
                         context,
-                        "Implement a Save changes to poi function in fun setUpMapFragmentBottomNav",
+                        "Implement a Save changes to poi function in fun setUpMapFragmentBottomButtons",
                         Toast.LENGTH_LONG
                     ).show()
                     viewModel.switchEditPointOfInterest()
@@ -399,6 +365,8 @@ class MapFragment : Fragment(), LocationListener {
             true
         }
     }
+
+    // This allows the user to drag a POI on the map if in edit mode
     private fun getMarkerDragListener(poi: PointOfInterest): OnMarkerDragListener {
             return object : OnMarkerDragListener {
                 override fun onMarkerDragStart(marker: Marker?) {
