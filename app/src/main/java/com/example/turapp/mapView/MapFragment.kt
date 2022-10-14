@@ -22,6 +22,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.BuildConfig
@@ -45,6 +46,7 @@ import java.io.IOException
 import java.util.*
 
 private val REQUEST_CODE = 123
+
 class MapFragment : Fragment() {
 
     private lateinit var binding: FragmentMapBinding
@@ -52,7 +54,6 @@ class MapFragment : Fragment() {
     var locLL: LatLng? = null
 
     private lateinit var map: MapView // 3
-
 
 
     private val viewModel: MapViewModel by lazy {
@@ -83,7 +84,7 @@ class MapFragment : Fragment() {
 
         // Setting up text window at top to show adress information as it comes in
         viewModel.positionInformation.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            binding.tvMapViewTop.text = it
+            binding.tvCurrentLocationInformation.text = it
         })
 
         // Setting up mvMap
@@ -98,6 +99,8 @@ class MapFragment : Fragment() {
         )
         compass.enableCompass()
         map.overlays.add(compass)
+        // This adds an eventOverlay that lets us configure a longpress listener
+        map.overlays.add(MapEventsOverlay(getEventsReceiver()))
 
         // This LiveData is updated when
         // override onLocationChanged in the viewModel gets its first Location
@@ -116,6 +119,18 @@ class MapFragment : Fragment() {
                 populateMapWithPois(it)
             }
         })
+        // TESTING SOMETHING
+        viewModel.editPointOfInterest.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            binding.etPoiTitle.apply {
+                isEnabled = it
+                setText(viewModel.positionInformation.value?: "")
+            }
+            if (it == true)
+                binding.poiInfoLayout.visibility = View.VISIBLE
+            else
+                binding.poiInfoLayout.visibility = View.GONE
+
+        })
 
         // Livedata. List with Locations that is updated when tracking
         viewModel.trackedLocations.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
@@ -132,8 +147,8 @@ class MapFragment : Fragment() {
             }
         })
 
-        // This adds an eventOverlay that lets us configure a longpress listener
-        map.overlays.add(MapEventsOverlay(getEventsReceiver()))
+        //
+
 
         requestAllPermission()
 
@@ -219,8 +234,6 @@ class MapFragment : Fragment() {
             }
         }
     }
-
-
 
 
     @SuppressLint("MissingPermission")
@@ -368,41 +381,40 @@ class MapFragment : Fragment() {
 
     // This allows the user to drag a POI on the map if in edit mode
     private fun getMarkerDragListener(poi: PointOfInterest): OnMarkerDragListener {
-            return object : OnMarkerDragListener {
-                override fun onMarkerDragStart(marker: Marker?) {
+        return object : OnMarkerDragListener {
+            override fun onMarkerDragStart(marker: Marker?) {
 
-                }
+            }
 
-                override fun onMarkerDrag(marker: Marker?) {
+            override fun onMarkerDrag(marker: Marker?) {
 
-                }
+            }
 
-                override fun onMarkerDragEnd(marker: Marker?) {
+            override fun onMarkerDragEnd(marker: Marker?) {
 
-                    if(marker != null) {
-                        val alertDialog = AlertDialog.Builder(context).create()
-                        alertDialog.setTitle(getString(R.string.change_poi_location_warning))
-                        alertDialog.setButton(
-                            AlertDialog.BUTTON_POSITIVE,
-                            "Yes"
-                        ) { dialog: DialogInterface,
-                            _: Int ->
-                            poi.poiLat = marker.position.latitude.toFloat()
-                            poi.poiLng = marker.position.longitude.toFloat()
-                            poi.poiAltitude = marker.position.altitude.toFloat()
-                            viewModel.replacePointOfInterest(poi)
-                        }
-                        alertDialog.setButton(
-                            AlertDialog.BUTTON_NEGATIVE,
-                            "No"
-                        ) { dialog: DialogInterface, _: Int ->
-                            viewModel.refreshPointOfInterest()
-                            dialog.dismiss()
-                        }
-                        alertDialog.show()
+                if (marker != null) {
+                    val alertDialog = AlertDialog.Builder(context).create()
+                    alertDialog.setTitle(getString(R.string.change_poi_location_warning))
+                    alertDialog.setButton(
+                        AlertDialog.BUTTON_POSITIVE,
+                        "Yes"
+                    ) { dialog: DialogInterface,
+                        _: Int ->
+                        poi.poiLat = marker.position.latitude.toFloat()
+                        poi.poiLng = marker.position.longitude.toFloat()
+                        poi.poiAltitude = marker.position.altitude.toFloat()
+                        viewModel.replacePointOfInterest(poi)
                     }
-                    else Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                }
+                    alertDialog.setButton(
+                        AlertDialog.BUTTON_NEGATIVE,
+                        "No"
+                    ) { dialog: DialogInterface, _: Int ->
+                        viewModel.refreshPointOfInterest()
+                        dialog.dismiss()
+                    }
+                    alertDialog.show()
+                } else Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+            }
 
 
         }
