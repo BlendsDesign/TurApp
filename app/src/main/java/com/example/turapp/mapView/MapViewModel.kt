@@ -9,6 +9,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.location.LocationManager.GPS_PROVIDER
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.*
@@ -28,13 +29,13 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
 
 
     // Setting up LOCATION SERVICE
-    private val lm: LocationManager = app.applicationContext
+    private val lm: LocationManager = app
         .getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     @SuppressLint("MissingPermission")
     fun setUpLocationUpdates() {
         if (checkPermissions()) {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0f, this)
+            lm.requestLocationUpdates(GPS_PROVIDER, 1000, 0f, this)
         }
     }
 
@@ -130,6 +131,7 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
         _tracking.value = false
         _editPointOfInterest.value = false
         refreshPointOfInterest()
+        setUpLocationUpdates()
         stepCounterSensor.startListening()
         stepCounterSensor.setOnSensorValuesChangedListener {
             if(_stepCounterData.value == null) {
@@ -211,11 +213,6 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
                         ActivityCompat.checkSelfPermission(
                             app.applicationContext,
                             Manifest.permission.ACCESS_COARSE_LOCATION
-                        ) == PackageManager.PERMISSION_GRANTED
-                        &&
-                        ActivityCompat.checkSelfPermission(
-                            app.applicationContext,
-                            Manifest.permission.HIGH_SAMPLING_RATE_SENSORS
                         ) == PackageManager.PERMISSION_GRANTED
                 )
     }
