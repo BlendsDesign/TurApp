@@ -11,6 +11,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.location.LocationManager.GPS_PROVIDER
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.*
 import com.example.turapp.Sensors.StepCounterSensor
@@ -197,8 +198,10 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
         if (_startingPos.value == null) {
             _startingPos.value = GeoPoint(loc.latitude, loc.longitude, loc.altitude)
         }
-        if (_tracking.value == true && !paused) {
-            _trackedLocations.value!!.add(loc)
+        if (_tracking.value == true &&  !paused) {
+            val temp :MutableList<Location> = _trackedLocations.value?: mutableListOf()
+            temp.add(loc)
+            _trackedLocations.value = temp
         }
         _positionInformation.value = getLocationInformation(loc.latitude, loc.longitude)
     }

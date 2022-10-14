@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.hardware.Sensor
 import android.location.Geocoder
-import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -47,8 +46,6 @@ private val REQUEST_CODE = 123
 class MapFragment : Fragment() {
 
     private lateinit var binding: FragmentMapBinding
-
-    var locLL: LatLng? = null
 
     private lateinit var map: MapView // 3
 
@@ -114,6 +111,8 @@ class MapFragment : Fragment() {
                 map.overlays.clear()
                 map.overlays.add(compass)
                 populateMapWithPois(it)
+
+
             }
         })
         // SHOWS THE EDIT TEXTS FOR A NEW POI
@@ -141,15 +140,7 @@ class MapFragment : Fragment() {
         // Livedata. List with Locations that is updated when tracking
         viewModel.trackedLocations.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if (it.isNotEmpty()) {
-                val list = mutableListOf<GeoPoint>()
-                it.forEach { loc ->
-                    list.add(GeoPoint(loc.latitude, loc.longitude, loc.altitude))
-                }
-                val path = Polyline()
-                path.color = Color.RED
-                path.setPoints(list)
-                map.overlayManager.add(path)
-                map.invalidate() //make sure the map is redrawn
+                drawTrackedLocations()
             }
         })
 
@@ -171,7 +162,6 @@ class MapFragment : Fragment() {
     }
 
     private fun populateMapWithPois(list: List<PointOfInterest>) {
-
         if (viewModel.editPointOfInterest.value != true)
             map.overlays.add(MapEventsOverlay(getEventsReceiver()))
 
@@ -202,7 +192,6 @@ class MapFragment : Fragment() {
 
                 }
                 if (viewModel.editPointOfInterest.value == true) {
-
                     posMarker.setOnMarkerClickListener { marker, mapView ->
                         val alertDialog = AlertDialog.Builder(context).create()
                         alertDialog.setTitle(getString(R.string.delete_are_you_sure))
@@ -253,6 +242,24 @@ class MapFragment : Fragment() {
                 viewModel.setAddingPOI(p)
                 return false
             }
+        }
+    }
+
+    private fun drawTrackedLocations() {
+
+        Log.d("drawTrackedLocations", viewModel.trackedLocations.value!!.lastIndex.toString())
+        val it = viewModel.trackedLocations.value ?: mutableListOf()
+        if (it.isNotEmpty()) {
+            val list = mutableListOf<GeoPoint>()
+            it.forEach { loc ->
+                list.add(GeoPoint(loc.latitude, loc.longitude, loc.altitude))
+            }
+            val path = Polyline()
+            path.color = Color.RED
+            path.setPoints(list)
+            map.overlayManager.add(path)
+            map.invalidate() //make sure the map is redrawn
+
         }
     }
 
