@@ -84,6 +84,7 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
                 repository.addSinglePoi(poi)
                 refreshPointOfInterest()
             }
+            _addingPOI.value = null
         }
     }
 

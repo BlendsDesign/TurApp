@@ -130,7 +130,7 @@ class MapFragment : Fragment() {
             } else {
                 binding.bottomNavMapFragment.apply {
                     this.menu.clear()
-                    this.inflateMenu(R.menu.when_editing_poi_in_mapview)
+                    this.inflateMenu(R.menu.map_fragment_bottom_nav)
                 }
                 binding.poiEditLayout.visibility = View.GONE
             }
@@ -367,18 +367,12 @@ class MapFragment : Fragment() {
                         val title = binding.etPoiTitle.text
                         val desc = binding.etPoiDescription.text
                         viewModel.addPoi(title.toString(), desc.toString())
+                        //binding.poiEditLayout.visibility = View.GONE
                     }
-                    binding.bottomNavMapFragment.apply {
-                        this.menu.clear()
-                        this.inflateMenu(R.menu.map_fragment_bottom_nav)
-                    }
+                    binding.poiEditLayout.visibility = View.GONE
                 }
                 R.id.miCancelAddingPoi -> {
                     viewModel.addPoiCancel()
-                    binding.bottomNavMapFragment.apply {
-                        this.menu.clear()
-                        this.inflateMenu(R.menu.map_fragment_bottom_nav)
-                    }
                 }
             }
             true
@@ -424,5 +418,10 @@ class MapFragment : Fragment() {
 
 
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshPointOfInterest()
     }
 }
