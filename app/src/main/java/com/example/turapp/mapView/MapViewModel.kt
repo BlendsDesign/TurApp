@@ -9,6 +9,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.*
 import com.example.turapp.Sensors.StepCounterSensor
@@ -37,12 +38,12 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
     }
 
     // Setting up STEP COUNTER
-    private val stepCounterSensor = StepCounterSensor(app)
-    private var _startingSteps : Float? = null
+    private var _startingSteps : Float = 0f
     private val _stepCounterData = MutableLiveData<Float>()
+    private val stepCounterSensor = StepCounterSensor(app)
     val stepCounterData : LiveData<Float> get() = _stepCounterData
     fun clearStepCount() {
-        _startingSteps = null
+        _startingSteps = _stepCounterData.value ?: 0f
     }
 
     // Livedata for starting position, current position and position information
@@ -124,9 +125,10 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
         refreshPointOfInterest()
         stepCounterSensor.startListening()
         stepCounterSensor.setOnSensorValuesChangedListener {
-            if (_startingSteps == null)
+            if(_stepCounterData.value == null) {
                 _startingSteps = it[0]
-            _stepCounterData.value = it[0] - (_startingSteps ?: it[0])
+            }
+            _stepCounterData.value = it[0] - _startingSteps
         }
     }
 

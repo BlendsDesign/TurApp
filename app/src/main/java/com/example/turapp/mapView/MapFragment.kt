@@ -137,7 +137,7 @@ class MapFragment : Fragment() {
         })
 
         viewModel.stepCounterData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            binding.tvStepsensorData.text = it.toInt().toString()
+            binding.tvStepsensorData.text = "$it"
         })
 
         // Livedata. List with Locations that is updated when tracking
@@ -224,7 +224,8 @@ class MapFragment : Fragment() {
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.HIGH_SAMPLING_RATE_SENSORS
+                Manifest.permission.HIGH_SAMPLING_RATE_SENSORS,
+                Manifest.permission.ACTIVITY_RECOGNITION
             ), REQUEST_CODE
         ) //2
     }
