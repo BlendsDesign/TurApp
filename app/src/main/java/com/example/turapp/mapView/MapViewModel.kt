@@ -120,7 +120,7 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
         viewModelScope.launch {
             val geoList: List<Location> = _trackedLocations.value ?: listOf()
             _trackedLocations.value = mutableListOf()
-            if (!geoList.isEmpty()) {
+            if (geoList.isNotEmpty()) {
                 val timeTaken: Long = geoList[geoList.size - 1].time - geoList[0].time
                 var distance = 0.0
                 var temp = geoList[0]
@@ -130,7 +130,10 @@ class MapViewModel(private val app: Application) : ViewModel(), LocationListener
                 }
                 val ra = RecordedActivity(
                     title = title, description = desc, timestamp = geoList.first().time,
-                    timeInMillis = timeTaken, totalDistance = distance.toInt()
+                    timeInMillis = timeTaken, totalDistance = distance.toInt(),
+                    startingLat = geoList.first().latitude.toFloat(),
+                    startingLng = geoList.first().longitude.toFloat(),
+                    startingAltitude = geoList.first().altitude.toFloat()
                 )
                 repository.insertRecordedActivityAndGeoData(ra, geoList)
             }

@@ -55,6 +55,9 @@ interface PoiDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActivity(activity: RecordedActivity): Long
 
+    @Query("DELETE FROM activity_lat_lng WHERE activityId = :activityId")
+    suspend fun deleteAssociatedActivityGeoData(activityId: Int)
+
     @Delete
     suspend fun deleteRecordedActivity(recordedActivity: RecordedActivity)
 
@@ -65,11 +68,12 @@ interface PoiDao {
 
     @Transaction
     @Query("SELECT * FROM recorded_activity_table WHERE activityId = :activityId")
-    fun getActivity(activityId: Int): LiveData<RecordedActivity>
+    suspend fun getActivity(activityId: Int): List<RecordedActivity>
+
 
     @Transaction
     @Query("SELECT * FROM recorded_activity_table WHERE activityId = :activityId")
-    fun getActivityWithGeoData(activityId: Int): LiveData<List<ActivityWithGeoData>>
+    suspend fun getActivityWithGeoData(activityId: Int): List<ActivityWithGeoData>
 
     @Transaction
     @Query("SELECT * FROM recorded_activity_table WHERE (startingLat BETWEEN :minLat AND :maxLat) AND (startingLng BETWEEN :minLng AND :maxLng)")

@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
-import com.example.turapp.mapView.MapFragment
-import com.google.android.gms.maps.model.LatLng
+import com.example.turapp.roomDb.TypeOfPoint
 import java.io.IOException
 import java.sql.Timestamp
 import java.util.*
@@ -23,7 +23,8 @@ import java.util.*
 class PointOfInterestFragment : Fragment() {
     // TODO: Rename and change types of parameters
 
-    private var poi: Int = -1
+    private var id: Int? = null
+    private var type: TypeOfPoint? = null
 
     private lateinit var _binding: FragmentPointOfInterestBinding
     private val binding get() = _binding
@@ -35,10 +36,14 @@ class PointOfInterestFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val app = requireNotNull(activity).application
         arguments?.let {
-            poi = it.getInt("poiId")
+            id = it.getInt("id")
+            type = it.get("type") as TypeOfPoint
         }
-        viewModel = ViewModelProvider(this, PointOfInterestViewModel.Factory(app, poi))
-            .get(PointOfInterestViewModel::class.java)
+        if (id != null && type != null) {
+            viewModel = ViewModelProvider(this, PointOfInterestViewModel.Factory(app, id!!, type!!))
+                .get(PointOfInterestViewModel::class.java)
+        } else
+            findNavController().popBackStack()
     }
 
     override fun onCreateView(
@@ -79,12 +84,36 @@ class PointOfInterestFragment : Fragment() {
                     val tv = binding.tvRecording
                     adapter = RecordingListAdapter(it.recording, linear, tv)
                 }
-            } else {
-                findNavController().navigate(PointOfInterestFragmentDirections.actionPointOfInterestFragmentToStartFragment())
             }
-
-
         })
+        viewModel.activity.observe(viewLifecycleOwner, Observer { act ->
+            if (act != null) {
+                //Set up POI textviews
+                binding.apply {
+                    tvPoiName.text = act.activity.title
+                    tvPoiDate.text =
+                        String.format("Recorded at: ${Date(Timestamp(act.activity.timestamp).time)}")
+                    val loc = getLocationInformation(act.activity.startingLat, act.activity.startingLng)
+                    tvPoiLength.text = String.format("Location: ${loc}")
+                    tvTotalPoiWithRecordingsSize.text = String.format("Ran: ${act.activity.totalDistance} meters")
+                    btCloseRecordingView.setOnClickListener {
+                        binding.showRecordingView.visibility = View.GONE
+                    }
+                    btDelete.setOnClickListener {
+                        val alertDialog = AlertDialog.Builder(context).create()
+                        alertDialog.setTitle(getString(R.string.delete_are_you_sure))
+                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") {
+                                dialog: DialogInterface, _: Int -> viewModel.deletePoi()
+                        }
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "No") {
+                                dialog: DialogInterface, _: Int -> dialog.dismiss()
+                        }
+                        alertDialog.show()
+                    }
+                }
+            }
+        })
+
 
         viewModel.loadingImage.observe(viewLifecycleOwner, Observer {
             if(it) {

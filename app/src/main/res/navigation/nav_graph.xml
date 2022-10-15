@@ -37,13 +37,16 @@
         android:label="fragment_point_of_interest"
         tools:layout="@layout/fragment_point_of_interest" >
         <argument
-            android:name="poiId"
+            android:name="id"
             app:argType="integer" />
         <action
             android:id="@+id/action_pointOfInterestFragment_to_startFragment"
             app:destination="@id/startFragment"
             app:popUpTo="@id/startFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="type"
+            app:argType="com.example.turapp.roomDb.TypeOfPoint" />
     </fragment>
 
 

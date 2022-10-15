@@ -29,6 +29,15 @@ class MyRepository(private val poiDao: PoiDao) {
         poiDao.deletePoi(poi)
     }
 
+    suspend fun deleteActivityAndGeoData(act: RecordedActivity) {
+        val id = act.activityId
+        if (id != null) {
+            poiDao.deleteAssociatedActivityGeoData(id)
+            poiDao.deleteRecordedActivity(act)
+
+        }
+    }
+
     suspend fun insertRecordedActivityAndGeoData(
         recordedActivity: RecordedActivity,
         geo: List<Location>
@@ -53,7 +62,7 @@ class MyRepository(private val poiDao: PoiDao) {
     }
 
     suspend fun insertActivityGeoData(activityId: Int, loc: Location) {
-        if (poiDao.getActivity(activityId).value != null) {
+        if (poiDao.getActivity(activityId).isNotEmpty()) {
             poiDao.insertActivityGeoData(
                 ActivityGeoData(activityId, loc.latitude.toFloat(), loc.longitude.toFloat())
             )
