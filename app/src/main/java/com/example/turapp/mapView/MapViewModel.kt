@@ -10,16 +10,13 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.location.LocationManager.GPS_PROVIDER
-import android.util.Log
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.*
 import com.example.turapp.Sensors.StepCounterSensor
-import com.example.turapp.roomDb.MyRepository
+import com.example.turapp.repository.MyRepository
 import com.example.turapp.roomDb.PoiDatabase
 import com.example.turapp.roomDb.entities.PointOfInterest
 import com.example.turapp.roomDb.entities.RecordedActivity
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker

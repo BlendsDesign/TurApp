@@ -18,13 +18,12 @@ class StartFragment : Fragment() {
         ViewModelProvider(this, StartViewModel.Factory(app))[StartViewModel::class.java]
     }
 
-    private var _binding: StartFragmentBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: StartFragmentBinding
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
-        _binding = StartFragmentBinding.inflate(inflater, container, false)
+        binding = StartFragmentBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 

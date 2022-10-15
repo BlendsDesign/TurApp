@@ -18,7 +18,7 @@ class LiveSensorDataFragment : Fragment() {
         ViewModelProvider(
             this,
             LiveSensorDataViewModel.Factory(app)
-        ).get(LiveSensorDataViewModel::class.java)
+        )[LiveSensorDataViewModel::class.java]
 
     }
 

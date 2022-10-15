@@ -8,7 +8,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.turapp.roomDb.entities.*
 
 @Database(
@@ -18,12 +17,13 @@ import com.example.turapp.roomDb.entities.*
         RecordedActivity::class,
         ActivityGeoData::class
     ],
-    version = 10,
+    version = 11,
     autoMigrations = [AutoMigration(
         from = 9,
         to = 10,
         spec = PoiDatabase.MyExampleAutoMigration::class
-    )],
+    ), AutoMigration(from = 10, to = 11, spec = PoiDatabase.Migration10To11::class)
+                     ],
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -35,6 +35,12 @@ abstract class PoiDatabase: RoomDatabase() {
         fromColumnName = "distance",
         toColumnName = "totalDistance")
     class MyExampleAutoMigration : AutoMigrationSpec {}
+    @RenameColumn(
+        tableName = "activity_lat_lng",
+        fromColumnName = "personalBestFromPrev",
+        toColumnName = "timeSincePrev")
+    class Migration10To11 : AutoMigrationSpec {}
+
 
 
     companion object {

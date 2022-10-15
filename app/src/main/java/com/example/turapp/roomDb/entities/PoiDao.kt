@@ -58,6 +58,11 @@ interface PoiDao {
     @Delete
     suspend fun deleteRecordedActivity(recordedActivity: RecordedActivity)
 
+
+    @Transaction
+    @Query("SELECT * FROM recorded_activity_table")
+    suspend fun getAllActivities(): List<RecordedActivity>
+
     @Transaction
     @Query("SELECT * FROM recorded_activity_table WHERE activityId = :activityId")
     fun getActivity(activityId: Int): LiveData<RecordedActivity>

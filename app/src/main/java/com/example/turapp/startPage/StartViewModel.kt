@@ -2,10 +2,10 @@ package com.example.turapp.startPage
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.turapp.roomDb.MyRepository
+import com.example.turapp.repository.MyRepository
 import com.example.turapp.roomDb.PoiDatabase
+import com.example.turapp.roomDb.SimplePoiAndActivities
 import com.example.turapp.roomDb.entities.PoiDao
-import com.example.turapp.roomDb.entities.PointOfInterest
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
@@ -14,8 +14,8 @@ class StartViewModel(app: Application) : ViewModel() {
 
     private val dao : PoiDao = PoiDatabase.getInstance(app).poiDao
     private val repository = MyRepository(dao)
-    private val _points = MutableLiveData<List<PointOfInterest>>()
-    val points : LiveData<List<PointOfInterest>> get() = _points
+    private val _points = MutableLiveData<List<SimplePoiAndActivities>>()
+    val points : LiveData<List<SimplePoiAndActivities>> get() = _points
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading : LiveData<Boolean> get() = _isLoading
 
@@ -23,7 +23,7 @@ class StartViewModel(app: Application) : ViewModel() {
         _isLoading.value = true
 
         viewModelScope.launch {
-            _points.value = repository.getAllPoi()
+            _points.value = repository.getListOfSimplePoiAndActivities()
             _isLoading.value = false
         }
     }
@@ -32,7 +32,7 @@ class StartViewModel(app: Application) : ViewModel() {
         _isLoading.value = true
 
         viewModelScope.launch {
-            _points.value = repository.getAllPoi()
+            _points.value = repository.getListOfSimplePoiAndActivities()
             _isLoading.value = false
         }
     }

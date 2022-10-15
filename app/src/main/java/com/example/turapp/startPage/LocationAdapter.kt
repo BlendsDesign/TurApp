@@ -5,13 +5,14 @@ import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.turapp.databinding.RvItemLocationBinding
-import com.example.turapp.roomDb.entities.PointOfInterest
+import com.example.turapp.roomDb.SimplePoiAndActivities
+import com.example.turapp.roomDb.TypeOfPoint
 import kotlinx.android.synthetic.main.rv_item_location.view.*
 
 // BASED ON https://youtu.be/HtwDXRWjMcU
 
 class LocationAdapter(
-    var locations: List<PointOfInterest>,
+    var locations: List<SimplePoiAndActivities>,
     val nav: NavController
 ) : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
@@ -31,12 +32,12 @@ class LocationAdapter(
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         holder.itemView.apply {
             val loc = locations[position]
-            tvLocationName.text = loc.poiName + loc.poiId.toString()
-            tvDistance.text = loc.poiLengt.toString()
+            tvLocationName.text = loc.title
+            tvDistance.text = if (loc.type == TypeOfPoint.RECORDED_ACTIVITY) "Activity" else "POI"
             setOnClickListener {
                 nav.navigate(
                     StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(
-                        loc.poiId?: -1
+                        loc.id
                     )
                 )
             }

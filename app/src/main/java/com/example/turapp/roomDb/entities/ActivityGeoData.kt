@@ -11,7 +11,7 @@ class ActivityGeoData(
     var lng: Float? = null,
     var altitude: Float? = null,
     var distanceToPrev: Float? = null,
-    var personalBestFromPrev: Long? = null,
+    var timeSincePrev: Long? = null,
     var title: String? = null,
     var description: String? = null,
 ) {
