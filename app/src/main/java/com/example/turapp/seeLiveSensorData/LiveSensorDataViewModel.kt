@@ -45,11 +45,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     private val _recAccSensorData = MutableLiveData<Boolean>()
     val recAccSensorData: LiveData<Boolean> get() = _recAccSensorData
     fun setRecAccSensorData() {
-        if (_recAccSensorData.value != true) {
-            _recAccSensorData.value = true
-        } else {
-            _recAccSensorData.value = false
-        }
+        _recAccSensorData.value = _recAccSensorData.value != true
     }
 
     // GYROSENSOR
@@ -63,11 +59,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     private val _recGyroSensorData = MutableLiveData<Boolean>()
     val recGyroSensorData: LiveData<Boolean> get() = _recGyroSensorData
     fun setRecGyroSensorData() {
-        if (_recGyroSensorData.value != true) {
-            _recGyroSensorData.value = true
-        } else {
-            _recGyroSensorData.value = false
-        }
+        _recGyroSensorData.value = _recGyroSensorData.value != true
     }
 
     // MAGNETOSENSOR
@@ -78,11 +70,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     private val _recMagnetoSensorData = MutableLiveData<Boolean>()
     val recMagnetoSensorData: LiveData<Boolean> get() = _recMagnetoSensorData
     fun setRecMagnetoSensorData() {
-        if (_recMagnetoSensorData.value != true) {
-            _recMagnetoSensorData.value = true
-        } else {
-            _recMagnetoSensorData.value = false
-        }
+        _recMagnetoSensorData.value = _recMagnetoSensorData.value != true
     }
 
     // ORIENTATION
@@ -96,11 +84,7 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     val recOrientationSensorData: LiveData<Boolean> get() = _recOrientationSensorData
     private var _recOrientation: Boolean = false
     fun setRecOrientationSensorData() {
-        if (_recOrientationSensorData.value != true) {
-            _recOrientationSensorData.value = true
-        } else {
-            _recOrientationSensorData.value = false
-        }
+        _recOrientationSensorData.value = _recOrientationSensorData.value != true
     }
 
 
