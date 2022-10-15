@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
 import com.example.turapp.roomDb.TypeOfPoint
+import com.example.turapp.roomDb.entities.RecordedActivity
 import java.io.IOException
 import java.sql.Timestamp
 import java.util.*
@@ -95,7 +96,7 @@ class PointOfInterestFragment : Fragment() {
                         String.format("Recorded at: ${Date(Timestamp(act.activity.timestamp).time)}")
                     val loc = getLocationInformation(act.activity.startingLat, act.activity.startingLng)
                     tvPoiLength.text = String.format("Location: ${loc}")
-                    tvTotalPoiWithRecordingsSize.text = String.format("Ran: ${act.activity.totalDistance} meters")
+                    tvTotalPoiWithRecordingsSize.text = getActivityInformationString(act.activity)
                     btCloseRecordingView.setOnClickListener {
                         binding.showRecordingView.visibility = View.GONE
                     }
@@ -142,5 +143,13 @@ class PointOfInterestFragment : Fragment() {
             e.printStackTrace()
         }
         return ""
+    }
+    private fun getActivityInformationString(act : RecordedActivity): String {
+        val distance = act.totalDistance ?: 0
+        val timeInSeconds: Double = act.timeInMillis / 1000.0
+        val speed = distance.div(timeInSeconds)
+        return String.format(
+            "You ran %d meters in %.2f seconds at a speed of %.2f m/s", distance, timeInSeconds, speed
+        )
     }
 }
