@@ -48,6 +48,10 @@
             android:name="type"
             app:argType="com.example.turapp.roomDb.TypeOfPoint" />
     </fragment>
+    <fragment
+        android:id="@+id/trackingFragment"
+        android:name="com.example.turapp.trackingFragment.TrackingFragment"
+        android:label="TrackingFragment" />
 
 
 </navigation>

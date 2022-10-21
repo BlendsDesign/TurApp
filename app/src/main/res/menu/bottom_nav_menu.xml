@@ -8,7 +8,7 @@
 
     </item>
     <item
-        android:id="@+id/mapFragment"
+        android:id="@+id/trackingFragment"
         android:title="Map"
         android:icon="@drawable/ic_map">
 

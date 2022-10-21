@@ -75,6 +75,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation  'org.osmdroid:osmdroid-android:6.1.11'
 
+    // Easy Permissions
+    implementation 'pub.devrel:easypermissions:3.0.0'
 
 
 
