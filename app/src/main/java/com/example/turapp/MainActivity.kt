@@ -1,6 +1,8 @@
 package com.example.turapp
 
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -17,6 +19,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.turapp.cameraView.CameraFragment
 import com.example.turapp.databinding.ActivityMainBinding
+import com.example.turapp.helperFiles.CHANNEL_ID
 import com.example.turapp.mapView.MapFragment
 import com.example.turapp.seeLiveSensorData.LiveSensorDataFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         //setSupportActionBar(findViewById(R.id.turToolbar))

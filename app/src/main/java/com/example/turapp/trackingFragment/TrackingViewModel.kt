@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.helperFiles.MyLocationListener
+import com.example.turapp.helperFiles.STARTING_POINT
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 
@@ -15,15 +16,24 @@ import org.osmdroid.views.overlay.Marker
 
 class TrackingViewModel(private val app: Application): ViewModel() {
 
-    private var locationListener = MyLocationListener(app.getSystemService(Context.LOCATION_SERVICE) as LocationManager)
+    private var locationListener = MyLocationListener(app)
 
     private val _markersList = MutableLiveData<List<Marker>>()
     val markersList : LiveData<List<Marker>> get() = _markersList
 
     val locGeoPoint: LiveData<GeoPoint> = locationListener.locGeoPoint
 
-    init {
+    val pas = STARTING_POINT
 
+    private val _isTracking = MutableLiveData<Boolean>()
+    val isTracking : LiveData<Boolean> get() = _isTracking
+    fun switchIsTracking() {
+        _isTracking.value = _isTracking.value != true
+    }
+
+
+
+    init {
     }
 
 

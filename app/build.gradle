@@ -78,6 +78,9 @@ dependencies {
     // Easy Permissions
     implementation 'pub.devrel:easypermissions:3.0.0'
 
+    // Location Services PLAY STORE NEEDED
+    implementation 'com.google.android.gms:play-services-location:21.0.0'
+
 
 
 }

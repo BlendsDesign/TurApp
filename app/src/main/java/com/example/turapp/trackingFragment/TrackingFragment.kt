@@ -2,6 +2,7 @@ package com.example.turapp.trackingFragment
 
 import android.Manifest
 import android.content.ContextWrapper
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,12 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import com.example.turapp.BuildConfig
 import com.example.turapp.Helper
 import com.example.turapp.databinding.FragmentTrackingBinding
 import com.example.turapp.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.turapp.helperFiles.TrackingUtility
+import com.example.turapp.utils.LocationService
 import kotlinx.android.synthetic.main.fragment_tracking.*
+import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
@@ -50,7 +52,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding = FragmentTrackingBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        map = trackingMap
+        map = binding.trackingMap
         map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
         map.setMultiTouchControls(true) //3
         map.setTileSource(TileSourceFactory.MAPNIK)
@@ -67,6 +69,34 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.tvFirstTextViewInTracking.apply {
+            text = "PRESS HERE TO TEST LOCATIONSERVICE"
+            setOnClickListener {
+                if (viewModel.isTracking.value != true) {
+                    Intent(context, LocationService::class.java).apply {
+                        action = LocationService.ACTION_START
+                        context.startService(this)
+                    }
+                    viewModel.switchIsTracking()
+                } else {
+                    Intent(context, LocationService::class.java).apply {
+                        action = LocationService.ACTION_STOP
+                        context.startService(this)
+                    }
+                    viewModel.switchIsTracking()
+                }
+
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Intent(context, LocationService::class.java).apply {
+            action = LocationService.ACTION_STOP
+            context?.startService(this)
+        }
     }
 
 
@@ -80,7 +110,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 "You need to accept location permissions to use this app.",
                 REQUEST_CODE_LOCATION_PERMISSION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACTIVITY_RECOGNITION
             )
         } else {
             EasyPermissions.requestPermissions(
@@ -89,7 +120,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 REQUEST_CODE_LOCATION_PERMISSION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                Manifest.permission.ACTIVITY_RECOGNITION
             )
         }
     }
