@@ -16,7 +16,7 @@ import com.example.turapp.utils.helperFiles.Helper
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentTrackingBinding
 import com.example.turapp.utils.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
-import com.example.turapp.utils.helperFiles.TrackingUtility
+import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.viewmodels.TrackingViewModel
 import com.example.turapp.utils.locationClient.LocationService
 import org.osmdroid.library.BuildConfig
@@ -47,7 +47,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         org.osmdroid.config.Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
         Helper.suggestedFix(contextWrapper = ContextWrapper(context))
         requestPermissions()
-        if (TrackingUtility.hasLocationPermissions(requireContext())) {
+        if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
             viewModel.startLocationClient()
         }
     }
@@ -71,7 +71,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         map.overlays.add(compass)
         map.controller.setZoom(20.0)
         viewModel.startingPoint.observe(viewLifecycleOwner, Observer {
-            if (it != null){
+            if (it != null) {
                 map.controller.setCenter(it)
             }
         })
@@ -94,6 +94,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             text = "PRESS HERE TO TEST LOCATIONSERVICE"
             setOnClickListener {
                 if (viewModel.isTracking.value != true) {
+                    // Her starter vi Locationservice som skal brukes til tracking
                     Intent(context, LocationService::class.java).apply {
                         action = LocationService.ACTION_START
                         context.startService(this)
@@ -121,33 +122,22 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
 
     private fun requestPermissions() {
-        if(TrackingUtility.hasLocationPermissions(requireContext())) {
+        if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
             return
         }
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            EasyPermissions.requestPermissions(
-                this,
-                "You need to accept location permissions to use this app.",
-                REQUEST_CODE_LOCATION_PERMISSION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACTIVITY_RECOGNITION
-            )
-        } else {
-            EasyPermissions.requestPermissions(
-                this,
-                "You need to accept location permissions to use this app.",
-                REQUEST_CODE_LOCATION_PERMISSION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-                Manifest.permission.ACTIVITY_RECOGNITION
-            )
-        }
+        EasyPermissions.requestPermissions(
+            this,
+            "You need to accept location permissions to use this app.",
+            REQUEST_CODE_LOCATION_PERMISSION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+            Manifest.permission.ACTIVITY_RECOGNITION
+        )
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-        if(EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             AppSettingsDialog.Builder(this).build().show()
         } else {
             requestPermissions()

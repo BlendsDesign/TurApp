@@ -1,6 +1,7 @@
 package com.example.turapp.viewmodels
 
 import android.app.Application
+import android.location.Location
 import android.widget.Toast
 import androidx.lifecycle.*
 import com.example.turapp.utils.locationClient.DefaultLocationClient
@@ -28,6 +29,8 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     private val _currentLocation = MutableLiveData<GeoPoint>()
     val currentLocation: LiveData<GeoPoint> get() = _currentLocation
 
+    private val _locationLocation = MutableLiveData<Location>()
+
     private val _startingPoint = MutableLiveData<GeoPoint>()
     val startingPoint : LiveData<GeoPoint> get() = _startingPoint
 
@@ -50,13 +53,14 @@ class TrackingViewModel(private val app: Application): ViewModel() {
         locationClient.getLocationUpdates(5000L)
             .catch { e -> Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show() }
             .onEach { location ->
+                _locationLocation.value = location
                 val lat = location.latitude
                 val long = location.longitude
                 val alt = location.altitude
                 val time = location.time
                 _currentLocation.value = GeoPoint(lat, long, alt)
                 if (_startingPoint.value == null)
-                    _startingPoint.value = _currentLocation.value
+                    _startingPoint.value = GeoPoint(lat, long, alt)
             }
             .launchIn(viewModelScope)
     }

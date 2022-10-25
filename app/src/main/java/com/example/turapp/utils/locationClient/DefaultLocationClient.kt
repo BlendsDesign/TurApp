@@ -6,7 +6,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
 import android.util.Log
-import com.example.turapp.utils.helperFiles.TrackingUtility
+import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -24,7 +24,8 @@ class DefaultLocationClient(
     @SuppressLint("MissingPermission")
     override fun getLocationUpdates(interval: Long): Flow<Location> {
         return callbackFlow {
-            if (!TrackingUtility.hasLocationPermissions(context)) {
+
+            if (!PermissionCheckUtility.hasLocationPermissions(context)) {
                 throw LocationClient.LocationException("Missing location permission")
             }
 
