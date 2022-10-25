@@ -78,7 +78,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
         val clMarker = Marker(map)
         clMarker.icon = getDrawable(requireContext(), R.drawable.ic_my_location)
-        viewModel.currentLocation.observe(viewLifecycleOwner, Observer {
+        viewModel.currentPosition.observe(viewLifecycleOwner, Observer {
             clMarker.position = it
         })
         map.overlayManager.add(clMarker)

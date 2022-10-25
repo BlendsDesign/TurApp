@@ -26,10 +26,11 @@ class TrackingViewModel(private val app: Application): ViewModel() {
 
     //val locGeoPoint: LiveData<GeoPoint> = locationListener.locGeoPoint
 
-    private val _currentLocation = MutableLiveData<GeoPoint>()
-    val currentLocation: LiveData<GeoPoint> get() = _currentLocation
+    private val _currentLocation = MutableLiveData<Location>()
+    val currentLocation: LiveData<Location> get() = _currentLocation
 
-    private val _locationLocation = MutableLiveData<Location>()
+    private val _currentPosition = MutableLiveData<GeoPoint>()
+    val currentPosition: LiveData<GeoPoint> get() = _currentPosition
 
     private val _startingPoint = MutableLiveData<GeoPoint>()
     val startingPoint : LiveData<GeoPoint> get() = _startingPoint
@@ -53,12 +54,12 @@ class TrackingViewModel(private val app: Application): ViewModel() {
         locationClient.getLocationUpdates(5000L)
             .catch { e -> Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show() }
             .onEach { location ->
-                _locationLocation.value = location
+                _currentLocation.value = location
                 val lat = location.latitude
                 val long = location.longitude
                 val alt = location.altitude
                 val time = location.time
-                _currentLocation.value = GeoPoint(lat, long, alt)
+                _currentPosition.value = GeoPoint(lat, long, alt)
                 if (_startingPoint.value == null)
                     _startingPoint.value = GeoPoint(lat, long, alt)
             }
