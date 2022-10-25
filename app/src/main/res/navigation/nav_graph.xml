@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/startFragment"
-        android:name="com.example.turapp.startPage.StartFragment"
+        android:name="com.example.turapp.fragments.StartFragment"
         android:label="start_fragment"
         tools:layout="@layout/start_fragment" >
         <action
@@ -17,23 +17,17 @@
     </fragment>
     <fragment
         android:id="@+id/liveSensorDataFragment"
-        android:name="com.example.turapp.seeLiveSensorData.LiveSensorDataFragment"
+        android:name="com.example.turapp.fragments.LiveSensorDataFragment"
         android:label="fragment_live_sensor_data"
         tools:layout="@layout/fragment_live_sensor_data" />
     <fragment
-        android:id="@+id/mapFragment"
-        android:name="com.example.turapp.mapView.MapFragment"
-        android:label="fragment_map"
-        tools:layout="@layout/fragment_map" >
-    </fragment>
-    <fragment
         android:id="@+id/cameraFragment"
-        android:name="com.example.turapp.cameraView.CameraFragment"
+        android:name="com.example.turapp.fragments.CameraFragment"
         android:label="fragment_camera"
         tools:layout="@layout/fragment_camera" />
     <fragment
         android:id="@+id/pointOfInterestFragment"
-        android:name="com.example.turapp.ShowPointOfInterest.PointOfInterestFragment"
+        android:name="com.example.turapp.fragments.PointOfInterestFragment"
         android:label="fragment_point_of_interest"
         tools:layout="@layout/fragment_point_of_interest" >
         <argument
@@ -50,7 +44,7 @@
     </fragment>
     <fragment
         android:id="@+id/trackingFragment"
-        android:name="com.example.turapp.trackingFragment.TrackingFragment"
+        android:name="com.example.turapp.fragments.TrackingFragment"
         android:label="TrackingFragment" />
 
 

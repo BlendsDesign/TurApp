@@ -1,6 +1,7 @@
 package com.example.turapp.repository
 
 import android.location.Location
+import com.example.turapp.roomDb.entities.*
 import com.example.turapp.roomDb.SimplePoiAndActivities
 import com.example.turapp.roomDb.TypeOfPoint
 import com.example.turapp.roomDb.entities.*

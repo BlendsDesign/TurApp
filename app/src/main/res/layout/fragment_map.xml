@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.turapp.mapView.MapViewModel" />
+            type="com.example.turapp.viewmodels.MapViewModel" />
     </data>
 
 

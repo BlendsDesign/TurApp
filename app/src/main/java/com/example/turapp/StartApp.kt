@@ -4,7 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import com.example.turapp.helperFiles.CHANNEL_ID
+import com.example.turapp.utils.helperFiles.CHANNEL_ID
 
 class StartApp: Application() {
 

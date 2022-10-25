@@ -2,11 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".startPage.StartFragment">
+    tools:context=".fragments.StartFragment">
     <data>
         <variable
             name="viewModel"
-            type="com.example.turapp.startPage.StartViewModel" />
+            type="com.example.turapp.viewmodels.StartViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

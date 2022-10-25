@@ -23,7 +23,7 @@
         android:theme="@style/Theme.TurApp"
         tools:targetApi="31">
         
-        <service android:name=".utils.LocationService"
+        <service android:name=".utils.locationClient.LocationService"
             android:foregroundServiceType="location"
             android:exported="false"/>
         
