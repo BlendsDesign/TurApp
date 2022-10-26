@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
+import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import com.example.turapp.R
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
@@ -58,6 +59,8 @@ class LocationService: Service() {
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setOngoing(true)
             .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
+            .setSilent(true)
+            .setVisibility(VISIBILITY_PUBLIC)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
