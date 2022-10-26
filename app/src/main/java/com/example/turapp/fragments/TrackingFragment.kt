@@ -73,6 +73,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         viewModel.startingPoint.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 map.controller.setCenter(it)
+                map.invalidate()
             }
         })
 
