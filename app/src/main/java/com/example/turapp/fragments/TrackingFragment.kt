@@ -1,14 +1,17 @@
 package com.example.turapp.fragments
 
 import android.Manifest
+import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +22,7 @@ import com.example.turapp.utils.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.viewmodels.TrackingViewModel
 import com.example.turapp.utils.locationClient.LocationService
+import kotlinx.android.synthetic.main.fragment_tracking.*
 import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.CustomZoomButtonsController
@@ -36,6 +40,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private lateinit var map: MapView // 3
 
+    private var totalSteps = 0 //
+    private var previousTotalSteps = 0f
 
     private val viewModel: TrackingViewModel by lazy {
         val app = requireNotNull(activity).application
@@ -45,10 +51,29 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         org.osmdroid.config.Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
+        loadStepData()
         Helper.suggestedFix(contextWrapper = ContextWrapper(context))
         requestPermissions()
         if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
             viewModel.startLocationClient()
+        }
+    }
+
+    private fun saveStepData() {
+
+        val sharedPreferences = context?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences?.edit()
+        editor?.putFloat("key1",previousTotalSteps)
+        editor?.apply()
+    }
+
+    private fun loadStepData()
+    {
+        val sharedPreferences = context?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val savedNumber = sharedPreferences?.getFloat("key1", 0f)
+        Log.d("loadStepData fun", "$savedNumber")
+        if (savedNumber != null) {
+            previousTotalSteps = savedNumber
         }
     }
 
@@ -83,6 +108,24 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             clMarker.position = it
         })
         map.overlayManager.add(clMarker)
+
+        viewModel.stepCountData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            totalSteps++
+            binding.tvStepCount.text = ("$totalSteps")
+
+            tvStepCount.setOnClickListener { view ->
+                Toast.makeText(context, "Long tap to reset steps!", Toast.LENGTH_SHORT).show()
+            }
+
+            tvStepCount.setOnLongClickListener{ view ->
+                previousTotalSteps = totalSteps.toFloat()
+                totalSteps = 0 //reset
+                binding.tvStepCount.text = 0.toString()
+                saveStepData()
+                true
+            }
+        })
+
 
         return binding.root
     }

@@ -45,3 +45,11 @@ class StepCounterSensor(
     sensorFeature = PackageManager.FEATURE_SENSOR_STEP_COUNTER,
     sensorType = Sensor.TYPE_STEP_COUNTER
 )
+
+class StepDetectorSensor(
+    context: Context
+): AndroidSensor(
+    context = context,
+    sensorFeature = PackageManager.FEATURE_SENSOR_STEP_DETECTOR,
+    sensorType = Sensor.TYPE_STEP_DETECTOR
+)

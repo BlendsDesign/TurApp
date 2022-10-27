@@ -2,8 +2,10 @@ package com.example.turapp.viewmodels
 
 import android.app.Application
 import android.location.Location
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.*
+import com.example.turapp.utils.Sensors.StepDetectorSensor
 import com.example.turapp.utils.locationClient.DefaultLocationClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.catch
@@ -44,15 +46,21 @@ class TrackingViewModel(private val app: Application): ViewModel() {
         _isTracking.value = _isTracking.value != true
     }
 
-
+    private val stepCountSensor = StepDetectorSensor(app)
+    private var _stepCountData = MutableLiveData<Float>()
+    val stepCountData: LiveData<Float> get() = _stepCountData
 
     init {
+        stepCountSensor.startListening()
+        stepCountSensor.setOnSensorValuesChangedListener {
+            _stepCountData.value = it[0]
+        }
 
     }
     fun startLocationClient() {
         // This is only for the map, and not for the tracking service
         locationClient.getLocationUpdates(5000L)
-            .catch { e -> Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show() }
+            .catch { e -> e.printStackTrace()/*Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show()*/ }
             .onEach { location ->
                 _currentLocation.value = location
                 val lat = location.latitude
