@@ -16,15 +16,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="THIS WILL BE A CAMERA FRAGMENT"-->
+<!--            android:textSize="25sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+
+        <TextureView
+            android:id="@+id/cameraView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="THIS WILL BE A CAMERA FRAGMENT"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX = "0dp"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
