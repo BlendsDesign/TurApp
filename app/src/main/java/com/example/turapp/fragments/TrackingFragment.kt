@@ -51,12 +51,13 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         org.osmdroid.config.Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
-        loadStepData()
         Helper.suggestedFix(contextWrapper = ContextWrapper(context))
         requestPermissions()
+
         if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
             viewModel.startLocationClient()
         }
+        loadStepData()
     }
 
     private fun saveStepData() {
