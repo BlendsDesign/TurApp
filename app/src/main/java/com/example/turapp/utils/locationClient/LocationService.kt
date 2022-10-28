@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import com.example.turapp.R
+import com.example.turapp.utils.helperFiles.CHANNEL_ID
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +54,7 @@ class LocationService: Service() {
 
     private fun start() {
         Log.d("LocationService", "Started service")
-        val notification = NotificationCompat.Builder(this, "location")
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Tracking location...")
             .setContentText("Location: null")
             .setSmallIcon(R.drawable.ic_launcher_background)

@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.utils.helperFiles.Helper
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentTrackingBinding
+import com.example.turapp.repository.trackingDb.entities.*
 import com.example.turapp.utils.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.viewmodels.TrackingViewModel
@@ -57,6 +58,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
             viewModel.startLocationClient()
         }
+        if (PermissionCheckUtility.hasActivityRecognitionPermissions(requireContext()))
+            viewModel.startStepCounter()
+
         loadStepData()
     }
 
@@ -111,8 +115,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         map.overlayManager.add(clMarker)
 
         viewModel.stepCountData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            totalSteps++
-            binding.tvStepCount.text = ("$totalSteps")
+            binding.tvStepCount.text = "Total steps: $it"
 
             tvStepCount.setOnClickListener { view ->
                 Toast.makeText(context, "Long tap to reset steps!", Toast.LENGTH_SHORT).show()
@@ -120,8 +123,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
             tvStepCount.setOnLongClickListener{ view ->
                 previousTotalSteps = totalSteps.toFloat()
-                totalSteps = 0 //reset
-                binding.tvStepCount.text = 0.toString()
+                viewModel.resetStepCounter()
                 saveStepData()
                 true
             }

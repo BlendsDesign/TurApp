@@ -8,5 +8,6 @@ import androidx.room.PrimaryKey
 data class TempGeoData(
     @PrimaryKey(autoGenerate = false)
     var id: Int? = null,
+    var steps: Int? = null,
     var loc: Location? = null
 )

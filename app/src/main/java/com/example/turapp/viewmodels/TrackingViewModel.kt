@@ -47,16 +47,26 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     }
 
     private val stepCountSensor = StepDetectorSensor(app)
-    private var _stepCountData = MutableLiveData<Float>()
-    val stepCountData: LiveData<Float> get() = _stepCountData
+    private var _stepCountData = MutableLiveData<Int>()
+    val stepCountData: LiveData<Int> get() = _stepCountData
 
     init {
-        stepCountSensor.startListening()
-        stepCountSensor.setOnSensorValuesChangedListener {
-            _stepCountData.value = it[0]
-        }
 
     }
+
+    fun startStepCounter() {
+        stepCountSensor.startListening()
+        stepCountSensor.setOnSensorValuesChangedListener {
+            val temp = _stepCountData.value ?: 0
+            _stepCountData.value = temp + 1
+        }
+    }
+
+    fun resetStepCounter() {
+        _stepCountData.value = 0
+    }
+
+
     fun startLocationClient() {
         // This is only for the map, and not for the tracking service
         locationClient.getLocationUpdates(5000L)

@@ -10,7 +10,8 @@ data class MyPoint(
     var desc: String? = null,
     var type: String,
     var image: Bitmap? = null,
-
+    var totalDistance: Float? = null,
+    var hasAdditionalData: Boolean = false
 ) {
     @PrimaryKey(autoGenerate = true)
     var pointId: Int? = null

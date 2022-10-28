@@ -11,7 +11,7 @@ class StartApp: Application() {
     override fun onCreate() {
         super.onCreate()
         val channel = NotificationChannel(
-            "location",
+            CHANNEL_ID,
             "Location",
             NotificationManager.IMPORTANCE_HIGH
         )
