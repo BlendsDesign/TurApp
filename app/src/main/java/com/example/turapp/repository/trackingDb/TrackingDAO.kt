@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.example.turapp.repository.trackingDb.entities.MyPoint
 import com.example.turapp.repository.trackingDb.entities.PointGeoData
+import com.example.turapp.repository.trackingDb.entities.relations.MyPointWithGeo
 import org.osmdroid.util.GeoPoint
 
 @Dao
@@ -20,8 +21,12 @@ interface TrackingDAO {
     suspend fun deleteMyPoint(point: MyPoint)
 
     @Transaction
+    @Query("SELECT * FROM my_point")
+    suspend fun getAllMyPointsWithGeo(): List<MyPointWithGeo>
+
+    @Transaction
     @Query("SELECT * FROM my_point WHERE pointId = :pointId")
-    suspend fun getMyPointById(pointId: Int): MyPoint
+    suspend fun getMyPointById(pointId: Int): MyPointWithGeo
 
 
     // PointGeoData

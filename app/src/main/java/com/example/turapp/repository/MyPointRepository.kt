@@ -2,9 +2,6 @@ package com.example.turapp.utils
 
 import com.example.turapp.repository.trackingDb.TrackingDAO
 import com.example.turapp.repository.trackingDb.entities.MyPoint
-import com.example.turapp.repository.trackingDb.entities.MyPointWithGeo
-import com.example.turapp.repository.trackingDb.entities.PointGeoData
-import org.osmdroid.util.GeoPoint
 
 class MyPointRepository(private val dao: TrackingDAO) {
 
