@@ -9,6 +9,7 @@ data class PointGeoData(
     var pointId: Int,
     var timestamp: Long,
     var geoPoint: GeoPoint,
+    var speed: Float? = null,
     var type: String?
 ) {
     @PrimaryKey(autoGenerate = true)
