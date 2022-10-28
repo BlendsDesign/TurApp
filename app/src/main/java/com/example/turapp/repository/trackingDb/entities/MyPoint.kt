@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "my_point")
 data class MyPoint(
     var title: String? = null,
-    var desc: String? = null,
+    var description: String? = null,
     var type: String,
     var image: Bitmap? = null,
     var totalDistance: Float? = null,
