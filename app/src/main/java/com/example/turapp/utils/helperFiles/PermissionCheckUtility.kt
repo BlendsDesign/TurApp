@@ -20,4 +20,10 @@ object PermissionCheckUtility {
             Manifest.permission.ACTIVITY_RECOGNITION
         )
 
+    fun hasCameraPermissions(context: Context) =
+        EasyPermissions.hasPermissions(
+            context,
+            Manifest.permission.CAMERA
+        )
+
 }

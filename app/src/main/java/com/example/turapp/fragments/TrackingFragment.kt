@@ -57,7 +57,11 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
             viewModel.startLocationClient()
         }
-        loadStepData()
+
+        if (PermissionCheckUtility.hasActivityRecognitionPermissions(requireContext())) {
+            loadStepData()
+        }
+
     }
 
     private fun saveStepData() {
