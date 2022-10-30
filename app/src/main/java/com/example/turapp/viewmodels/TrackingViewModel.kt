@@ -42,6 +42,7 @@ class TrackingViewModel(private val app: Application): ViewModel() {
 
     private val _isTracking = MutableLiveData<Boolean>()
     val isTracking : LiveData<Boolean> get() = _isTracking
+
     fun switchIsTracking() {
         _isTracking.value = _isTracking.value != true
     }
@@ -50,12 +51,19 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     private var _stepCountData = MutableLiveData<Float>()
     val stepCountData: LiveData<Float> get() = _stepCountData
 
+    // This lets you observe a livedata object in a viewModel. REMEMBER TO OVERRIDE ONCLEARED IN VIEWMODEL
+    private val mObserver = Observer<GeoPoint> {
+        Log.d("mObserver", "OBSERVING")
+        // THIS IS WHERE YOU DO THE MAGIC IN THE OBSERVER
+    }
+
     init {
         stepCountSensor.startListening()
         stepCountSensor.setOnSensorValuesChangedListener {
             _stepCountData.value = it[0]
         }
-
+        // THIS IS WHERE YOU ADD THE OBSERVER. THE OBSERVE FOREVER IS THE REASON FOR THE override ONCLEARED
+        _currentPosition.observeForever(mObserver)
     }
     fun startLocationClient() {
         // This is only for the map, and not for the tracking service
@@ -74,7 +82,10 @@ class TrackingViewModel(private val app: Application): ViewModel() {
             .launchIn(viewModelScope)
     }
 
-
+    override fun onCleared() {
+        super.onCleared()
+        _currentPosition.removeObserver(mObserver)
+    }
 
 
 
