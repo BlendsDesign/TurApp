@@ -64,7 +64,7 @@ class CameraFragment : Fragment() {
         }
         EasyPermissions.requestPermissions(
             this,
-            "You need to accept location permissions to use this app.",
+            "You need to accept camera permissions to use this app.",
             REQUEST_CODE_CAMERA_PERMISSION,
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
