@@ -1,8 +1,11 @@
 package com.example.turapp.roomDb
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.io.ByteArrayOutputStream
 import java.lang.reflect.Type
 import java.util.*
 
@@ -21,4 +24,24 @@ class Converters {
         return Gson().toJson(data)
     }
 
+    @TypeConverter
+    fun toBitmap(bytes: ByteArray?): Bitmap? {
+        if (bytes != null) {
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        } else {
+            return null
+        }
+    }
+
+    @TypeConverter
+    fun fromBitmap(bmp: Bitmap?): ByteArray? {
+        if (bmp != null) {
+            val outputStream = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            return outputStream.toByteArray()
+        }
+        else {
+            return null
+        }
+    }
 }

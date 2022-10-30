@@ -5,63 +5,39 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.turapp.cameraView.CameraFragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.turapp.databinding.ActivityMainBinding
-import com.example.turapp.mapView.MapFragment
-import com.example.turapp.seeLiveSensorData.LiveSensorDataFragment
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
+    private lateinit var navController: NavController
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         //setSupportActionBar(findViewById(R.id.turToolbar))
         //setContentView(R.layout.activity_main)
 
         checkPrefs()
-
-        setUpBottomNav()
-
-
+        navController = findViewById<View?>(R.id.navHostFragment).findNavController()
+        binding.bottomNav.setupWithNavController(navController)
 
         //val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
         setSupportActionBar(binding.turToolbar)
-        setUpBottomNav()
-
-    }
-
-    private fun setUpBottomNav() {
-        binding.bottomNav.setOnItemSelectedListener {
-            when(it.itemId) {
-                R.id.miList -> {
-                    // Weird error led to this implementation. Probably connected to this being the base nav_graph in the fragment
-                    startActivity(Intent(this, MainActivity::class.java))
-                }
-                R.id.miCamera -> supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, CameraFragment()).commit()
-                R.id.miMap -> supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, MapFragment()).commit()
-                R.id.miLiveSensors -> supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, LiveSensorDataFragment()).commit()
-            }
-            true
-        }
-
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        this.menuInflater.inflate(R.menu.app_bar_menu, menu)
-        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

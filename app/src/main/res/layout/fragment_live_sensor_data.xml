@@ -2,12 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".seeLiveSensorData.LiveSensorDataFragment">
+    tools:context=".fragments.LiveSensorDataFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="com.example.turapp.seeLiveSensorData.LiveSensorDataViewModel" />
+            type="com.example.turapp.viewmodels.LiveSensorDataViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

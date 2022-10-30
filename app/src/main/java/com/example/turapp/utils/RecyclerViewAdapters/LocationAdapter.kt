@@ -1,0 +1,53 @@
+package com.example.turapp.utils.RecyclerViewAdapters
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.navigation.NavController
+import androidx.recyclerview.widget.RecyclerView
+import com.example.turapp.databinding.RvItemLocationBinding
+import com.example.turapp.roomDb.SimplePoiAndActivities
+import com.example.turapp.roomDb.TypeOfPoint
+import com.example.turapp.fragments.StartFragmentDirections
+import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
+import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
+import kotlinx.android.synthetic.main.rv_item_location.view.*
+
+// BASED ON https://youtu.be/HtwDXRWjMcU
+
+class LocationAdapter(
+    var myPoints: List<MyPointWithGeo>,
+    val nav: NavController
+) : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
+
+    inner class LocationViewHolder(val binding: RvItemLocationBinding) : RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = RvItemLocationBinding.inflate(layoutInflater,parent,false)
+        return LocationViewHolder(binding)
+    }
+
+    override fun getItemCount(): Int {
+        return myPoints.size
+    }
+
+    //Take the data from each item and set it to each corresponding view
+    override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
+        holder.itemView.apply {
+            val point = myPoints[position]
+            tvLocationName.text = point.point.title
+            tvDistance.text = if (point.point.type == TYPE_TRACKING) "Activity" else "POI"
+            setOnClickListener {
+                //nav.navigate(
+                    //StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(
+                    //    point.id, point.type
+                    //)
+                //)
+                Toast.makeText(requireNotNull(context), "HAS NOT IMPLEMENTED SHOW POINT YET", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+}

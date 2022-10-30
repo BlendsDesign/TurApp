@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/miStartTracking"
+        android:title="Start Tracking Run"
+        android:icon="@drawable/ic_track_changes">
+
+    </item>
+<!--    <item
+        android:id="@+id/miCreatePoint"
+        android:title="Create POI"
+        android:icon="@drawable/ic_add_location_24">
+
+    </item> -->
+    <item
+        android:id="@+id/miEditPoint"
+        android:title="@string/edit_pois"
+        android:icon="@drawable/ic_edit_24">
+    </item>
+</menu>

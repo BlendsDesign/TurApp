@@ -1,0 +1,274 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 11,
+    "identityHash": "a0e759fc166f98572af5a7f32c25bae6",
+    "entities": [
+      {
+        "tableName": "point_of_interest",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`createdAt` INTEGER NOT NULL, `image` BLOB, `poiLengt` INTEGER, `poiName` TEXT NOT NULL, `poiLat` REAL, `poiLng` REAL, `poiAltitude` REAL, `poiDescription` TEXT, `poiId` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "fields": [
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "poiLengt",
+            "columnName": "poiLengt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "poiName",
+            "columnName": "poiName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "poiLat",
+            "columnName": "poiLat",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "poiLng",
+            "columnName": "poiLng",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "poiAltitude",
+            "columnName": "poiAltitude",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "poiDescription",
+            "columnName": "poiDescription",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "poiId",
+            "columnName": "poiId",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "poiId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Recording",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`poiId` INTEGER NOT NULL, `sensorType` INTEGER NOT NULL, `recording` TEXT NOT NULL, `recId` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "fields": [
+          {
+            "fieldPath": "poiId",
+            "columnName": "poiId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sensorType",
+            "columnName": "sensorType",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recording",
+            "columnName": "recording",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recId",
+            "columnName": "recId",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "recId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "recorded_activity_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`image` BLOB, `startingLat` REAL, `startingLng` REAL, `startingAltitude` REAL, `timestamp` INTEGER NOT NULL, `avgSpeed` REAL NOT NULL, `totalDistance` INTEGER, `timeInMillis` INTEGER NOT NULL, `title` TEXT, `description` TEXT, `steps` INTEGER, `activityId` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "fields": [
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "startingLat",
+            "columnName": "startingLat",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "startingLng",
+            "columnName": "startingLng",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "startingAltitude",
+            "columnName": "startingAltitude",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "avgSpeed",
+            "columnName": "avgSpeed",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalDistance",
+            "columnName": "totalDistance",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "timeInMillis",
+            "columnName": "timeInMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "steps",
+            "columnName": "steps",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "activityId",
+            "columnName": "activityId",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "activityId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "activity_lat_lng",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`activityId` INTEGER, `lat` REAL, `lng` REAL, `altitude` REAL, `distanceToPrev` REAL, `timeSincePrev` INTEGER, `title` TEXT, `description` TEXT, `geoId` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "fields": [
+          {
+            "fieldPath": "activityId",
+            "columnName": "activityId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lat",
+            "columnName": "lat",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lng",
+            "columnName": "lng",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "altitude",
+            "columnName": "altitude",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "distanceToPrev",
+            "columnName": "distanceToPrev",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "timeSincePrev",
+            "columnName": "timeSincePrev",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "geoId",
+            "columnName": "geoId",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "geoId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a0e759fc166f98572af5a7f32c25bae6')"
+    ]
+  }
+}
