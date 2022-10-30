@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "temp_geo_data")
 data class TempGeoData(
     @PrimaryKey(autoGenerate = false)
-    var id: Int? = null,
-    var loc: Location? = null
+    var id: Int,
+    var loc: Location,
+    var type: String? = null
 )
