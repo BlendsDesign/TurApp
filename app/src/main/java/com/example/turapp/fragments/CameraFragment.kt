@@ -1,10 +1,8 @@
 package com.example.turapp.fragments
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.databinding.FragmentCameraBinding
@@ -14,15 +12,13 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.camera.view.PreviewView
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
+import com.example.turapp.utils.helperFiles.REQUEST_CODE_CAMERA_PERMISSION
+import pub.devrel.easypermissions.EasyPermissions
 
 class CameraFragment : Fragment() {
 
     private lateinit var binding : FragmentCameraBinding
-
-    private val camPERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-
     private lateinit var cameraExecutor: ExecutorService
-
     private lateinit var cameraView: PreviewView
     private lateinit var shotCam : ShotCamera
 
@@ -34,13 +30,6 @@ class CameraFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
-
-        //camera permissions
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), camPERMISSIONS, 1)
-            return
-        }
     }
 
     override fun onCreateView(
@@ -48,6 +37,7 @@ class CameraFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        requestPermissions()
 
         binding = FragmentCameraBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
@@ -66,6 +56,19 @@ class CameraFragment : Fragment() {
         }
         // Inflate the layout for this fragment
         return binding.root
+    }
+
+    private fun requestPermissions() {
+        if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
+            return
+        }
+        EasyPermissions.requestPermissions(
+            this,
+            "You need to accept location permissions to use this app.",
+            REQUEST_CODE_CAMERA_PERMISSION,
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        )
     }
 
     override fun onDestroy() {
