@@ -3,19 +3,22 @@ package com.example.turapp.viewmodels
 import android.app.Application
 import androidx.lifecycle.*
 import com.example.turapp.repository.MyRepository
+import com.example.turapp.repository.trackingDb.MyPointDAO
+import com.example.turapp.repository.trackingDb.MyPointDB
+import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
 import com.example.turapp.roomDb.PoiDatabase
 import com.example.turapp.roomDb.SimplePoiAndActivities
 import com.example.turapp.roomDb.entities.PoiDao
+import com.example.turapp.utils.MyPointRepository
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 
 class StartViewModel(app: Application) : ViewModel() {
 
-    private val dao : PoiDao = PoiDatabase.getInstance(app).poiDao
-    private val repository = MyRepository(dao)
-    private val _points = MutableLiveData<List<SimplePoiAndActivities>>()
-    val points : LiveData<List<SimplePoiAndActivities>> get() = _points
+    private val repository = MyPointRepository(app)
+    private val _points = MutableLiveData<List<MyPointWithGeo>>()
+    val points : LiveData<List<MyPointWithGeo>> get() = _points
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading : LiveData<Boolean> get() = _isLoading
 
@@ -23,7 +26,7 @@ class StartViewModel(app: Application) : ViewModel() {
         _isLoading.value = true
 
         viewModelScope.launch {
-            _points.value = repository.getListOfSimplePoiAndActivities()
+            _points.value = repository.getAllMyPointsWithGeo()
             _isLoading.value = false
         }
     }
@@ -32,8 +35,8 @@ class StartViewModel(app: Application) : ViewModel() {
         _isLoading.value = true
 
         viewModelScope.launch {
-            _points.value = repository.getListOfSimplePoiAndActivities()
-            _isLoading.value = false
+            val temp = repository.getAllMyPointsWithGeo()
+            _points.value = temp
         }
     }
 

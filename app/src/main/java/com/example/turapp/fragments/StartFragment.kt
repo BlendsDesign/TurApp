@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.turapp.databinding.StartFragmentBinding
 import com.example.turapp.viewmodels.StartViewModel
 import com.example.turapp.utils.RecyclerViewAdapters.LocationAdapter
+import kotlinx.coroutines.launch
 
 class StartFragment : Fragment() {
 
@@ -31,12 +33,14 @@ class StartFragment : Fragment() {
 
         viewModel.isLoading.observe(viewLifecycleOwner, Observer {
             if(!it) {
-                binding.rvLocations.apply {
-                    val navControl = findNavController()
-                    adapter = LocationAdapter(viewModel.points.value ?: listOf(), navControl)
-                    layoutManager = LinearLayoutManager(context)
+                lifecycleScope.launch {
+                    binding.rvLocations.apply {
+                        val navControl = findNavController()
+                        adapter = LocationAdapter(viewModel.points.value ?: listOf(), navControl)
+                        layoutManager = LinearLayoutManager(context)
+                    }
+                    binding.statusImage.visibility = View.GONE
                 }
-                binding.statusImage.visibility = View.GONE
             } else {
                 binding.statusImage.visibility = View.VISIBLE
             }
