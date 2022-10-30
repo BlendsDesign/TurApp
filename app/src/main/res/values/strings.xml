@@ -10,13 +10,13 @@
     <string name="accelerometer">ACCELEROMETER</string>
     <string name="gyroscope">GYROSCOPE</string>
     <string name="stop_recording">STOP RECORDING</string>
-    <string name="accelerator_data">ACCELERATOR DATA</string>
-    <string name="gyroscope_data">GYROSCOPE DATA</string>
+    <string name="accelerator_data">Accelerator Data</string>
+    <string name="gyroscope_data">Gyroscope Data</string>
     <string name="heading_data">HEADING DATA</string>
-    <string name="computed_orientation">COMPUTED ORIENTATION</string>
-    <string name="filtered_gyro_data">FILTERED GYRO DATA</string>
-    <string name="magnetometer">MAGNETOMETER</string>
-    <string name="filtered_acceleration">FILTERED ACCELERATION</string>
+    <string name="computed_orientation">Computed Orientation</string>
+    <string name="filtered_gyro_data">Filtered Gyro Data</string>
+    <string name="magnetometer">Magnetometer</string>
+    <string name="filtered_acceleration">Filtered Acceleration</string>
     <string name="delete_are_you_sure">Are you sure you want to delete this POI</string>
     <string name="about_app">About this app</string>
     <string name="info_text">As a digital nomad, you know that the key to traveling the world is being able to stay connected. And with your busy lifestyle, you don\'t have time to research long lists of travel apps. That\'s why we built the world\'s most comprehensive app for digital nomads. With our app, you can visit places with visual descriptions of the areas (POI – points of interest)\n\n When the user is near the area he/she can take up the camera and observe graphics with associated text related to the place.\n\n App has built in features such as menu to edit settings, language, theme etc.\n\nTemporary views for: MAP, CAMERA, GRAPH, INFORMATION\n\nRaw and filtered Sensor recording of accelerometer, gyroscope\n\nComputed orientation using accelerometer and magnetometer\n\nVisualization of the sensor data with orientation\nThis app was developed during a student project by a team (Team ID=6) of three members:\n\nMagnus Roald Ree  \nTore Bjerkan Tore Bjerkan\nSharmila Ratnasingam\n

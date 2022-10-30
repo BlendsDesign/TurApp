@@ -10,4 +10,5 @@
     <color name="theme_orange">#F7941D</color>
     <color name="theme_blue">#2E3192</color>
     <color name="transparent_theme_blue">#E62E3192</color>
+    <color name="card_background">#f2f2f2</color>
 </resources>
