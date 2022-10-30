@@ -2,6 +2,8 @@ package com.example.turapp.utils.helperFiles
 
 const val REQUEST_CODE_LOCATION_PERMISSION = 123
 
+const val REQUEST_CODE_CAMERA_PERMISSION = 2
+
 const val STARTING_POINT = "STARTING_POINT"
 
 const val END_POINT = "END_PONT"
