@@ -42,6 +42,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'com.example.turapp'
 }
 
 dependencies {
@@ -80,6 +81,16 @@ dependencies {
 
     // Location Services PLAY STORE NEEDED
     implementation 'com.google.android.gms:play-services-location:21.0.0'
+
+    //CameraX
+    def camerax_version = "1.1.0-beta01"
+    implementation "androidx.camera:camera-core:${camerax_version}"
+    implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.camera:camera-video:${camerax_version}"
+
+    implementation "androidx.camera:camera-view:${camerax_version}"
+    implementation "androidx.camera:camera-extensions:${camerax_version}"
 
 
 
