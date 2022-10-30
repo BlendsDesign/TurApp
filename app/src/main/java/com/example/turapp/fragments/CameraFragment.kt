@@ -60,7 +60,7 @@ class CameraFragment : Fragment() {
     }
 
     private fun requestPermissions() {
-        if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
+        if (PermissionCheckUtility.hasCameraPermissions(requireContext())) {
             return
         }
         EasyPermissions.requestPermissions(
