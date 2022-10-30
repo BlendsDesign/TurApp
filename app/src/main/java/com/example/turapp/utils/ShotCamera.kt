@@ -1,6 +1,5 @@
 package com.example.turapp.utils
 
-
 import android.content.ContentValues
 import android.content.Context
 import android.os.Build
@@ -66,9 +65,6 @@ class ShotCamera(
         )
 
     }
-
-    //a future possibility
-    fun captureVideo() {}
 
     fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(mContext)

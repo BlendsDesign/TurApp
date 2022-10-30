@@ -60,7 +60,6 @@ class CameraFragment : Fragment() {
 
         // Set up the listeners for take photo and video capture buttons
         binding.imageCaptureButton.setOnClickListener { shotCam.takePhoto() }
-        binding.videoCaptureButton.setOnClickListener { shotCam.captureVideo() }
 
         if (PermissionCheckUtility.hasCameraPermissions(requireContext())) {
             shotCam.startCamera()

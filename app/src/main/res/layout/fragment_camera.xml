@@ -10,13 +10,10 @@
             type="com.example.turapp.viewmodels.CameraViewModel" />
     </data>
 
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-<!--        android:id="@+id/viewFinder"-->
         <androidx.camera.view.PreviewView
             android:id="@+id/cameraView"
             android:layout_width="match_parent"
@@ -34,16 +31,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintEnd_toStartOf="@id/vertical_centerline" />
 
-        <Button
-            android:id="@+id/video_capture_button"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:layout_marginBottom="50dp"
-            android:layout_marginStart="50dp"
-            android:elevation="2dp"
-            android:text="@string/start_capture"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/vertical_centerline" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/vertical_centerline"
@@ -52,15 +39,6 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent=".50" />
 
-<!--        <TextureView-->
-<!--            android:id="@+id/cameraView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            tools:ignore="MissingConstraints"-->
-<!--            tools:layout_editor_absoluteX = "0dp"-->
-<!--            />-->
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </layout>
