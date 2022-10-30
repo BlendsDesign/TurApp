@@ -77,6 +77,11 @@ class LiveSensorDataFragment : Fragment() {
             binding.tvMagnetoSensor.text = String.format("X: %.2f Y: %.2f Z: %.2f", it[0], it[1], it[2])
         })
 
+        viewModel.magSensorDataFiltered.observe(viewLifecycleOwner, Observer {
+            binding.tvFilteredMagnetoSensor.text = String.format("X: %.2f Y: %.2f Z: %.2f", it[0], it[1], it[2])
+        })
+
+
         viewModel.orientationData.observe(viewLifecycleOwner, Observer {
             binding.tvOrientationData.text = String.format("X: %.2f Y: %.2f Z: %.2f", it[0], it[1], it[2])
         })

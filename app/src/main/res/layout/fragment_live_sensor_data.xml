@@ -86,6 +86,19 @@
                     android:layout_height="wrap_content" />
 
 
+                <TextView
+                    style="@style/heading_textSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filtered_magnetometer" />
+
+                <TextView
+
+                    android:id="@+id/tvFilteredMagnetoSensor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchOrientationRec"
                     style="@style/heading_textSize"
