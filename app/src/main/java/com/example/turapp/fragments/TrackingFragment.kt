@@ -132,7 +132,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             }
         })
 
-        setUpBottomNavTrackingButtons()
+        setUpBottomNavTrackingFragmentButtons()
 
 
         return binding.root
@@ -207,7 +207,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
-    private fun setUpBottomNavTrackingButtons() {
+    private fun setUpBottomNavTrackingFragmentButtons() {
         binding.bottomNavTrackingFragment.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.miStartTracking -> {
