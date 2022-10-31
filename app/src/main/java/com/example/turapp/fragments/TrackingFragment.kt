@@ -54,6 +54,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         Helper.suggestedFix(contextWrapper = ContextWrapper(context))
         requestPermissions()
 
+
         if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
             viewModel.startLocationClient()
         }
@@ -131,6 +132,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             }
         })
 
+        setUpBottomNavTrackingButtons()
+
 
         return binding.root
     }
@@ -202,5 +205,28 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    private fun setUpBottomNavTrackingButtons() {
+        binding.bottomNavTrackingFragment.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.miStartTracking -> {
+                    binding.svTrackingFragment.apply {
+                        if (visibility == View.VISIBLE) {
+                            visibility = View.GONE
+                        } else {
+                            visibility = View.VISIBLE
+                        }
+                    }
+                }
+                R.id.miGoToMyLocation -> {
+                    if (viewModel.currentPosition.value != null) {
+                        map.controller.setCenter(viewModel.currentPosition.value)
+                    }
+                }
+
+            }
+            false
+        }
     }
 }

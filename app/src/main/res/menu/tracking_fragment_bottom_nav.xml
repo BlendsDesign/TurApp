@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/miStartTracking"
+        android:title="Start Tracking Run"
+        android:icon="@drawable/ic_track_changes"/>
+
+    <item
+        android:id="@+id/miGoToMyLocation"
+        android:title="My Location"
+        android:icon="@drawable/ic_my_location"/>
+
+    <item
+        android:id="@+id/miAddPoint"
+        android:title="Add Point"
+        android:icon="@drawable/ic_add_location"/>
+</menu>
