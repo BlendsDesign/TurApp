@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:flow_horizontalBias="0.5"
-            app:layout_constraintBottom_toTopOf="@+id/bottomNavTrackingFragment"
+            app:layout_constraintBottom_toTopOf="@+id/tvForTests_DELETE_ME"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/trackingMap"
             app:layout_constraintVertical_weight="1"
@@ -74,6 +74,15 @@
 
         </ScrollView>
 
+        <TextView
+            android:id="@+id/tvForTests_DELETE_ME"
+            android:text="This is a development View to see live experiments on screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/bottomNavTrackingFragment"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@color/cardview_dark_background"
+            android:textColor="@color/white"/>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavTrackingFragment"
