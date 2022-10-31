@@ -37,6 +37,7 @@ class StartViewModel(app: Application) : ViewModel() {
         viewModelScope.launch {
             val temp = repository.getAllMyPointsWithGeo()
             _points.value = temp
+            _isLoading.value = false
         }
     }
 

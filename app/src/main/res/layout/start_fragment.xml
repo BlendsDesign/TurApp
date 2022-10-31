@@ -31,6 +31,15 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/loading_animation" />
 
+        <TextView
+            android:id="@+id/startFragmentListIsEmpty"
+            android:textAlignment="center"
+            android:text="Oh, there is nothing to show here.\nGet out there and record some activities"
+            android:padding="20dp"
+            style="@style/heading_textSize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
