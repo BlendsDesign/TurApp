@@ -212,14 +212,13 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding.bottomNavTrackingFragment.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.miStartTracking -> {
-                    animateViewToSlideUp(binding.svTrackingFragment)
-//                    binding.svTrackingFragment.apply {
-//                        if (visibility == View.VISIBLE) {
-//                            visibility = View.GONE
-//                        } else {
-//                            visibility = View.VISIBLE
-//                        }
-//                    }
+                    binding.svTrackingFragment.apply {
+                        if (visibility == View.VISIBLE) {
+                            visibility = View.GONE
+                        } else {
+                            visibility = View.VISIBLE
+                        }
+                    }
                 }
                 R.id.miGoToMyLocation -> {
                     if (viewModel.currentPosition.value != null) {
@@ -229,30 +228,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
             }
             false
-        }
-    }
-
-    private fun animateViewToSlideUp(view: View) {
-        if (view.visibility == View.GONE) {
-            view.visibility = View.VISIBLE
-            val animate: TranslateAnimation = TranslateAnimation(
-                0F,
-                0F,
-                view.height.toFloat(),
-                0F)
-            animate.duration = 500
-            view.startAnimation(animate)
-        } else {
-            view.visibility = View.GONE
-            val animate: TranslateAnimation = TranslateAnimation(
-                0F,
-                0F,
-                0F,
-                view.height.toFloat(),
-            )
-            animate.duration = 500
-            view.startAnimation(animate)
-
         }
     }
 }
