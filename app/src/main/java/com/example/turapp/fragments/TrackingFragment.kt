@@ -91,6 +91,16 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding = FragmentTrackingBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
 
+        binding.fabTrackingHelp.setOnClickListener {
+            binding.svHelpInfo.apply {
+                if (visibility == View.VISIBLE) {
+                    visibility = View.GONE
+                } else {
+                    visibility = View.VISIBLE
+                }
+            }
+        }
+
         map = binding.trackingMap
         map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
         map.setMultiTouchControls(true) //3

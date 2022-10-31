@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:flow_horizontalBias="0.5"
-            app:layout_constraintBottom_toTopOf="@+id/tvForTests_DELETE_ME"
+            app:layout_constraintBottom_toTopOf="@+id/svHelpInfo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/trackingMap"
             app:layout_constraintVertical_weight="1"
@@ -75,6 +75,23 @@
 
         </ScrollView>
 
+        <ScrollView
+            android:id="@+id/svHelpInfo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/svTrackingFragment"
+            app:layout_constraintBottom_toTopOf="@id/tvForTests_DELETE_ME"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_weight="1"
+            android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvHelpInfoTrackingFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="THIS WILL HOLD A LONGER TEXT EXPLAINING THE WAY TO USE THIS FRAGMENT"/>
+        </ScrollView>
         <TextView
             android:id="@+id/tvForTests_DELETE_ME"
             android:text="This is a development View to see live experiments on screen"
