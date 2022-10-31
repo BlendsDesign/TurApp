@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.TranslateAnimation
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.lifecycle.Observer
@@ -211,13 +212,14 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding.bottomNavTrackingFragment.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.miStartTracking -> {
-                    binding.svTrackingFragment.apply {
-                        if (visibility == View.VISIBLE) {
-                            visibility = View.GONE
-                        } else {
-                            visibility = View.VISIBLE
-                        }
-                    }
+                    animateViewToSlideUp(binding.svTrackingFragment)
+//                    binding.svTrackingFragment.apply {
+//                        if (visibility == View.VISIBLE) {
+//                            visibility = View.GONE
+//                        } else {
+//                            visibility = View.VISIBLE
+//                        }
+//                    }
                 }
                 R.id.miGoToMyLocation -> {
                     if (viewModel.currentPosition.value != null) {
@@ -227,6 +229,30 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
             }
             false
+        }
+    }
+
+    private fun animateViewToSlideUp(view: View) {
+        if (view.visibility == View.GONE) {
+            view.visibility = View.VISIBLE
+            val animate: TranslateAnimation = TranslateAnimation(
+                0F,
+                0F,
+                view.height.toFloat(),
+                0F)
+            animate.duration = 500
+            view.startAnimation(animate)
+        } else {
+            view.visibility = View.GONE
+            val animate: TranslateAnimation = TranslateAnimation(
+                0F,
+                0F,
+                0F,
+                view.height.toFloat(),
+            )
+            animate.duration = 500
+            view.startAnimation(animate)
+
         }
     }
 }
