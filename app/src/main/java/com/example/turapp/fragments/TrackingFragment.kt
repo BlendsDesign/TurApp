@@ -259,6 +259,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     binding.svTrackingFragment.apply {
                         if (visibility == View.VISIBLE) {
                             visibility = View.GONE
+                            return@setOnItemSelectedListener false
                         } else {
                             visibility = View.VISIBLE
                         }
@@ -267,12 +268,14 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 R.id.miGoToMyLocation -> {
                     if (viewModel.currentPosition.value != null) {
                         map.controller.animateTo(viewModel.currentPosition.value)
+
                     }
+                    return@setOnItemSelectedListener false
                 }
                 R.id.miAddPoint -> viewModel.setAddingCustomMarker()
 
             }
-            false
+            true
         }
     }
 
@@ -291,6 +294,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     showInfoWindow()
                 }
                 map.overlays.add(m)
+                map.controller.animateTo(m.position)
                 map.invalidate()
 
                 return false
