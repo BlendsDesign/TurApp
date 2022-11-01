@@ -2,8 +2,11 @@ package com.example.turapp.fragments
 
 import android.Manifest
 import android.content.Context
+import android.content.Context.SENSOR_SERVICE
 import android.content.ContextWrapper
 import android.content.Intent
+import android.hardware.SensorManager
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +17,7 @@ import android.view.ViewGroup
 import android.view.animation.TranslateAnimation
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.utils.helperFiles.Helper
@@ -24,15 +28,23 @@ import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.viewmodels.TrackingViewModel
 import com.example.turapp.utils.locationClient.LocationService
 import kotlinx.android.synthetic.main.fragment_tracking.*
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Marker.OnMarkerDragListener
+import org.osmdroid.views.overlay.Overlay
 import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
+import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import java.io.IOException
+import java.util.*
 
 
 class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
@@ -63,6 +75,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         if (PermissionCheckUtility.hasActivityRecognitionPermissions(requireContext())) {
             loadStepData()
         }
+
+        val mOrientationProvider = SensorManager.SENSOR_ORIENTATION
 
     }
 
@@ -111,10 +125,11 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         )
         compass.enableCompass()
         map.overlays.add(compass)
-        map.controller.setZoom(20.0)
+        val test = DirectedLocationOverlay(requireContext())
+        map.controller.setZoom(18.0)
         viewModel.startingPoint.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                map.controller.setCenter(it)
+                map.controller.animateTo(it)
                 map.invalidate()
             }
         })
@@ -123,8 +138,18 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         clMarker.icon = getDrawable(requireContext(), R.drawable.ic_my_location)
         viewModel.currentPosition.observe(viewLifecycleOwner, Observer {
             clMarker.position = it
+            map.mapOrientation = viewModel.deviceOrientation.value?: 90F
         })
         map.overlayManager.add(clMarker)
+
+        val myMapEventsOverlay: MapEventsOverlay = MapEventsOverlay(getEventsReceiver())
+        viewModel.addingCustomMarker.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                map.overlays.add(myMapEventsOverlay)
+            } else {
+                map.overlays.remove(myMapEventsOverlay)
+            }
+        })
 
         viewModel.stepCountData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             totalSteps++
@@ -151,6 +176,15 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        var testOverLay = DirectedLocationOverlay(requireContext())
+        testOverLay.setShowAccuracy(true)
+        map.overlays.add(testOverLay)
+        viewModel.bearing.observe(viewLifecycleOwner, Observer {
+            testOverLay.setBearing(it)
+            viewModel.bearingAccuracy.value?.toInt()?.let { it1 -> testOverLay.setAccuracy(it1) }
+            testOverLay.location = viewModel.currentPosition.value
+        })
+
 
         // THIS IS JUST TO TEST THE TRACKING SERVICE
         binding.tvFirstTextViewInTracking.apply {
@@ -232,12 +266,74 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 }
                 R.id.miGoToMyLocation -> {
                     if (viewModel.currentPosition.value != null) {
-                        map.controller.setCenter(viewModel.currentPosition.value)
+                        map.controller.animateTo(viewModel.currentPosition.value)
                     }
                 }
+                R.id.miAddPoint -> viewModel.setAddingCustomMarker()
 
             }
             false
         }
     }
+
+    // This works with the MapEventsOverlay to add clicklisteners and lets us add POIs
+    private fun getEventsReceiver(): MapEventsReceiver {
+        return object : MapEventsReceiver {
+            override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
+                val m = Marker(map)
+                m.apply {
+                    position = p
+                    title = getLocationInformation(p.latitude, p.longitude)
+                    isDraggable = true
+                    setOnMarkerDragListener(
+                        getMarkerDragListener()
+                    )
+                    showInfoWindow()
+                }
+                map.overlays.add(m)
+                map.invalidate()
+
+                return false
+            }
+
+            override fun longPressHelper(p: GeoPoint): Boolean {
+                return false
+            }
+        }
+    }
+
+    private fun getMarkerDragListener(): OnMarkerDragListener {
+        return object : OnMarkerDragListener {
+            override fun onMarkerDrag(marker: Marker?) {
+
+            }
+
+            override fun onMarkerDragEnd(marker: Marker?) {
+                if (marker != null) {
+                    marker.position = marker.position
+                    marker.title = getLocationInformation(marker.position.latitude, marker.position.longitude)
+                    marker.showInfoWindow()
+                    map.controller.animateTo(marker.position)
+                }
+            }
+
+            override fun onMarkerDragStart(marker: Marker?) {
+
+            }
+
+        }
+    }
+
+    private fun getLocationInformation(lat: Double, lng: Double): String? {
+        val gc = Geocoder(requireContext(), Locale.getDefault())
+        try {
+            val adrs = gc.getFromLocation(lat, lng, 1)
+            val ads = adrs!![0]
+            return ads.getAddressLine(0)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return ""
+    }
+
 }
