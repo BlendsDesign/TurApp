@@ -119,13 +119,16 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
         map.setMultiTouchControls(true) //3
         map.setTileSource(TileSourceFactory.MAPNIK)
+        InternalCompassOrientationProvider(requireContext()).startOrientationProvider { orientation, source ->
+            map.mapOrientation = orientation
+        }
         val compass = CompassOverlay(
             context,
             InternalCompassOrientationProvider(context), map
         )
         compass.enableCompass()
+
         map.overlays.add(compass)
-        val test = DirectedLocationOverlay(requireContext())
         map.controller.setZoom(18.0)
         viewModel.startingPoint.observe(viewLifecycleOwner, Observer {
             if (it != null) {
@@ -138,7 +141,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         clMarker.icon = getDrawable(requireContext(), R.drawable.ic_my_location)
         viewModel.currentPosition.observe(viewLifecycleOwner, Observer {
             clMarker.position = it
-            map.mapOrientation = viewModel.deviceOrientation.value?: 90F
         })
         map.overlayManager.add(clMarker)
 
