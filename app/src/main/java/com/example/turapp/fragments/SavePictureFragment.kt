@@ -6,9 +6,11 @@ import android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 import android.provider.MediaStore.Images.Media._ID
 import android.provider.MediaStore.MediaColumns.DATE_ADDED
 import android.provider.MediaStore.MediaColumns.RELATIVE_PATH
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Observer
@@ -48,7 +50,7 @@ class SavePictureFragment : Fragment() {
 
         binding = FragmentSavePictureBinding.inflate(inflater)
 
-
+        binding.viewModel = viewModel
 
         binding.imageSavePicture.setOnClickListener{
             viewModel.setHappyWithPicture()
@@ -59,6 +61,11 @@ class SavePictureFragment : Fragment() {
                 binding.llShowTextInput.visibility = View.VISIBLE
             }
         })
+
+        binding.imageCancelPicture.setOnClickListener {
+            viewModel.cancelImage()
+            findNavController().popBackStack()
+        }
 
         // Use the Kotlin extension in the fragment-ktx artifact
 //        setFragmentResultListener("requestKey") { requestKey, bundle ->
@@ -97,7 +104,15 @@ class SavePictureFragment : Fragment() {
         return binding.root
     }
 
+    override fun onPause() {
+        super.onPause()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        if (viewModel.hasSavedMyPoint.value != true) {
+            Toast.makeText(requireContext(), viewModel.path, Toast.LENGTH_SHORT).show()
+            viewModel.cancelImage()
+        }
     }
 }

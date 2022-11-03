@@ -101,10 +101,10 @@ class CameraFragment : Fragment() {
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                 Log.d("ShotCamera", msg)
                 //viewModel.setTakingPicture()
-                val test : String? = output.savedUri?.path
+                val test = output.savedUri
                 if(test != null) {
                     findNavController().navigate(CameraFragmentDirections
-                        .actionCameraFragmentToSavePictureFragment(test))
+                        .actionCameraFragmentToSavePictureFragment(test.toString()))
                     //viewModel.saveMyPoint(test)
 
                 }
