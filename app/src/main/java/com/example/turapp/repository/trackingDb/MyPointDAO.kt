@@ -30,10 +30,10 @@ interface MyPointDAO {
 
     // PointGeoData
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMyPoint(geoData: PointGeoData): Long
+    suspend fun insertMyPointGeoData(geoData: PointGeoData): Long
 
     @Delete
-    suspend fun deleteMyPoint(geoData: PointGeoData)
+    suspend fun deleteMyPointGeoData(geoData: PointGeoData)
 
     @Transaction
     @Query("SELECT * FROM geo_data WHERE pointId = :pointId ORDER BY timestamp ASC")
