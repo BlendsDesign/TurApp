@@ -5,6 +5,8 @@ import androidx.lifecycle.*
 import com.example.turapp.repository.MyRepository
 import com.example.turapp.repository.trackingDb.MyPointDAO
 import com.example.turapp.repository.trackingDb.MyPointDB
+import com.example.turapp.repository.trackingDb.entities.MyPoint
+import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
 import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
 import com.example.turapp.roomDb.PoiDatabase
 import com.example.turapp.roomDb.SimplePoiAndActivities
@@ -14,30 +16,41 @@ import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 
-class StartViewModel(app: Application) : ViewModel() {
+class SavePictureViewModel(app: Application, private val path: String) : ViewModel() {
 
     private val repository = MyPointRepository(app)
-    private val _points = MutableLiveData<List<MyPointWithGeo>>()
-    val points : LiveData<List<MyPointWithGeo>> get() = _points
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading : LiveData<Boolean> get() = _isLoading
 
+    private val _happyWithPicture = MutableLiveData<Boolean>()
+    val happyWithPicture : LiveData<Boolean> get() = _happyWithPicture
 
-    fun refreshList() {
+    fun setHappyWithPicture() { //switch
+        _happyWithPicture.value = _happyWithPicture.value != true
+    }
+
+
+    fun saveMyPoint(title: String?, description: String?) {
         _isLoading.value = true
 
         viewModelScope.launch {
-            val temp = repository.getAllMyPointsWithGeo()
-            _points.value = temp
+            val myPointId = repository.insertMyPoint(
+                MyPoint(
+                    title = title?: path,
+                    description = description,
+                    image = path,
+                    type = TYPE_SNAPSHOT
+                )
+            )
         }
     }
 
 
-    class Factory(val app: Application) : ViewModelProvider.Factory {
+    class Factory(val app: Application, val picturePath: String) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(StartViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(SavePictureViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return StartViewModel(app) as T
+                return SavePictureViewModel(app, picturePath) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

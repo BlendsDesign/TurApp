@@ -3,6 +3,7 @@ package com.example.turapp.utils
 import android.content.ContentValues
 import android.content.Context
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
@@ -23,13 +24,19 @@ class ShotCamera(
     private val cameraFragment: CameraFragment
 ) {
     private var imageCapture: ImageCapture? = null
+    private var name : String? = null
 
-    fun takePhoto() {
+    fun getPath() : String {
+        //path used by MediaStore
+        return "${Environment.getExternalStorageDirectory()}/$name"
+    }
+
+    fun takePhoto(myCallBack : ImageCapture.OnImageSavedCallback) {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
         // Create time stamped name and MediaStore entry.
-        val name = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
+        name = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
             .format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -50,18 +57,8 @@ class ShotCamera(
         // been taken
         imageCapture.takePicture(
             outputOptions,
-            ContextCompat.getMainExecutor(mContext),
-            object : ImageCapture.OnImageSavedCallback {
-                override fun onError(exc: ImageCaptureException) {
-                    Log.e("ShotCamera", "Photo capture failed: ${exc.message}", exc)
-                }
+            ContextCompat.getMainExecutor(mContext), myCallBack
 
-                override fun onImageSaved(output: ImageCapture.OutputFileResults){
-                    val msg = "Photo capture succeeded: ${output.savedUri}"
-                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show()
-                    Log.d("ShotCamera", msg)
-                }
-            }
         )
 
     }
