@@ -11,7 +11,7 @@
 
         <TextView
             android:id="@+id/tvPoiName"
-            style="@style/heading_textSize"
+            style="@style/style_switch_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
