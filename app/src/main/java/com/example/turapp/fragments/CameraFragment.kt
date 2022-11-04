@@ -67,8 +67,8 @@ class CameraFragment : Fragment() {
         // Set up the listeners for take photo and video capture buttons
         binding.imageCaptureButton.setOnClickListener {
             shotCam.takePhoto(getImageSavedCallback())
-            //pathToPicture = shotCam.getPath()
-            //setFragmentResult("requestKey", bundleOf("bundleKey" to pathToPicture))
+//            pathToPicture = shotCam.getPath()
+//            setFragmentResult("requestKey", bundleOf("bundleKey" to pathToPicture))
         }
 
 //        viewModel.takingPicture.observe(viewLifecycleOwner, Observer {
