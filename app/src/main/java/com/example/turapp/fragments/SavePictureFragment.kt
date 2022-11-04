@@ -1,5 +1,6 @@
 package com.example.turapp.fragments
 
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -63,8 +64,10 @@ class SavePictureFragment : Fragment() {
         })
 
         binding.imageCancelPicture.setOnClickListener {
-            viewModel.cancelImage()
+            //viewModel.cancelImage()
+            //context?.contentResolver?.delete(Uri.parse(picturePath),null,null)
             findNavController().popBackStack()
+
         }
 
         // Use the Kotlin extension in the fragment-ktx artifact
@@ -99,8 +102,6 @@ class SavePictureFragment : Fragment() {
 //            }
 //        }
 
-        // se også: https://developer.android.com/training/data-storage/shared/photopicker#select-single-item
-
         return binding.root
     }
 
@@ -110,9 +111,10 @@ class SavePictureFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (viewModel.hasSavedMyPoint.value != true) {
+        if (viewModel.hasSavedMyPoint.value != true && picturePath != null) {
             Toast.makeText(requireContext(), viewModel.path, Toast.LENGTH_SHORT).show()
-            viewModel.cancelImage()
+            //viewModel.cancelImage()
+            context?.contentResolver?.delete(Uri.parse(picturePath),null,null)
         }
     }
 }
