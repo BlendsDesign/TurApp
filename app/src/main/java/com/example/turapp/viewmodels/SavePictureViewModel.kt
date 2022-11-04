@@ -33,8 +33,9 @@ class SavePictureViewModel(app: Application, val path: String) : ViewModel() {
     private val _happyWithPicture = MutableLiveData<Boolean>()
     val happyWithPicture : LiveData<Boolean> get() = _happyWithPicture
 
-    fun setHappyWithPicture() { //switch
-        _happyWithPicture.value = _happyWithPicture.value != true
+    fun setHappyWithPicture(status : Boolean) {
+        //_happyWithPicture.value = _happyWithPicture.value != true
+        _happyWithPicture.value = status
     }
 
     fun cancelImage() {
