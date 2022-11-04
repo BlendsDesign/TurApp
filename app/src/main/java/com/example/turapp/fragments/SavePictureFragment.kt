@@ -21,6 +21,7 @@ import com.example.turapp.databinding.FragmentSavePictureBinding
 import com.example.turapp.roomDb.TypeOfPoint
 import com.example.turapp.viewmodels.PointOfInterestViewModel
 import com.example.turapp.viewmodels.SavePictureViewModel
+import kotlinx.android.synthetic.main.fragment_save_picture.view.*
 
 class SavePictureFragment : Fragment() {
 
@@ -55,18 +56,27 @@ class SavePictureFragment : Fragment() {
 
         binding.imageSavePicture.setOnClickListener{
             viewModel.setHappyWithPicture(true)
+
         }
 
         viewModel.happyWithPicture.observe(viewLifecycleOwner,Observer{
             if(it == true) {
                 binding.llShowTextInput.visibility = View.VISIBLE
-                findNavController().popBackStack() //temporary testing
+                //findNavController().popBackStack() //temporary testing
+                // TODO: UTILIZE saveMyPoint in ViewModel and store the path to the database?
+
+                binding.btnSubmitInfo.setOnClickListener {
+                    // get the data with the "editText.text.toString()"
+                    val enteredTitle: String = binding.etImageTitle.text.toString()
+                    val enteredDescription: String = binding.etImageDescription.text.toString()
+                    viewModel.saveMyPoint(enteredTitle, enteredDescription)
+                    findNavController().popBackStack()
+                }
+
             }
         })
 
         binding.imageCancelPicture.setOnClickListener {
-            //viewModel.cancelImage()
-            //context?.contentResolver?.delete(Uri.parse(picturePath),null,null)
             viewModel.setHappyWithPicture(false)
             findNavController().popBackStack()
 
