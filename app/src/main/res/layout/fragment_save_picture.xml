@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".fragments.SavePictureFragment">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.turapp.viewmodels.SavePictureViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        >
+
+        <ImageView
+            android:id="@+id/iv_show_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:contentDescription="the image"
+            app:layout_constraintBottom_toTopOf="@+id/image_save_picture"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:loadImage="@{viewModel.path}"/>
+
+
+        <Button
+            android:id="@+id/image_save_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SAVE IMAGE"
+            app:layout_constraintBottom_toTopOf="@+id/image_cancel_picture"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_show_image" />
+
+        <Button
+            android:id="@+id/image_cancel_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CANCEL IMAGE"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_save_picture" />
+
+
+        <LinearLayout
+            android:id="@+id/ll_show_text_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <Button
+                android:id="@+id/btn_image_save"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SAVE IMAGE"
+                >
+
+            </Button>
+
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
