@@ -54,18 +54,20 @@ class SavePictureFragment : Fragment() {
         binding.viewModel = viewModel
 
         binding.imageSavePicture.setOnClickListener{
-            viewModel.setHappyWithPicture()
+            viewModel.setHappyWithPicture(true)
         }
 
         viewModel.happyWithPicture.observe(viewLifecycleOwner,Observer{
             if(it == true) {
                 binding.llShowTextInput.visibility = View.VISIBLE
+                findNavController().popBackStack() //temporary testing
             }
         })
 
         binding.imageCancelPicture.setOnClickListener {
             //viewModel.cancelImage()
             //context?.contentResolver?.delete(Uri.parse(picturePath),null,null)
+            viewModel.setHappyWithPicture(false)
             findNavController().popBackStack()
 
         }
@@ -114,7 +116,11 @@ class SavePictureFragment : Fragment() {
         if (viewModel.hasSavedMyPoint.value != true && picturePath != null) {
             Toast.makeText(requireContext(), viewModel.path, Toast.LENGTH_SHORT).show()
             //viewModel.cancelImage()
-            context?.contentResolver?.delete(Uri.parse(picturePath),null,null)
+            if(viewModel.happyWithPicture.value == false
+                || viewModel.happyWithPicture.value == null) //null if navigating back without deciding
+                context?.contentResolver?.delete(
+                        Uri.parse(picturePath),
+                        null, null)
         }
     }
 }

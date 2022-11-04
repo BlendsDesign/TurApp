@@ -27,7 +27,7 @@ class ShotCamera(
     private var name : String? = null
 
     fun getPath() : String {
-        //path used by MediaStore
+        //complete path, not accessible when using API 30 and up
         return "${Environment.getExternalStorageDirectory()}/$name"
     }
 
