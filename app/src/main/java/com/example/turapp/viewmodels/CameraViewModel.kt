@@ -20,16 +20,6 @@ class CameraViewModel(app: Application): ViewModel() {
         _takingPicture.value = _takingPicture.value != true
     }
 
-    fun saveMyPoint( path : String) {
-        val myPoint = MyPoint(
-            path,
-            "test",
-            TYPE_SNAPSHOT,
-            image = path
-        )
-        viewModelScope.launch { repository.insertMyPoint(myPoint)}
-    }
-
     class Factory(val app:Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(CameraViewModel::class.java)) {

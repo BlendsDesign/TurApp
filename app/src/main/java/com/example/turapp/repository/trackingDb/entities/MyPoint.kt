@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class MyPoint(
     var title: String? = null,
     var description: String? = null,
+    var adress: String? = null,
     var type: String,
     var image: String? = null,
     val createdAt: Long = System.currentTimeMillis(),

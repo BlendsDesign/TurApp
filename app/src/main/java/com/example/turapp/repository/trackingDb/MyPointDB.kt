@@ -12,10 +12,10 @@ import com.example.turapp.repository.trackingDb.entities.TempGeoData
         PointGeoData::class,
         TempGeoData::class
     ],
-    version = 3,
+    version = 4,
     autoMigrations = [AutoMigration(
-        from = 2,
-        to = 3
+        from = 3,
+        to = 4
     )
     ],
     exportSchema = true
