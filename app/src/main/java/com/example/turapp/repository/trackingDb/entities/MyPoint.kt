@@ -10,6 +10,9 @@ data class MyPoint(
     var type: String,
     var image: String? = null,
     val createdAt: Long = System.currentTimeMillis(),
+    var distanceInMeters: Float? = null,
+    var timeTaken: Long? = null,
+    var steps: Long? = null,
     var hasAdditionalData: Boolean = false
 ) {
     @PrimaryKey(autoGenerate = true)
