@@ -98,6 +98,16 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     init {
         val filter = SensorFilterFunctions()
 
+        magnetoSensor.startListening()
+        magnetoSensor.setOnSensorValuesChangedListener {
+            if(!filter.limitValues(accelVec,prevAccelVec, 0.5f)) {
+                _prevMagData = _magnetoSensorData.value ?: it as MutableList<Float>
+                _magnetoSensorData.value = it as MutableList<Float>
+                _magSensorDataFiltered.value = filter.lowPass(it, 0.2f)
+            }
+            updateOrientationAngles()
+        }
+
         accSensor.startListening()
         accSensor.setOnSensorValuesChangedListener {
             // STORE OLD VALUE FOR FILTER
@@ -109,16 +119,6 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             prevAccelVec = sqrt(_prevAccData[0]*_prevAccData[0] +
                     _prevAccData[1]*_prevAccData[1] + _prevAccData[2]*_prevAccData[2])
             accelVec = sqrt(it[0]*it[0] + it[1]*it[1] + it[2]*it[2])
-        }
-
-        magnetoSensor.startListening()
-        magnetoSensor.setOnSensorValuesChangedListener {
-            if(!filter.limitValues(accelVec,prevAccelVec, 0.5f)) {
-                _prevMagData = _magnetoSensorData.value ?: it as MutableList<Float>
-                _magnetoSensorData.value = it as MutableList<Float>
-                _magSensorDataFiltered.value = filter.lowPass(it, 0.2f)
-            }
-            updateOrientationAngles()
         }
 
         gyroSensor.startListening()
