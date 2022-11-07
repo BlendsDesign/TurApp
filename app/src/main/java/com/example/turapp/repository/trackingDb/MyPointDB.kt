@@ -12,13 +12,13 @@ import com.example.turapp.repository.trackingDb.entities.TempGeoData
         PointGeoData::class,
         TempGeoData::class
     ],
-    version = 2,
-    exportSchema = true,
+    version = 3,
     autoMigrations = [AutoMigration(
-        from = 1,
-        to = 2
+        from = 2,
+        to = 3
     )
-    ]
+    ],
+    exportSchema = true
 )
 @TypeConverters(MyConverters::class)
 abstract class MyPointDB: RoomDatabase() {
