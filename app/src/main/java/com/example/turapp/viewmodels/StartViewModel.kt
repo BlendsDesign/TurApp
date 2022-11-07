@@ -22,14 +22,6 @@ class StartViewModel(app: Application) : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading : LiveData<Boolean> get() = _isLoading
 
-    init {
-        _isLoading.value = true
-
-        viewModelScope.launch {
-            _points.value = repository.getAllMyPointsWithGeo()
-            _isLoading.value = false
-        }
-    }
 
     fun refreshList() {
         _isLoading.value = true

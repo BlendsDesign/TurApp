@@ -15,12 +15,11 @@
 
     <color name="colorPrimary">@color/theme_blue</color>
     <color name="colorPrimaryVariant">@color/theme_blue</color>
-    <color name="colorOnPrimary">@color/white</color>
+    <color name="colorOnPrimary">@color/black</color>
     <color name="colorSecondary">@color/theme_orange</color>
-    <color name="colorSecondaryVariant">@color/teal_700</color>
+    <color name="colorSecondaryVariant">@color/teal_200</color>
     <color name="colorOnSecondary">@color/black</color>
-    <color name="titleTextColor">@color/colorOnSecondary</color>
-
+    <color name="titleTextColor">@color/white</color>
 
 
 </resources>

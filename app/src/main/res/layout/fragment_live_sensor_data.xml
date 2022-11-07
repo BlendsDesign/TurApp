@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragments.LiveSensorDataFragment">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.example.turapp.viewmodels.LiveSensorDataViewModel" />
@@ -27,45 +28,43 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchAccRec"
-                    style="@style/heading_textSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/accelerator_data"/>
+                    style="@style/style_switch_text"
+                    android:text="@string/accelerator_data" />
+
                 <TextView
                     android:id="@+id/tvAccSensor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    style="@style/heading_textSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/style_livesensor_fragment_textview"
                     android:text="@string/filtered_acceleration" />
+
                 <TextView
                     android:id="@+id/tvFilteredAccData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <View style="@style/style_view" />
+
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchGyroRec"
-                    style="@style/heading_textSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/gyroscope_data"/>
+                    style="@style/style_switch_text"
+                    android:text="@string/gyroscope_data" />
+
                 <TextView
                     android:id="@+id/tvGyroSensor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    style="@style/heading_textSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/style_livesensor_fragment_textview"
                     android:text="@string/filtered_gyro_data" />
 
                 <TextView
@@ -73,13 +72,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <View style="@style/style_view" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchMagnetoRec"
-                    style="@style/heading_textSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/style_switch_text"
                     android:text="@string/magnetometer" />
+
                 <TextView
                     android:id="@+id/tvMagnetoSensor"
                     android:layout_width="match_parent"
@@ -87,9 +86,7 @@
 
 
                 <TextView
-                    style="@style/heading_textSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/style_livesensor_fragment_textview"
                     android:text="@string/filtered_magnetometer" />
 
                 <TextView
@@ -98,13 +95,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <View style="@style/style_view" />
+
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchOrientationRec"
-                    style="@style/heading_textSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/computed_orientation"/>
+                    style="@style/style_switch_text"
+                    android:text="@string/computed_orientation" />
+
                 <TextView
                     android:id="@+id/tvOrientationData"
                     android:layout_width="match_parent"
@@ -115,11 +113,8 @@
 
         <Button
             android:id="@+id/btRecord"
+            style="@style/style_record_button"
             android:text="@string/record"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@color/theme_blue"
-            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

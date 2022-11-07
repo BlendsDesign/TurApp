@@ -1,8 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="heading_textSize">
-        <item name="android:textSize">23sp</item>
+    <style name="style_switch_text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="style_view">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:background">@android:color/darker_gray</item>
+    </style>
+
+    <style name="style_livesensor_fragment_textview">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_marginTop">5dp</item>
+
+    </style>
+
+    <style name="style_mapview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_margin">2dp</item>
+
+    </style>
+
+    <style name="style_title_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/titleTextColor</item>
+    </style>
+
+    <style name="style_loading">
+        <item name="android:src">@drawable/loading_animation</item>
+    </style>
+
+    <style name="style_camera_button">
+        <item name="android:layout_width">90dp</item>
+        <item name="android:layout_height">90dp</item>
+        <item name="android:background">@drawable/ic_capture</item>
+        <item name="android:layout_marginBottom">50dp</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+
+    <style name="style_record_button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/theme_blue</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
+    <style name="style_rv_text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+    </style>
+
+    <style name="style_guideline">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="layout_constraintGuide_percent">0.5</item>
     </style>
 
     <style name="see_poi_recording_button">

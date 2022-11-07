@@ -30,6 +30,7 @@ class StartFragment : Fragment() {
         binding = StartFragmentBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+        viewModel.refreshList()
 
         viewModel.isLoading.observe(viewLifecycleOwner, Observer {
             if (!it && viewModel.points.value?.isEmpty() == true) {
