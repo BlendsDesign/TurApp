@@ -62,8 +62,6 @@ class SavePictureFragment : Fragment() {
         viewModel.happyWithPicture.observe(viewLifecycleOwner,Observer{
             if(it == true) {
                 binding.llShowTextInput.visibility = View.VISIBLE
-                //findNavController().popBackStack() //temporary testing
-                // TODO: UTILIZE saveMyPoint in ViewModel and store the path to the database?
 
                 binding.btnSubmitInfo.setOnClickListener {
                     // get the data with the "editText.text.toString()"
