@@ -52,18 +52,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
-            <Button
-                android:id="@+id/btn_image_save"
+            <EditText
+                android:id="@+id/et_image_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SAVE IMAGE"
-                >
+                android:autofillHints="title"
+                android:hint="TITLE"
+                android:inputType="text"
+                android:minHeight="48dp" />
+
+            <EditText
+                android:id="@+id/et_image_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="description"
+                android:hint="DESCRIPTION"
+                android:inputType="text"
+                android:minHeight="48dp"
+                android:textColorHint="#757575" />
+
+            <Button
+                android:id="@+id/btn_submit_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SUBMIT CHANGES">
 
             </Button>
 

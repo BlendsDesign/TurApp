@@ -4,6 +4,18 @@ import kotlin.math.abs
 
 class SensorFilterFunctions() {
 
+    //Filter Theory: Kalman
+
+    var errorInEstimate = 0 // A: original error estimate feeds into it
+    var errorInData = 0 // B: measurement
+    var calkKalmanGain = 0 // Equation 1 : Puts relative importance on A or B
+
+    var previousEstimate = 0 // C: original estimate feeds into it
+    var measuredValue = 0 // D: data input
+    var calcCurrentEstimate = 0 // Equation 2: updates estimate and puts relative importance on C or D
+
+    var calkNewErrorInEstimate = 0 // Equation 3: feeds back into errorInEstimate
+
     var lastOutput = mutableListOf(0f, 0f, 0f)
 
     /*
