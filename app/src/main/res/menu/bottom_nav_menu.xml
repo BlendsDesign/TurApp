@@ -25,4 +25,10 @@
         android:icon="@drawable/ic_sensor">
     </item>
 
+    <item
+        android:id="@+id/graphFragment"
+        android:title="GraphFragment"
+        android:icon="@drawable/ic_baseline_auto_graph_24">
+    </item>
+
 </menu>
