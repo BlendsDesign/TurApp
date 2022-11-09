@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.turapp.utils.helperFiles.Helper
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentTrackingBinding
@@ -274,32 +275,43 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     }
                     return@setOnItemSelectedListener false
                 }
-                R.id.miAddPoint -> viewModel.setAddingCustomMarker()
+                R.id.miAddPoint -> {
+                    if (viewModel.addingCustomMarker.value == true) {
+                        viewModel.setAddingCustomMarker()
+                        return@setOnItemSelectedListener false
+                    }
+                    Toast.makeText(requireContext(), "Click on map to add a point there",
+                        Toast.LENGTH_SHORT).show()
+                    viewModel.setAddingCustomMarker()
+                }
 
             }
-            true
+            false
         }
     }
 
     // This works with the MapEventsOverlay to add clicklisteners and lets us add POIs
     private fun getEventsReceiver(): MapEventsReceiver {
         return object : MapEventsReceiver {
-            override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
-                val m = Marker(map)
-                m.apply {
-                    position = p
-                    title = getLocationInformation(p.latitude, p.longitude)
-                    isDraggable = true
-                    setOnMarkerDragListener(
-                        getMarkerDragListener()
-                    )
-                    showInfoWindow()
-                }
-                map.overlays.add(m)
-                map.controller.animateTo(m.position)
-                map.invalidate()
-
-                return false
+            override fun singleTapConfirmedHelper(geoPoint: GeoPoint): Boolean {
+                viewModel.setAddingCustomMarker()
+                findNavController().navigate(
+                    TrackingFragmentDirections.actionTrackingFragmentToSaveMyPointFragment(geoPoint)
+                )
+//                val m = Marker(map)
+//                m.apply {
+//                    position = p
+//                    title = getLocationInformation(p.latitude, p.longitude)
+//                    isDraggable = true
+//                    setOnMarkerDragListener(
+//                        getMarkerDragListener()
+//                    )
+//                    showInfoWindow()
+//                }
+//                map.overlays.add(m)
+//                map.controller.animateTo(m.position)
+//                map.invalidate()
+                return true
             }
 
             override fun longPressHelper(p: GeoPoint): Boolean {

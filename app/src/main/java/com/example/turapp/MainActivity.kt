@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.turapp.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -36,6 +37,14 @@ class MainActivity : AppCompatActivity() {
         checkPrefs()
         navController = findViewById<View?>(R.id.navHostFragment).findNavController()
         binding.bottomNav.setupWithNavController(navController)
+        navController.apply {
+            addOnDestinationChangedListener { controller, destination, arguments ->
+                when (destination.id) {
+                    R.id.saveMyPointFragment -> binding.bottomNav.visibility = View.GONE
+                    else -> binding.bottomNav.visibility = View.VISIBLE
+                }
+            }
+        }
 
         //val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
         setSupportActionBar(binding.turToolbar)
@@ -45,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.app_bar_menu, menu)
         return true
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long

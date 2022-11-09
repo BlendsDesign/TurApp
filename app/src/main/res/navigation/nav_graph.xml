@@ -50,7 +50,11 @@
     <fragment
         android:id="@+id/trackingFragment"
         android:name="com.example.turapp.fragments.TrackingFragment"
-        android:label="TrackingFragment" />
+        android:label="TrackingFragment" >
+        <action
+            android:id="@+id/action_trackingFragment_to_saveMyPointFragment"
+            app:destination="@id/saveMyPointFragment" />
+    </fragment>
     <fragment
         android:id="@+id/savePictureFragment"
         android:name="com.example.turapp.fragments.SavePictureFragment"
@@ -59,6 +63,16 @@
         <argument
             android:name="picturePath"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/saveMyPointFragment"
+        android:name="com.example.turapp.fragments.SaveMyPointFragment"
+        android:label="fragment_save_my_point"
+        tools:layout="@layout/fragment_save_my_point" >
+        <argument
+            android:name="location"
+            app:argType="org.osmdroid.util.GeoPoint"
+            app:nullable="true" />
     </fragment>
 
 

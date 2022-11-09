@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".fragments.SaveMyPointFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/buttonGroup"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGrpImage"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="image"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGrpLocation"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="location"/>
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <FrameLayout
+                android:id="@+id/frameForImageOrMap"
+                app:layout_constraintTop_toBottomOf="@id/buttonGroup"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="1:1">
+
+            <ImageView
+                android:id="@+id/imgHolder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="The Image connected to this point"
+                android:src="@drawable/ic_baseline_broken_image" />
+
+            <org.osmdroid.views.MapView
+                android:id="@+id/mapHolder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_baseline_broken_image"
+                android:visibility="gone" />
+            </FrameLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputTitle"
+                app:layout_constraintTop_toBottomOf="@id/frameForImageOrMap"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="match_parent"
+                android:minWidth="88dp"
+                android:layout_height="wrap_content"
+                android:hint="Title"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputDescription"
+                app:layout_constraintTop_toBottomOf="@id/inputTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="match_parent"
+                android:minWidth="88dp"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>
