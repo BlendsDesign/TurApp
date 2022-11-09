@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragments.SaveMyPointFragment">
 
-    <ScrollView
+    <com.example.turapp.utils.helperFiles.LockableScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp">
@@ -30,14 +31,18 @@
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="image" />
+                    android:text="image"
+                    app:icon="@drawable/ic_image"
+                    app:iconGravity="top"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnGrpLocation"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="location" />
+                    android:text="location"
+                    app:icon="@drawable/ic_map"
+                    app:iconGravity="top"/>
 
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -130,5 +135,5 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </com.example.turapp.utils.helperFiles.LockableScrollView>
 </layout>

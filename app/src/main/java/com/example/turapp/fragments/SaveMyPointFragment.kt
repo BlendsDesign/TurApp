@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentSaveMyPointBinding
 import com.example.turapp.utils.helperFiles.Helper
@@ -33,6 +34,8 @@ class SaveMyPointFragment : Fragment() {
     private var location: GeoPoint? = null
     private lateinit var map: MapView
 
+    private var disableScrollView : Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +59,13 @@ class SaveMyPointFragment : Fragment() {
             setTileSource(TileSourceFactory.MAPNIK)
             controller.setZoom(18.0)
         }
+
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         if (location != null) {
             val marker = Marker(map)
@@ -83,9 +93,12 @@ class SaveMyPointFragment : Fragment() {
                 binding.mapHolder.visibility = View.VISIBLE
             }
         }
-
-        return binding.root
+        binding.btnCancel.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
+
+
     private fun getLocationInformation(p: GeoPoint): String? {
         val gc = Geocoder(requireContext(), Locale.getDefault())
         try {
@@ -100,7 +113,7 @@ class SaveMyPointFragment : Fragment() {
     private fun getMarkerDragListener(): Marker.OnMarkerDragListener {
         return object : Marker.OnMarkerDragListener {
             override fun onMarkerDrag(marker: Marker?) {
-
+                binding.scrollView.setScrollingEnabled(false)
             }
 
             override fun onMarkerDragEnd(marker: Marker?) {
@@ -109,6 +122,8 @@ class SaveMyPointFragment : Fragment() {
                     marker.title = getLocationInformation(marker.position)
                     marker.showInfoWindow()
                     map.controller.animateTo(marker.position)
+                    binding.scrollView.setScrollingEnabled(true)
+
                 }
             }
 
@@ -118,5 +133,4 @@ class SaveMyPointFragment : Fragment() {
 
         }
     }
-
 }
