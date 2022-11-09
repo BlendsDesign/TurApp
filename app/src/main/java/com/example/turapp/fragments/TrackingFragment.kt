@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.utils.helperFiles.Helper
 import com.example.turapp.R
@@ -65,8 +66,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        org.osmdroid.config.Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
-        Helper.suggestedFix(contextWrapper = ContextWrapper(context))
         requestPermissions()
 
 
@@ -116,40 +115,40 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 }
             }
         }
-
-        map = binding.trackingMap
-        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
-        map.setMultiTouchControls(true) //3
-        map.setTileSource(TileSourceFactory.MAPNIK)
-        InternalCompassOrientationProvider(requireContext()).startOrientationProvider { orientation, source ->
-            map.mapOrientation = orientation
-        }
-        val compass = CompassOverlay(
-            context,
-            InternalCompassOrientationProvider(context), map
-        )
-        compass.enableCompass()
-
-        map.overlays.add(compass)
-        map.controller.setZoom(18.0)
-        viewModel.startingPoint.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                map.controller.animateTo(it)
-                map.invalidate()
+        lifecycleScope.launchWhenCreated {
+            map = binding.trackingMap
+            map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
+            map.setMultiTouchControls(true) //3
+            map.setTileSource(TileSourceFactory.MAPNIK)
+            InternalCompassOrientationProvider(requireContext()).startOrientationProvider { orientation, source ->
+                map.mapOrientation = orientation
             }
-        })
+            val compass = CompassOverlay(
+                context,
+                InternalCompassOrientationProvider(context), map
+            )
+            compass.enableCompass()
 
-        val clMarker = Marker(map)
-        clMarker.icon = getDrawable(requireContext(), R.drawable.ic_my_location)
-        viewModel.currentPosition.observe(viewLifecycleOwner, Observer {
-            clMarker.position = it
-        })
-        map.overlayManager.add(clMarker)
+            map.overlays.add(compass)
+            map.controller.setZoom(18.0)
+            viewModel.startingPoint.observe(viewLifecycleOwner, Observer {
+                if (it != null) {
+                    map.controller.animateTo(it)
+                    map.invalidate()
+                }
+            })
+
+            val clMarker = Marker(map)
+            clMarker.icon = getDrawable(requireContext(), R.drawable.ic_my_location)
+            viewModel.currentPosition.observe(viewLifecycleOwner, Observer {
+                clMarker.position = it
+            })
+            map.overlayManager.add(clMarker)
 
 
-        val myMapEventsOverlay: MapEventsOverlay = MapEventsOverlay(getEventsReceiver())
-        map.overlays.add(myMapEventsOverlay)
-
+            val myMapEventsOverlay: MapEventsOverlay = MapEventsOverlay(getEventsReceiver())
+            map.overlays.add(myMapEventsOverlay)
+        }
 
         viewModel.stepCountData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             totalSteps++

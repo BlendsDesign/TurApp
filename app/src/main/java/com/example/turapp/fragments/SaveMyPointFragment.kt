@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentSaveMyPointBinding
@@ -39,8 +40,6 @@ class SaveMyPointFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        org.osmdroid.config.Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
-        Helper.suggestedFix(contextWrapper = ContextWrapper(context))
         arguments?.let {
             location = it.get("location") as GeoPoint?
         }
@@ -51,14 +50,16 @@ class SaveMyPointFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSaveMyPointBinding.inflate(inflater)
-
-        map = binding.mapHolder
-        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
-        map.apply {
-            setMultiTouchControls(true) //3
-            setTileSource(TileSourceFactory.MAPNIK)
-            controller.setZoom(18.0)
+        lifecycleScope.launchWhenCreated {
+            map = binding.mapHolder
+            map.setTileSource(TileSourceFactory.MAPNIK)
+            map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
+            map.apply {
+                setMultiTouchControls(true) //3
+                controller.setZoom(18.0)
+            }
         }
+
 
 
         return binding.root
