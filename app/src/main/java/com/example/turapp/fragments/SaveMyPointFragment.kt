@@ -69,18 +69,18 @@ class SaveMyPointFragment : Fragment() {
             map.overlays.add(marker)
             map.controller.animateTo(location)
             binding.btnGrpLocation.isChecked = true
-            binding.imgHolder.visibility = View.GONE
         } else {
             binding.btnGrpLocation.isCheckable = false
             binding.btnGrpImage.isChecked = true
+            binding.mapHolder.visibility = View.GONE
         }
 
-        binding.btnGrpLocation.addOnCheckedChangeListener { button, isChecked ->
+        binding.btnGrpImage.addOnCheckedChangeListener { button, isChecked ->
             if (isChecked) {
-                binding.imgHolder.visibility = View.GONE
+                binding.mapHolder.visibility = View.GONE
 
             } else {
-                binding.imgHolder.visibility = View.VISIBLE
+                binding.mapHolder.visibility = View.VISIBLE
             }
         }
 

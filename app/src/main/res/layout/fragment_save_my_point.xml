@@ -15,8 +15,9 @@
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true">
 
+
             <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/buttonGroup"
+                android:id="@+id/btnLocImgGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -46,14 +47,8 @@
                 android:layout_height="0dp"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/buttonGroup">
+                app:layout_constraintTop_toBottomOf="@id/btnLocImgGroup">
 
-
-                <org.osmdroid.views.MapView
-                    android:id="@+id/mapHolder"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_baseline_broken_image" />
 
                 <ImageView
                     android:background="@color/white"
@@ -62,6 +57,14 @@
                     android:layout_height="match_parent"
                     android:contentDescription="The Image connected to this point"
                     android:src="@drawable/ic_baseline_broken_image" />
+
+
+                <org.osmdroid.views.MapView
+                    android:id="@+id/mapHolder"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_baseline_broken_image" />
+
 
             </FrameLayout>
 
@@ -98,6 +101,32 @@
 
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/btnGrpSaveOrCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/inputDescription">
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancel"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancel" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSaveMyPoint"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/save_poi" />
+
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
