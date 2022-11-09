@@ -5,12 +5,15 @@ import android.location.Location
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.*
+import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
+import com.example.turapp.utils.MyPointRepository
 import com.example.turapp.utils.Sensors.StepDetectorSensor
 import com.example.turapp.utils.locationClient.DefaultLocationClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 
@@ -18,14 +21,16 @@ import org.osmdroid.views.overlay.Marker
 
 class TrackingViewModel(private val app: Application): ViewModel() {
 
+    private val repository = MyPointRepository(app)
+
     private var locationClient = DefaultLocationClient(
         app.applicationContext,
         LocationServices.getFusedLocationProviderClient(app.applicationContext)
     )
 
 
-    private val _markersList = MutableLiveData<List<Marker>>()
-    val markersList : LiveData<List<Marker>> get() = _markersList
+    private val _myPointList = MutableLiveData<List<MyPointWithGeo>>()
+    val myPointList : LiveData<List<MyPointWithGeo>> get() = _myPointList
 
     //val locGeoPoint: LiveData<GeoPoint> = locationListener.locGeoPoint
 
@@ -75,6 +80,15 @@ class TrackingViewModel(private val app: Application): ViewModel() {
             _stepCountData.value = it[0]
         }
     }
+
+    fun refreshList() {
+        viewModelScope.launch {
+            _myPointList.value = with(repository) {
+                getAllMyPointsWithGeo()
+            }
+        }
+    }
+
     fun startLocationClient() {
         // This is only for the map, and not for the tracking service
         locationClient.getLocationUpdates(500L)

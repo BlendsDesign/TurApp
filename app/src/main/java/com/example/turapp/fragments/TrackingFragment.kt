@@ -31,6 +31,7 @@ import com.example.turapp.viewmodels.TrackingViewModel
 import com.example.turapp.utils.locationClient.LocationService
 import kotlinx.android.synthetic.main.fragment_tracking.*
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -85,12 +86,11 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
         val sharedPreferences = context?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences?.edit()
-        editor?.putFloat("key1",previousTotalSteps)
+        editor?.putFloat("key1", previousTotalSteps)
         editor?.apply()
     }
 
-    private fun loadStepData()
-    {
+    private fun loadStepData() {
         val sharedPreferences = context?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         val savedNumber = sharedPreferences?.getFloat("key1", 0f)
         Log.d("loadStepData fun", "$savedNumber")
@@ -158,7 +158,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 Toast.makeText(context, "Long tap to reset steps!", Toast.LENGTH_SHORT).show()
             }
 
-            tvStepCount.setOnLongClickListener{ view ->
+            tvStepCount.setOnLongClickListener { view ->
                 previousTotalSteps = totalSteps.toFloat()
                 totalSteps = 0 //reset
                 binding.tvStepCount.text = 0.toString()
@@ -168,6 +168,23 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         })
 
         setUpBottomNavTrackingFragmentButtons()
+
+        viewModel.myPointList.observe(viewLifecycleOwner, Observer {
+            if (it.isNotEmpty()) {
+                lifecycleScope.launch {
+                    it.forEach { point ->
+
+                        val temp = Marker(map)
+                        temp.apply {
+                            position = point.geoData.first().geoPoint
+                            title = point.point.title
+                            subDescription = point.point.description
+                        }
+                        map.overlays.add(temp)
+                    }
+                }
+            }
+        })
 
 
         return binding.root
@@ -216,6 +233,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onResume() {
         super.onResume()
         map.onResume()
+        viewModel.refreshList()
     }
 
     override fun onDestroy() {
@@ -287,8 +305,10 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                         viewModel.setAddingCustomMarker()
                         return@setOnItemSelectedListener false
                     }
-                    Toast.makeText(requireContext(), "Click on map to add a point there",
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(), "Click on map to add a point there",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     viewModel.setAddingCustomMarker()
                 }
 
@@ -340,7 +360,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             override fun onMarkerDragEnd(marker: Marker?) {
                 if (marker != null) {
                     marker.position = marker.position
-                    marker.title = getLocationInformation(marker.position.latitude, marker.position.longitude)
+                    marker.title =
+                        getLocationInformation(marker.position.latitude, marker.position.longitude)
                     marker.showInfoWindow()
                     map.controller.animateTo(marker.position)
                 }

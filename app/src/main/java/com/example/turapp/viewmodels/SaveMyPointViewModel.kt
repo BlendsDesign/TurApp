@@ -1,6 +1,8 @@
 package com.example.turapp.viewmodels
 
 import android.app.Application
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -17,6 +19,9 @@ class SaveMyPointViewModel(private val app: Application): ViewModel() {
 
     private val repository: MyPointRepository = MyPointRepository(app)
 
+    private val _finishedSavingPoint = MutableLiveData<Boolean>()
+    val finishedSavingPoint: LiveData<Boolean> get() = _finishedSavingPoint
+
     fun saveSinglePoint(title: String, description: String, marker: Marker?) {
         viewModelScope.launch {
             val geoList = mutableListOf<PointGeoData>()
@@ -30,6 +35,7 @@ class SaveMyPointViewModel(private val app: Application): ViewModel() {
                     geoList = geoList,
                     adress = marker.title
                 )
+                _finishedSavingPoint.value = true
             }
         }
     }

@@ -70,6 +70,11 @@ class SaveMyPointFragment : Fragment() {
             viewModel.saveSinglePoint(title = title, description = desc, marker = marker)
         }
 
+        viewModel.finishedSavingPoint.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if(it)
+                findNavController().popBackStack()
+        })
+
 
 
         return binding.root
