@@ -3,6 +3,7 @@ package com.example.turapp.fragments
 import android.content.ContextWrapper
 import android.location.Geocoder
 import android.os.Bundle
+import android.text.Editable
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.example.turapp.R
 import com.example.turapp.databinding.FragmentSaveMyPointBinding
 import com.example.turapp.utils.helperFiles.Helper
 import com.example.turapp.viewmodels.SaveMyPointViewModel
+import com.google.android.material.textfield.TextInputEditText
 import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -34,6 +36,8 @@ class SaveMyPointFragment : Fragment() {
 
     private var location: GeoPoint? = null
     private lateinit var map: MapView
+
+    private var marker: Marker? = null
 
     private var disableScrollView : Boolean = false
 
@@ -60,6 +64,12 @@ class SaveMyPointFragment : Fragment() {
             }
         }
 
+        binding.btnSaveMyPoint.setOnClickListener {
+            val title = binding.titleInputField.text.toString()
+            val desc = binding.descInputField.text.toString()
+            viewModel.saveSinglePoint(title = title, description = desc, marker = marker)
+        }
+
 
 
         return binding.root
@@ -69,8 +79,8 @@ class SaveMyPointFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (location != null) {
-            val marker = Marker(map)
-            marker.apply {
+            marker = Marker(map)
+            marker?.apply {
                 isDraggable = true
                 title = getLocationInformation(location!!)
                 showInfoWindow()

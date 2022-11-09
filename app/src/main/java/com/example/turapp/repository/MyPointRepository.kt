@@ -17,6 +17,28 @@ class MyPointRepository(app: Application) {
         return dao.getAllMyPointWithGeo()
     }
 
+    suspend fun createMyPointWithGeo(
+        title: String,
+        desc: String?,
+        type: String,
+        adress: String?,
+        geoList: List<PointGeoData>
+    ): Boolean {
+        val myPointId = dao.insertMyPoint(
+            MyPoint(
+                title = title,
+                description = desc,
+                adress = adress,
+                type = type
+            )
+        )
+        geoList.forEach {
+            it.pointId = myPointId.toInt()
+            dao.insertMyPointGeoData(it)
+        }
+        return true
+    }
+
     suspend fun insertMyPoint(myPoint: MyPoint /*, geo: GeoPoint, timestamp: Long*/) : Int {
         val pointId =  dao.insertMyPoint(myPoint).toInt()
 
