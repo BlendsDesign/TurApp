@@ -37,4 +37,10 @@
     <string name="start_capture">Start Capture</string>
     <string name="stop_capture">Stop Capture</string>
 
+    <!--https://appsnipp.com/creative-android-login-registration-design/-->
+    <string name="help_hint">Don\'t have a clue what this does? click here!</string>
+    <string name="title_hint">Title</string>
+    <string name="description_hint">Description</string>
+    <string name="save">Save</string>
+
 </resources>

@@ -1,20 +1,60 @@
 package com.example.turapp.utils.Sensors
 
+import android.content.ContentValues
 import kotlin.math.abs
 
 class SensorFilterFunctions() {
 
     //Filter Theory: Kalman
+    var errorInEstimate = 0
+    // A: first time through : original error estimate, then next previous error in estimate feeds back into it
 
-    var errorInEstimate = 0 // A: original error estimate feeds into it
-    var errorInData = 0 // B: measurement
-    var calkKalmanGain = 0 // Equation 1 : Puts relative importance on A or B
+    var errorInDataMeasurement = 0
+    // B: Data measurement error
 
-    var previousEstimate = 0 // C: original estimate feeds into it
-    var measuredValue = 0 // D: data input
-    var calcCurrentEstimate = 0 // Equation 2: updates estimate and puts relative importance on C or D
+    var kalmanGain = 0
+    // Equation 1 : Puts relative importance on A or B, and determines weight distribution on C and D
+    // If error in estimate is smaller then more importance is put into it, and vica versa.
 
-    var calkNewErrorInEstimate = 0 // Equation 3: feeds back into errorInEstimate
+    var previousEstimate = 0
+    // C: first time through : original estimate feeds into it (original error can be anything)
+
+    var measuredValue = 0
+    // D: data input
+
+    var currentEstimate = 0
+    // Equation 2: updates estimate and puts relative importance on C or D
+
+    var newErrorInEstimate = 0
+    // Equation 3: feeds back into errorInEstimate
+
+    fun generalKalman()
+    {
+        // NOTE:
+        // high kalmanGain: measurements are accurate, estimates are unstable (big errors) *
+        // low  kalmanGain: measurements are inaccurate, estimates are stable (small errors) **
+
+        kalmanGain = errorInEstimate / (errorInEstimate + errorInDataMeasurement)
+        // EQ 1:
+        // 0 < KalmanGain < 1
+        // use kalmanGain to place relative importance on errorInEstimate or errorInDataMeasurement
+        // if kalmanGain is close to 1, measurement error is very small
+
+        currentEstimate = previousEstimate + (kalmanGain * measuredValue - kalmanGain * previousEstimate)
+        // EQ: 2
+        // use kalmanGain to place relative importance on either measuredValue or previousEstimate
+        // if kalmanGain is close to 0, currentEstimate will be closer to previousEstimate
+        // and we are getting closer to the true value
+
+        newErrorInEstimate = (1 - kalmanGain) * previousEstimate
+        // EQ 3 (inverse of EQ1)
+        // same as: newErrorInEstimate = (errorInDataMeasurement * previousEstimate) /
+        //      (errorInDataMeasurement + previousEstimate)
+        // if errorInDataMeasurement is very small we can rely more on the previousEstimate -> newErrorInEstimate decreases faster **
+        // if errorInDataMeasurement is very large we must rely less on the previousEstimate -> newErrorInEstimate decreases slower *
+
+    }
+
 
     var lastOutput = mutableListOf(0f, 0f, 0f)
 
@@ -38,10 +78,15 @@ class SensorFilterFunctions() {
     }
 
     fun limitValues(prevAcc: Float, currAcc: Float, limit: Float): Boolean {
-        if (abs(currAcc - prevAcc) < limit)
-            return true; // below limit, do not update values
+        return (abs(currAcc - prevAcc) < limit)
 
-        return false
+    }
+
+    fun limitValues(newValues: MutableList<Float>, oldValues: MutableList<Float>,limit: Float): Boolean {
+        return ((abs(newValues[0] - oldValues[0]) < limit)
+                or (abs(newValues[1] - oldValues[1]) < limit)
+                or (abs(newValues[2] - oldValues[2]) < limit))
+
     }
 
     fun gyroFilter(

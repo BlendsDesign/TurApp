@@ -95,9 +95,9 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
     private var accelVec = 0.0f
     private var prevAccelVec = 0.0f
 
-    init {
-        val filter = SensorFilterFunctions()
+    private val filter = SensorFilterFunctions()
 
+    init {
         magnetoSensor.startListening()
         magnetoSensor.setOnSensorValuesChangedListener {
             if(!filter.limitValues(accelVec,prevAccelVec, 0.5f)) {
@@ -232,19 +232,27 @@ class LiveSensorDataViewModel(app: Application) : ViewModel() {
             )
             // "rotationMatrix" now has up-to-date information.
 
-            val o = SensorManager.getOrientation(rotationMatrix, orientationAngles).toMutableList()
+            val newOrient = SensorManager.getOrientation(rotationMatrix, orientationAngles).toMutableList()
+            val oldOrient = mutableListOf<Float>()
+            oldOrient.add(newOrient[0])
+            oldOrient.add(newOrient[1])
+            oldOrient.add(newOrient[2])
 
+            val yaw = Math.toDegrees(newOrient[0].toDouble()).toFloat()
+            val pitch = Math.toDegrees(newOrient[1].toDouble()).toFloat()
+            val roll = Math.toDegrees(newOrient[2].toDouble()).toFloat()
             //convert to degrees from radians
-            val yaw = Math.toDegrees(o[0].toDouble()).toFloat()
-            val pitch = Math.toDegrees(o[1].toDouble()).toFloat()
-            val roll = Math.toDegrees(o[2].toDouble()).toFloat()
-            o[0] = yaw
-            o[1] = pitch
-            o[2] = roll
+            newOrient[0] = yaw
+            newOrient[1] = pitch
+            newOrient[2] = roll
 
-            _orientationData.value = o
+            if(filter.limitValues(oldOrient, newOrient,1f))
+                _orientationData.value = newOrient
+
+            oldOrient.clear()
+
             if (_recOrientation) {
-                _orientationRec.add(o)
+                _orientationRec.add(newOrient)
             }
 
             // "orientationAngles" now has up-to-date information.

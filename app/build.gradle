@@ -96,6 +96,11 @@ dependencies {
     implementation "androidx.camera:camera-view:${camerax_version}"
     implementation "androidx.camera:camera-extensions:${camerax_version}"
 
+    //testing a new form layout when saving picture
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support.constraint:constraint-layout:2.0.4'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
 
 
 }

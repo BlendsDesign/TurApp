@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="8dp"
+    android:layout_marginEnd="24dp"
+    android:layout_marginStart="24dp"
+    android:layout_marginTop="8dp"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        style="@style/loginHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/loginViewsMargin"
+        android:text="Save your data"
+        android:textColor="@color/colorSecondary" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputName"
+        style="@style/parent"
+        android:layout_marginTop="@dimen/loginViewsMargin">
+
+        <EditText
+            android:id="@+id/editTextName"
+            style="@style/modifiedEditText"
+            android:hint="@string/title_hint"
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:autofillHints="Title" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputMobile"
+        style="@style/parent"
+        android:layout_marginTop="@dimen/loginViewsMargin">
+
+        <EditText
+            android:id="@+id/editTextDescription"
+            style="@style/modifiedEditText"
+            android:hint="@string/description_hint"
+            android:inputType="textCapSentences|textNoSuggestions|textMultiLine"
+            android:minLines="3"
+            android:maxLines="6"
+            android:gravity="top"
+            android:autofillHints="edittext"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/cirLoginButton"
+        style="@style/save_button"
+        android:text="@string/save"
+        android:layout_gravity="right"
+        android:layout_marginTop="@dimen/loginViewsMargin"/>
+
+    <TextView
+        style="@style/parent"
+        android:layout_marginTop="@dimen/loginViewsMargin"
+        android:text="@string/help_hint"
+        android:textAlignment="textEnd"
+        android:textColor="@color/colorSecondary"
+        android:textStyle="bold" />
+
+</LinearLayout>
