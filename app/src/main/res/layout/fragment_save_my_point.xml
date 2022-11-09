@@ -68,7 +68,8 @@
                     android:id="@+id/mapHolder"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_baseline_broken_image" />
+                    android:src="@drawable/ic_baseline_broken_image"
+                    android:focusable="true"/>
 
 
             </FrameLayout>

@@ -29,6 +29,7 @@ import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.viewmodels.TrackingViewModel
 import com.example.turapp.utils.locationClient.LocationService
 import kotlinx.android.synthetic.main.fragment_tracking.*
+import kotlinx.coroutines.flow.callbackFlow
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -145,14 +146,10 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         })
         map.overlayManager.add(clMarker)
 
+
         val myMapEventsOverlay: MapEventsOverlay = MapEventsOverlay(getEventsReceiver())
-        viewModel.addingCustomMarker.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                map.overlays.add(myMapEventsOverlay)
-            } else {
-                map.overlays.remove(myMapEventsOverlay)
-            }
-        })
+        map.overlays.add(myMapEventsOverlay)
+
 
         viewModel.stepCountData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             totalSteps++
@@ -212,12 +209,23 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        map.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        map.onResume()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         Intent(context, LocationService::class.java).apply {
             action = LocationService.ACTION_STOP
             context?.startService(this)
         }
+        map.onDetach()
     }
 
 
@@ -294,10 +302,14 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private fun getEventsReceiver(): MapEventsReceiver {
         return object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(geoPoint: GeoPoint): Boolean {
-                viewModel.setAddingCustomMarker()
-                findNavController().navigate(
-                    TrackingFragmentDirections.actionTrackingFragmentToSaveMyPointFragment(geoPoint)
-                )
+                if (viewModel.addingCustomMarker.value == true) {
+                    viewModel.setAddingCustomMarker()
+                    findNavController().navigate(
+                        TrackingFragmentDirections.actionTrackingFragmentToSaveMyPointFragment(
+                            geoPoint
+                        )
+                    )
+                }
 //                val m = Marker(map)
 //                m.apply {
 //                    position = p
