@@ -49,6 +49,26 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputTitle"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Title"
+                    android:minWidth="88dp"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/titleInputField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:textColor="@color/black"
+                        />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <TextView
                     android:id="@+id/tvFirstTextViewInTracking"
                     android:layout_width="wrap_content"

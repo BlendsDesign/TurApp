@@ -4,9 +4,12 @@ import android.app.Application
 import android.location.Location
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.*
+import com.example.turapp.R
 import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
 import com.example.turapp.utils.MyPointRepository
+import com.example.turapp.utils.OSMDroidUtils
 import com.example.turapp.utils.Sensors.StepDetectorSensor
 import com.example.turapp.utils.locationClient.DefaultLocationClient
 import com.google.android.gms.location.LocationServices
@@ -36,10 +39,15 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     private val _selectedMarker = MutableLiveData<Marker?>()
     val selectedMarker : LiveData<Marker?> get() = _selectedMarker
     fun setSelectedMarker(marker: Marker) {
+        marker.icon = AppCompatResources.getDrawable(app.applicationContext, R.drawable.ic_marker_blue)
         _selectedMarker.value = marker
     }
     fun clearSelectedMarker() {
-        _selectedMarker.value = null
+        if (_selectedMarker.value != null) {
+            _selectedMarker.value?.icon = AppCompatResources.getDrawable(app.applicationContext, R.drawable.ic_marker_orange)
+            _selectedMarker.value = null
+        }
+
     }
     private val _targetMarker = MutableLiveData<Marker?>()
     val targetMarker : LiveData<Marker?> get() = _targetMarker

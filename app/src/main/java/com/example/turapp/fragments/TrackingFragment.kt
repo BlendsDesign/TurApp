@@ -9,6 +9,7 @@ import android.hardware.SensorManager
 import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -52,6 +53,8 @@ import java.util.*
 
 
 class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
+
+    private var clearSelectedMarkerOverlay: MapEventsOverlay = MapEventsOverlay(getClearSelectedMarkerEventsReceiver())
 
     private lateinit var binding: FragmentTrackingBinding
 
@@ -119,6 +122,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
         lifecycleScope.launchWhenCreated {
             map = binding.trackingMap
+            clearSelectedMarkerOverlay
             map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
             map.setMultiTouchControls(true) //3
             map.setTileSource(TileSourceFactory.MAPNIK)
@@ -186,6 +190,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                             position = point.geoData.first().geoPoint
                             title = point.point.title
                             subDescription = point.point.description
+                            icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
                             id = point.point.pointId.toString()
                             setOnMarkerClickListener { marker, _ ->
                                 viewModel.setSelectedMarker(marker)
@@ -202,7 +207,13 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         // Observe selected point
         viewModel.selectedMarker.observe(viewLifecycleOwner, Observer {
             if(it != null) {
-                Toast.makeText(requireContext(), it.title, Toast.LENGTH_SHORT).show()
+                map.overlays.add(clearSelectedMarkerOverlay)
+                binding.svTrackingFragment.visibility = View.VISIBLE
+                binding.titleInputField.setText(it.title)
+            } else {
+                binding.svTrackingFragment.visibility = View.GONE
+                binding.titleInputField.setText("")
+                map.overlays.remove(clearSelectedMarkerOverlay)
             }
         })
 
@@ -349,19 +360,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                         )
                     )
                 }
-//                val m = Marker(map)
-//                m.apply {
-//                    position = p
-//                    title = getLocationInformation(p.latitude, p.longitude)
-//                    isDraggable = true
-//                    setOnMarkerDragListener(
-//                        getMarkerDragListener()
-//                    )
-//                    showInfoWindow()
-//                }
-//                map.overlays.add(m)
-//                map.controller.animateTo(m.position)
-//                map.invalidate()
                 return true
             }
 
@@ -371,26 +369,16 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    private fun getMarkerDragListener(): OnMarkerDragListener {
-        return object : OnMarkerDragListener {
-            override fun onMarkerDrag(marker: Marker?) {
-
+    private fun getClearSelectedMarkerEventsReceiver(): MapEventsReceiver {
+        return object : MapEventsReceiver {
+            override fun singleTapConfirmedHelper(geoPoint: GeoPoint): Boolean {
+                viewModel.clearSelectedMarker()
+                return true
             }
 
-            override fun onMarkerDragEnd(marker: Marker?) {
-                if (marker != null) {
-                    marker.position = marker.position
-                    marker.title =
-                        getLocationInformation(marker.position.latitude, marker.position.longitude)
-                    marker.showInfoWindow()
-                    map.controller.animateTo(marker.position)
-                }
+            override fun longPressHelper(p: GeoPoint): Boolean {
+                return false
             }
-
-            override fun onMarkerDragStart(marker: Marker?) {
-
-            }
-
         }
     }
 
