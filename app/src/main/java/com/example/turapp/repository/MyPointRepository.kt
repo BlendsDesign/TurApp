@@ -17,6 +17,13 @@ class MyPointRepository(app: Application) {
         return dao.getAllMyPointWithGeo()
     }
 
+
+    suspend fun getSumRanLastSevenDays(): Long {
+        val currentTime = System.currentTimeMillis()
+        val firstTime = 100L
+        return dao.getSumDistanceBetweenDates(firstTime, currentTime)
+    }
+
     suspend fun createMyPointWithGeo(
         title: String,
         desc: String?,

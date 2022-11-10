@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
-
+import java.sql.Time
 
 
 class TrackingViewModel(private val app: Application): ViewModel() {
@@ -27,6 +27,7 @@ class TrackingViewModel(private val app: Application): ViewModel() {
         app.applicationContext,
         LocationServices.getFusedLocationProviderClient(app.applicationContext)
     )
+
 
 
     private val _myPointList = MutableLiveData<List<MyPointWithGeo>>()
@@ -83,9 +84,7 @@ class TrackingViewModel(private val app: Application): ViewModel() {
 
     fun refreshList() {
         viewModelScope.launch {
-            _myPointList.value = with(repository) {
-                getAllMyPointsWithGeo()
-            }
+            _myPointList.value = repository.getAllMyPointsWithGeo()
         }
     }
 

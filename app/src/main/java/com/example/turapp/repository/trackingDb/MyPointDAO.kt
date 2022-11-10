@@ -38,4 +38,8 @@ interface MyPointDAO {
     @Transaction
     @Query("SELECT * FROM geo_data WHERE pointId = :pointId ORDER BY timestamp ASC")
     suspend fun getMyPointsOrderedGeoData(pointId: Int): List<PointGeoData>
+
+    @Transaction
+    @Query("SELECT Sum(distanceInMeters) FROM my_point WHERE createdAt BETWEEN :fromDateInMillis AND :toDateInMillis")
+    suspend fun getSumDistanceBetweenDates(fromDateInMillis: Long, toDateInMillis: Long): Long
 }
