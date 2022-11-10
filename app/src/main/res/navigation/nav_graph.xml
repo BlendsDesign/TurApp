@@ -73,6 +73,10 @@
             android:name="location"
             app:argType="org.osmdroid.util.GeoPoint"
             app:nullable="true" />
+        <argument
+            android:name="uri"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
     <fragment

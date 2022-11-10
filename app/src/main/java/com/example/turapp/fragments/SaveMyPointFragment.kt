@@ -35,6 +35,7 @@ class SaveMyPointFragment : Fragment() {
     }
 
     private var location: GeoPoint? = null
+    private var image: String? = null
     private lateinit var map: MapView
 
     private var marker: Marker? = null
@@ -46,6 +47,7 @@ class SaveMyPointFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             location = it.get("location") as GeoPoint?
+            image = it.getString("uri")
         }
     }
 

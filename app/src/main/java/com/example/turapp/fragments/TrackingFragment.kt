@@ -326,7 +326,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     findNavController().navigate(
                         TrackingFragmentDirections.actionTrackingFragmentToSaveMyPointFragment(
                             geoPoint
-                        )
+                        , null)
                     )
                 }
 //                val m = Marker(map)
