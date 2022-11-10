@@ -112,17 +112,10 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.fabTrackingHelp.setOnClickListener {
-            binding.svHelpInfo.apply {
-                if (visibility == View.VISIBLE) {
-                    visibility = View.GONE
-                } else {
-                    visibility = View.VISIBLE
-                }
-            }
+            //TODO Add an alertdialog for this
         }
         lifecycleScope.launchWhenCreated {
             map = binding.trackingMap
-            clearSelectedMarkerOverlay
             map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
             map.setMultiTouchControls(true) //3
             map.setTileSource(TileSourceFactory.MAPNIK)
@@ -150,28 +143,26 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 clMarker.position = it
             })
             map.overlayManager.add(clMarker)
-
-
             val myMapEventsOverlay: MapEventsOverlay = MapEventsOverlay(getEventsReceiver())
             map.overlays.add(myMapEventsOverlay)
         }
 
-        viewModel.stepCountData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            totalSteps++
-            binding.tvStepCount.text = ("$totalSteps")
-
-            tvStepCount.setOnClickListener { view ->
-                Toast.makeText(context, "Long tap to reset steps!", Toast.LENGTH_SHORT).show()
-            }
-
-            tvStepCount.setOnLongClickListener { view ->
-                previousTotalSteps = totalSteps.toFloat()
-                totalSteps = 0 //reset
-                binding.tvStepCount.text = 0.toString()
-                saveStepData()
-                true
-            }
-        })
+//        viewModel.stepCountData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+//            totalSteps++
+//            binding.tvStepCount.text = ("$totalSteps")
+//
+//            tvStepCount.setOnClickListener { view ->
+//                Toast.makeText(context, "Long tap to reset steps!", Toast.LENGTH_SHORT).show()
+//            }
+//
+//            tvStepCount.setOnLongClickListener { view ->
+//                previousTotalSteps = totalSteps.toFloat()
+//                totalSteps = 0 //reset
+//                binding.tvStepCount.text = 0.toString()
+//                saveStepData()
+//                true
+//            }
+//        })
 
         setUpBottomNavTrackingFragmentButtons()
 
@@ -185,20 +176,24 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     markersList.clear()
 
                     it.forEach { point ->
-                        val temp = Marker(map)
-                        temp.apply {
-                            position = point.geoData.first().geoPoint
-                            title = point.point.title
-                            subDescription = point.point.description
-                            icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
-                            id = point.point.pointId.toString()
-                            setOnMarkerClickListener { marker, _ ->
-                                viewModel.setSelectedMarker(marker)
-                                true
+                        if (point.geoData.isNotEmpty()) {
+                            val temp = Marker(map)
+                            temp.apply {
+                                position = point.geoData.first().geoPoint
+                                title = point.point.title
+                                subDescription = point.point.description
+                                icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
+                                id = point.point.pointId.toString()
+                                setOnMarkerClickListener { marker, _ ->
+                                    if (!binding.btnSetAsTarget.isChecked) {
+                                        viewModel.setSelectedMarker(marker)
+                                    }
+                                    true
+                                }
                             }
+                            markersList.add(temp)
+                            map.overlays.add(temp)
                         }
-                        markersList.add(temp)
-                        map.overlays.add(temp)
                     }
                 }
             }
@@ -208,15 +203,30 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         viewModel.selectedMarker.observe(viewLifecycleOwner, Observer {
             if(it != null) {
                 map.overlays.add(clearSelectedMarkerOverlay)
-                binding.svTrackingFragment.visibility = View.VISIBLE
+                binding.selectedMarkerDialog.visibility = View.VISIBLE
                 binding.titleInputField.setText(it.title)
             } else {
-                binding.svTrackingFragment.visibility = View.GONE
-                binding.titleInputField.setText("")
+                binding.selectedMarkerDialog.visibility = View.GONE
                 map.overlays.remove(clearSelectedMarkerOverlay)
             }
         })
+        viewModel.distanceToTargetString.observe(viewLifecycleOwner, Observer {
+            it?.let { distanceString ->
+                binding.distanceInputField.setText(distanceString)
+            } ?: binding.distanceInputField.setText("Unknown")
+        })
+        binding.btnSetAsTarget.addOnCheckedChangeListener { _, isChecked ->
+            viewModel.setSelectedAsTargetMarker(isChecked)
+        }
 
+        // Observe if we have a target location
+        viewModel.selectedMarkerIsTarget.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                map.overlays.remove(clearSelectedMarkerOverlay)
+            } else if (viewModel.selectedMarker.value != null) {
+                map.overlays.add(clearSelectedMarkerOverlay)
+            }
+        })
 
         return binding.root
     }
@@ -234,7 +244,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
 
         // THIS IS JUST TO TEST THE TRACKING SERVICE
-        binding.tvFirstTextViewInTracking.apply {
+        binding.tvForTestsDELETEME.apply {
             text = "PRESS HERE TO TEST LOCATIONSERVICE"
             setOnClickListener {
                 if (viewModel.isTracking.value != true) {
@@ -315,14 +325,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding.bottomNavTrackingFragment.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.miStartTracking -> {
-                    binding.svTrackingFragment.apply {
-                        if (visibility == View.VISIBLE) {
-                            visibility = View.GONE
-                            return@setOnItemSelectedListener false
-                        } else {
-                            visibility = View.VISIBLE
-                        }
-                    }
+
                 }
                 R.id.miGoToMyLocation -> {
                     if (viewModel.currentPosition.value != null) {
@@ -372,7 +375,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private fun getClearSelectedMarkerEventsReceiver(): MapEventsReceiver {
         return object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(geoPoint: GeoPoint): Boolean {
-                viewModel.clearSelectedMarker()
+                if (!binding.btnSetAsTarget.isChecked)
+                    viewModel.clearSelectedMarker()
                 return true
             }
 

@@ -38,24 +38,40 @@ class TrackingViewModel(private val app: Application): ViewModel() {
 
     private val _selectedMarker = MutableLiveData<Marker?>()
     val selectedMarker : LiveData<Marker?> get() = _selectedMarker
+    private val _selectedMarkerIsTarget = MutableLiveData<Boolean>()
+    val selectedMarkerIsTarget : LiveData<Boolean> get() = _selectedMarkerIsTarget
+    private val _distanceToTargetString = MutableLiveData<String?>()
+    val distanceToTargetString : LiveData<String?> get() = _distanceToTargetString
     fun setSelectedMarker(marker: Marker) {
-        marker.icon = AppCompatResources.getDrawable(app.applicationContext, R.drawable.ic_marker_blue)
-        _selectedMarker.value = marker
+        if (_selectedMarkerIsTarget.value != true) {
+            marker.icon =
+                AppCompatResources.getDrawable(app.applicationContext, R.drawable.ic_marker_blue)
+            _selectedMarker.value = marker
+            _currentPosition.value?.let {
+                setDistanceToTargetString(it)
+            }
+        }
+    }
+    fun setSelectedAsTargetMarker(isChecked: Boolean) {
+        _selectedMarkerIsTarget.value = isChecked
+        if (!isChecked) {
+            _distanceToTargetString.value = null
+        }
     }
     fun clearSelectedMarker() {
         if (_selectedMarker.value != null) {
-            _selectedMarker.value?.icon = AppCompatResources.getDrawable(app.applicationContext, R.drawable.ic_marker_orange)
+            _selectedMarker.value?.icon = AppCompatResources.getDrawable(app.applicationContext,
+                R.drawable.ic_marker_orange)
             _selectedMarker.value = null
+            _distanceToTargetString.value = null
         }
-
     }
-    private val _targetMarker = MutableLiveData<Marker?>()
-    val targetMarker : LiveData<Marker?> get() = _targetMarker
-    fun setTargetMarker(marker: Marker) {
-        _targetMarker.value = marker
-    }
-    fun clearTargetMarker() {
-        _targetMarker.value = null
+    private fun setDistanceToTargetString(current: GeoPoint) {
+        _selectedMarker.value?.let {
+            val target: GeoPoint = it.position
+            val distance = current.distanceToAsDouble(target)
+            _distanceToTargetString.value = String.format("%.2f meters", distance)
+        }
     }
 
     //val locGeoPoint: LiveData<GeoPoint> = locationListener.locGeoPoint
@@ -122,10 +138,13 @@ class TrackingViewModel(private val app: Application): ViewModel() {
                 val lat = location.latitude
                 val long = location.longitude
                 val alt = location.altitude
-                val time = location.time
+                val geo = GeoPoint(lat, long, alt)
                 _bearingAccuracy.value = location.accuracy
                 _bearing.value = location.bearing
-                _currentPosition.value = GeoPoint(lat, long, alt)
+                _currentPosition.value = geo
+                if (_selectedMarker.value != null) {
+                    setDistanceToTargetString(geo)
+                }
 
                 if (_startingPoint.value == null)
                     _startingPoint.value = GeoPoint(lat, long, alt)
@@ -136,6 +155,7 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     override fun onCleared() {
         super.onCleared()
     }
+
 
 
 

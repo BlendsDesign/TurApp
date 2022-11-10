@@ -21,6 +21,8 @@
     <color name="colorOnSecondary">@color/black</color>
     <color name="titleTextColor">@color/colorOnSecondary</color>
 
+    <color name="makeDisabledEditTextLookGood">@color/black</color>
+
 
 
 </resources>
