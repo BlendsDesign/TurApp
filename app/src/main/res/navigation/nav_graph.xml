@@ -75,5 +75,11 @@
             app:nullable="true" />
     </fragment>
 
+    <fragment
+        android:id="@+id/graphFragment"
+        android:name="com.example.turapp.fragments.GraphFragment"
+        android:label="@string/graph"
+        tools:layout="@layout/fragment_graph" />
+
 
 </navigation>
