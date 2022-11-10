@@ -33,6 +33,23 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     private val _myPointList = MutableLiveData<List<MyPointWithGeo>>()
     val myPointList : LiveData<List<MyPointWithGeo>> get() = _myPointList
 
+    private val _selectedMarker = MutableLiveData<Marker?>()
+    val selectedMarker : LiveData<Marker?> get() = _selectedMarker
+    fun setSelectedMarker(marker: Marker) {
+        _selectedMarker.value = marker
+    }
+    fun clearSelectedMarker() {
+        _selectedMarker.value = null
+    }
+    private val _targetMarker = MutableLiveData<Marker?>()
+    val targetMarker : LiveData<Marker?> get() = _targetMarker
+    fun setTargetMarker(marker: Marker) {
+        _targetMarker.value = marker
+    }
+    fun clearTargetMarker() {
+        _targetMarker.value = null
+    }
+
     //val locGeoPoint: LiveData<GeoPoint> = locationListener.locGeoPoint
 
     private val _currentLocation = MutableLiveData<Location>()

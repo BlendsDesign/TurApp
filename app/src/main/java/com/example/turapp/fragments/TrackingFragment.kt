@@ -55,6 +55,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private lateinit var binding: FragmentTrackingBinding
 
+    private val markersList = mutableListOf<Marker>()
+
     private lateinit var map: MapView // 3
 
     private var totalSteps = 0 //
@@ -172,17 +174,35 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         viewModel.myPointList.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 lifecycleScope.launch {
-                    it.forEach { point ->
+                    // REMOVE EXISTING MARKERS
+                    markersList.forEach { marker ->
+                        map.overlays.remove(marker)
+                    }
+                    markersList.clear()
 
+                    it.forEach { point ->
                         val temp = Marker(map)
                         temp.apply {
                             position = point.geoData.first().geoPoint
                             title = point.point.title
                             subDescription = point.point.description
+                            id = point.point.pointId.toString()
+                            setOnMarkerClickListener { marker, _ ->
+                                viewModel.setSelectedMarker(marker)
+                                true
+                            }
                         }
+                        markersList.add(temp)
                         map.overlays.add(temp)
                     }
                 }
+            }
+        })
+
+        // Observe selected point
+        viewModel.selectedMarker.observe(viewLifecycleOwner, Observer {
+            if(it != null) {
+                Toast.makeText(requireContext(), it.title, Toast.LENGTH_SHORT).show()
             }
         })
 
