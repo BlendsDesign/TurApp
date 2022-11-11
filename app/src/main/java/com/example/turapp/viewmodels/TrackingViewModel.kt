@@ -22,7 +22,7 @@ import org.osmdroid.views.overlay.Marker
 import java.sql.Time
 
 
-class TrackingViewModel(private val app: Application): ViewModel() {
+class TrackingViewModel(private val app: Application) : ViewModel() {
 
     private val repository = MyPointRepository(app)
 
@@ -32,16 +32,15 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     )
 
 
-
     private val _myPointList = MutableLiveData<List<MyPointWithGeo>>()
-    val myPointList : LiveData<List<MyPointWithGeo>> get() = _myPointList
+    val myPointList: LiveData<List<MyPointWithGeo>> get() = _myPointList
 
     private val _selectedMarker = MutableLiveData<Marker?>()
-    val selectedMarker : LiveData<Marker?> get() = _selectedMarker
+    val selectedMarker: LiveData<Marker?> get() = _selectedMarker
     private val _selectedMarkerIsTarget = MutableLiveData<Boolean>()
-    val selectedMarkerIsTarget : LiveData<Boolean> get() = _selectedMarkerIsTarget
+    val selectedMarkerIsTarget: LiveData<Boolean> get() = _selectedMarkerIsTarget
     private val _distanceToTargetString = MutableLiveData<String?>()
-    val distanceToTargetString : LiveData<String?> get() = _distanceToTargetString
+    val distanceToTargetString: LiveData<String?> get() = _distanceToTargetString
     fun setSelectedMarker(marker: Marker) {
         if (_selectedMarkerIsTarget.value != true) {
             marker.icon =
@@ -54,18 +53,32 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     }
     fun setSelectedAsTargetMarker(isChecked: Boolean) {
         _selectedMarkerIsTarget.value = isChecked
-        if (!isChecked) {
-            _distanceToTargetString.value = null
+        _selectedMarker.value?.let {
+            if (isChecked) {
+                it.icon = AppCompatResources.getDrawable(
+                    app.applicationContext,
+                    R.drawable.ic_marker_red
+                )
+            } else {
+                it.icon = AppCompatResources.getDrawable(
+                    app.applicationContext,
+                    R.drawable.ic_marker_blue
+                )
+            }
         }
     }
+
     fun clearSelectedMarker() {
         if (_selectedMarker.value != null) {
-            _selectedMarker.value?.icon = AppCompatResources.getDrawable(app.applicationContext,
-                R.drawable.ic_marker_orange)
+            _selectedMarker.value?.icon = AppCompatResources.getDrawable(
+                app.applicationContext,
+                R.drawable.ic_marker_orange
+            )
             _selectedMarker.value = null
             _distanceToTargetString.value = null
         }
     }
+
     private fun setDistanceToTargetString(current: GeoPoint) {
         _selectedMarker.value?.let {
             val target: GeoPoint = it.position
@@ -83,16 +96,16 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     val currentPosition: LiveData<GeoPoint> get() = _currentPosition
 
     private val _startingPoint = MutableLiveData<GeoPoint>()
-    val startingPoint : LiveData<GeoPoint> get() = _startingPoint
+    val startingPoint: LiveData<GeoPoint> get() = _startingPoint
 
     private val _markersForMap = MutableLiveData<MutableList<Marker>>()
-    val markersForMap : LiveData<MutableList<Marker>> get() = _markersForMap
+    val markersForMap: LiveData<MutableList<Marker>> get() = _markersForMap
 
     private val _deviceOrientation = MutableLiveData<Float>()
     val deviceOrientation: LiveData<Float> get() = _deviceOrientation
 
     private val _isTracking = MutableLiveData<Boolean>()
-    val isTracking : LiveData<Boolean> get() = _isTracking
+    val isTracking: LiveData<Boolean> get() = _isTracking
 
     fun switchIsTracking() {
         _isTracking.value = _isTracking.value != true
@@ -103,17 +116,16 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     val stepCountData: LiveData<Float> get() = _stepCountData
 
     private val _bearing = MutableLiveData<Float>()
-    val bearing : LiveData<Float> get() = _bearing
+    val bearing: LiveData<Float> get() = _bearing
 
     private val _bearingAccuracy = MutableLiveData<Float>()
-    val bearingAccuracy : LiveData<Float> get() = _bearingAccuracy
+    val bearingAccuracy: LiveData<Float> get() = _bearingAccuracy
 
     private val _addingCustomMarker = MutableLiveData<Boolean>()
     val addingCustomMarker: LiveData<Boolean> get() = _addingCustomMarker
     fun setAddingCustomMarker() {
         _addingCustomMarker.value = _addingCustomMarker.value != true
     }
-
 
 
     init {
@@ -155,9 +167,6 @@ class TrackingViewModel(private val app: Application): ViewModel() {
     override fun onCleared() {
         super.onCleared()
     }
-
-
-
 
 
     class Factory(private val app: Application) : ViewModelProvider.Factory {

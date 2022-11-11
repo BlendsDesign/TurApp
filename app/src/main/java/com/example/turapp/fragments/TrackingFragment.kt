@@ -204,7 +204,10 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             if(it != null) {
                 map.overlays.add(clearSelectedMarkerOverlay)
                 binding.selectedMarkerDialog.visibility = View.VISIBLE
-                binding.titleInputField.setText(it.title)
+                var title = it.title
+                if (title.length > 30)
+                    title = title.substring(0, 30) + "..."
+                binding.titleInputField.setText(title)
             } else {
                 binding.selectedMarkerDialog.visibility = View.GONE
                 map.overlays.remove(clearSelectedMarkerOverlay)
