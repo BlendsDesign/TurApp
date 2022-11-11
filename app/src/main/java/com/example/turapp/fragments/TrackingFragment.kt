@@ -2,56 +2,38 @@ package com.example.turapp.fragments
 
 import android.Manifest
 import android.content.Context
-import android.content.Context.SENSOR_SERVICE
-import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Color
-import android.hardware.SensorManager
-import android.location.Geocoder
-import android.os.Build
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.TranslateAnimation
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.turapp.utils.helperFiles.Helper
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentTrackingBinding
 import com.example.turapp.utils.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.viewmodels.TrackingViewModel
 import com.example.turapp.utils.locationClient.LocationService
-import kotlinx.android.synthetic.main.fragment_tracking.*
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import org.osmdroid.events.MapEventsReceiver
-import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.Marker.OnMarkerDragListener
-import org.osmdroid.views.overlay.Overlay
 import org.osmdroid.views.overlay.Polyline
-import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
-import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import java.io.IOException
-import java.util.*
 
 
 class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
@@ -62,10 +44,19 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private val markersList = mutableListOf<Marker>()
 
+    private lateinit var orientationProvider : InternalCompassOrientationProvider
+
     private lateinit var map: MapView // 3
 
     private val pathToTarget = Polyline().apply {
         color = Color.CYAN
+    }
+
+    private val clMark : Marker by lazy {
+        Marker(map).apply {
+            icon = getDrawable(requireContext(), R.drawable.ic_my_location_arrow)
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+        }
     }
 
     private var totalSteps = 0 //
@@ -79,8 +70,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPermissions()
-
-
         if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
             viewModel.startLocationClient()
         }
@@ -89,7 +78,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             loadStepData()
         }
 
-        val mOrientationProvider = SensorManager.SENSOR_ORIENTATION
+        orientationProvider = InternalCompassOrientationProvider(requireContext())
 
     }
 
@@ -120,21 +109,12 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding.fabTrackingHelp.setOnClickListener {
             //TODO Add an alertdialog for this
         }
+
         lifecycleScope.launchWhenCreated {
             map = binding.trackingMap
             map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
             map.setMultiTouchControls(true) //3
             map.setTileSource(TileSourceFactory.MAPNIK)
-            InternalCompassOrientationProvider(requireContext()).startOrientationProvider { orientation, source ->
-                map.mapOrientation = orientation
-            }
-            val compass = CompassOverlay(
-                context,
-                InternalCompassOrientationProvider(context), map
-            )
-            compass.enableCompass()
-
-            map.overlays.add(compass)
             map.controller.setZoom(18.0)
             viewModel.startingPoint.observe(viewLifecycleOwner, Observer {
                 if (it != null) {
@@ -143,14 +123,11 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 }
             })
 
-            val clMarker = Marker(map)
-            clMarker.icon = getDrawable(requireContext(), R.drawable.ic_my_location)
-            clMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
             viewModel.currentPosition.observe(viewLifecycleOwner, Observer { curPos ->
-                clMarker.position = curPos
+                clMark.position = curPos
             })
-            map.overlayManager.add(clMarker)
-            val myMapEventsOverlay: MapEventsOverlay = MapEventsOverlay(getEventsReceiver())
+            map.overlayManager.add(clMark)
+            val myMapEventsOverlay = MapEventsOverlay(getEventsReceiver())
             map.overlays.add(myMapEventsOverlay)
         }
 
@@ -288,12 +265,18 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onPause() {
         super.onPause()
         map.onPause()
+        orientationProvider.stopOrientationProvider()
     }
 
     override fun onResume() {
         super.onResume()
         map.onResume()
         viewModel.refreshList()
+        orientationProvider.startOrientationProvider { orientation, source ->
+                Log.d("InternalCompass", orientation.toString())
+                clMark.rotation = -orientation
+            map.invalidate()
+            }
     }
 
     override fun onDestroy() {
