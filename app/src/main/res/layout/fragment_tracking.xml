@@ -6,102 +6,119 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".fragments.TrackingFragment"
-        android:animateLayoutChanges="true">
+        android:animateLayoutChanges="true"
+        tools:context=".fragments.TrackingFragment">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabTrackingHelp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
             android:clickable="true"
-            app:srcCompat="@drawable/ic_help"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="16dp"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_help" />
 
         <org.osmdroid.views.MapView
             android:id="@+id/trackingMap"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:flow_horizontalBias="0.5"
-            app:layout_constraintBottom_toTopOf="@+id/svTrackingFragment"
+            app:layout_constraintBottom_toTopOf="@+id/selectedMarkerDialog"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_weight="2"
-            tools:layout_editor_absoluteX="47dp">
+            app:layout_constraintStart_toStartOf="parent">
 
 
         </org.osmdroid.views.MapView>
 
-        <ScrollView
-            android:id="@+id/svTrackingFragment"
+        <LinearLayout
+            android:id="@+id/selectedMarkerDialog"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:flow_horizontalBias="0.5"
-            app:layout_constraintBottom_toTopOf="@+id/svHelpInfo"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/tvForTests_DELETE_ME"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/trackingMap"
-            app:layout_constraintVertical_weight="1"
             android:visibility="gone">
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:hint="Title"
+                android:minWidth="88dp">
 
-                <TextView
-                    android:id="@+id/tvFirstTextViewInTracking"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/current_location" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="Current Step Count:"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvStepCount"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/titleInputField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="0"
-                    android:textSize="18sp" />
+                    android:enabled="false"
+                    android:textColor="@color/makeDisabledEditTextLookGood" />
 
 
-            </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        </ScrollView>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Distance"
+                android:minWidth="88dp">
 
-        <ScrollView
-            android:id="@+id/svHelpInfo"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/svTrackingFragment"
-            app:layout_constraintBottom_toTopOf="@id/tvForTests_DELETE_ME"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_weight="1"
-            android:visibility="gone">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/distanceInputField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:textColor="@color/makeDisabledEditTextLookGood" />
 
-        <TextView
-            android:id="@+id/tvHelpInfoTrackingFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="THIS WILL HOLD A LONGER TEXT EXPLAINING THE WAY TO USE THIS FRAGMENT"/>
-        </ScrollView>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/selectedMarkerDialogBtnToggleGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGoToMyPointPage"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="open" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEdit"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="edit" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSetAsTarget"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Target" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        </LinearLayout>
+
+
         <TextView
             android:id="@+id/tvForTests_DELETE_ME"
-            android:text="This is a development View to see live experiments on screen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/bottomNavTrackingFragment"
-            app:layout_constraintStart_toStartOf="parent"
             android:background="@color/cardview_dark_background"
-            android:textColor="@color/white"/>
+            android:text="This is a development View to see live experiments on screen"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavTrackingFragment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/selectedMarkerDialog" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavTrackingFragment"
@@ -111,7 +128,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/tracking_fragment_bottom_nav"/>
+            app:layout_constraintTop_toBottomOf="@+id/tvForTests_DELETE_ME"
+            app:menu="@menu/tracking_fragment_bottom_nav" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

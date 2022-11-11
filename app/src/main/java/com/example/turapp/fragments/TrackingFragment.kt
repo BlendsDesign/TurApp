@@ -2,60 +2,62 @@ package com.example.turapp.fragments
 
 import android.Manifest
 import android.content.Context
-import android.content.Context.SENSOR_SERVICE
-import android.content.ContextWrapper
 import android.content.Intent
-import android.hardware.SensorManager
-import android.location.Geocoder
-import android.os.Build
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.TranslateAnimation
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.turapp.utils.helperFiles.Helper
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentTrackingBinding
 import com.example.turapp.utils.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.viewmodels.TrackingViewModel
 import com.example.turapp.utils.locationClient.LocationService
-import kotlinx.android.synthetic.main.fragment_tracking.*
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import org.osmdroid.events.MapEventsReceiver
-import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.Marker.OnMarkerDragListener
-import org.osmdroid.views.overlay.Overlay
-import org.osmdroid.views.overlay.compass.CompassOverlay
+import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
-import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import java.io.IOException
-import java.util.*
 
 
 class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
+    private var clearSelectedMarkerOverlay: MapEventsOverlay = MapEventsOverlay(getClearSelectedMarkerEventsReceiver())
+
     private lateinit var binding: FragmentTrackingBinding
 
+    private val markersList = mutableListOf<Marker>()
+
+    private lateinit var orientationProvider : InternalCompassOrientationProvider
+
     private lateinit var map: MapView // 3
+
+    private val pathToTarget = Polyline().apply {
+        color = Color.CYAN
+    }
+
+    private val clMark : Marker by lazy {
+        Marker(map).apply {
+            icon = getDrawable(requireContext(), R.drawable.ic_my_location_arrow)
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+        }
+    }
 
     private var totalSteps = 0 //
     private var previousTotalSteps = 0f
@@ -68,8 +70,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPermissions()
-
-
         if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
             viewModel.startLocationClient()
         }
@@ -78,7 +78,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             loadStepData()
         }
 
-        val mOrientationProvider = SensorManager.SENSOR_ORIENTATION
+        orientationProvider = InternalCompassOrientationProvider(requireContext())
 
     }
 
@@ -107,29 +107,14 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.fabTrackingHelp.setOnClickListener {
-            binding.svHelpInfo.apply {
-                if (visibility == View.VISIBLE) {
-                    visibility = View.GONE
-                } else {
-                    visibility = View.VISIBLE
-                }
-            }
+            //TODO Add an alertdialog for this
         }
+
         lifecycleScope.launchWhenCreated {
             map = binding.trackingMap
             map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
             map.setMultiTouchControls(true) //3
             map.setTileSource(TileSourceFactory.MAPNIK)
-            InternalCompassOrientationProvider(requireContext()).startOrientationProvider { orientation, source ->
-                map.mapOrientation = orientation
-            }
-            val compass = CompassOverlay(
-                context,
-                InternalCompassOrientationProvider(context), map
-            )
-            compass.enableCompass()
-
-            map.overlays.add(compass)
             map.controller.setZoom(18.0)
             viewModel.startingPoint.observe(viewLifecycleOwner, Observer {
                 if (it != null) {
@@ -138,72 +123,124 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 }
             })
 
-            val clMarker = Marker(map)
-            clMarker.icon = getDrawable(requireContext(), R.drawable.ic_my_location)
-            viewModel.currentPosition.observe(viewLifecycleOwner, Observer {
-                clMarker.position = it
+            viewModel.currentPosition.observe(viewLifecycleOwner, Observer { curPos ->
+                clMark.position = curPos
             })
-            map.overlayManager.add(clMarker)
-
-
-            val myMapEventsOverlay: MapEventsOverlay = MapEventsOverlay(getEventsReceiver())
+            map.overlayManager.add(clMark)
+            val myMapEventsOverlay = MapEventsOverlay(getEventsReceiver())
             map.overlays.add(myMapEventsOverlay)
         }
 
-        viewModel.stepCountData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            totalSteps++
-            binding.tvStepCount.text = ("$totalSteps")
-
-            tvStepCount.setOnClickListener { view ->
-                Toast.makeText(context, "Long tap to reset steps!", Toast.LENGTH_SHORT).show()
-            }
-
-            tvStepCount.setOnLongClickListener { view ->
-                previousTotalSteps = totalSteps.toFloat()
-                totalSteps = 0 //reset
-                binding.tvStepCount.text = 0.toString()
-                saveStepData()
-                true
-            }
-        })
+//        viewModel.stepCountData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+//            totalSteps++
+//            binding.tvStepCount.text = ("$totalSteps")
+//
+//            tvStepCount.setOnClickListener { view ->
+//                Toast.makeText(context, "Long tap to reset steps!", Toast.LENGTH_SHORT).show()
+//            }
+//
+//            tvStepCount.setOnLongClickListener { view ->
+//                previousTotalSteps = totalSteps.toFloat()
+//                totalSteps = 0 //reset
+//                binding.tvStepCount.text = 0.toString()
+//                saveStepData()
+//                true
+//            }
+//        })
 
         setUpBottomNavTrackingFragmentButtons()
 
         viewModel.myPointList.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 lifecycleScope.launch {
-                    it.forEach { point ->
+                    // REMOVE EXISTING MARKERS
+                    markersList.forEach { marker ->
+                        map.overlays.remove(marker)
+                    }
+                    markersList.clear()
 
-                        val temp = Marker(map)
-                        temp.apply {
-                            position = point.geoData.first().geoPoint
-                            title = point.point.title
-                            subDescription = point.point.description
+                    it.forEach { point ->
+                        if (point.geoData.isNotEmpty()) {
+                            val temp = Marker(map)
+                            temp.apply {
+                                position = point.geoData.first().geoPoint
+                                title = point.point.title
+                                subDescription = point.point.description
+                                icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
+                                id = point.point.pointId.toString()
+                                setOnMarkerClickListener { marker, _ ->
+                                    if (!binding.btnSetAsTarget.isChecked) {
+                                        viewModel.setSelectedMarker(marker)
+                                    }
+                                    true
+                                }
+                            }
+                            markersList.add(temp)
+                            map.overlays.add(temp)
                         }
-                        map.overlays.add(temp)
                     }
                 }
             }
         })
 
+        // Observe selected point
+        viewModel.selectedMarker.observe(viewLifecycleOwner, Observer {
+            if(it != null) {
+                map.overlays.add(clearSelectedMarkerOverlay)
+                binding.selectedMarkerDialog.visibility = View.VISIBLE
+                var title = it.title
+                if (title.length > 30)
+                    title = title.substring(0, 30) + "..."
+                binding.titleInputField.setText(title)
+            } else {
+                binding.selectedMarkerDialog.visibility = View.GONE
+                map.overlays.remove(clearSelectedMarkerOverlay)
+            }
+        })
+        viewModel.distanceToTargetString.observe(viewLifecycleOwner, Observer {
+            it?.let { distanceString ->
+                binding.distanceInputField.setText(distanceString)
+            } ?: binding.distanceInputField.setText("Unknown")
+        })
+        binding.btnSetAsTarget.addOnCheckedChangeListener { _, isChecked ->
+            viewModel.setSelectedAsTargetMarker(isChecked)
+        }
+
+        // Observe if we have a target location
+        viewModel.selectedMarkerIsTarget.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                map.overlays.remove(clearSelectedMarkerOverlay)
+            } else if (viewModel.selectedMarker.value != null) {
+                map.overlays.add(clearSelectedMarkerOverlay)
+            }
+        })
+        viewModel.pathPointsToTarget.observe(viewLifecycleOwner, Observer {
+            if (it.size > 1) {
+                pathToTarget.setPoints(it)
+                map.overlays.add(pathToTarget)
+            } else {
+                map.overlays.remove(pathToTarget)
+                map.invalidate()
+            }
+        })
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var testOverLay = DirectedLocationOverlay(requireContext())
-        testOverLay.setShowAccuracy(true)
-        map.overlays.add(testOverLay)
-        viewModel.bearing.observe(viewLifecycleOwner, Observer {
-            testOverLay.setBearing(it)
-            viewModel.bearingAccuracy.value?.toInt()?.let { it1 -> testOverLay.setAccuracy(it1) }
-            testOverLay.location = viewModel.currentPosition.value
-        })
+//        var testOverLay = DirectedLocationOverlay(requireContext())
+//        testOverLay.setShowAccuracy(true)
+//        map.overlays.add(testOverLay)
+//        viewModel.bearing.observe(viewLifecycleOwner, Observer {
+//            testOverLay.setBearing(it)
+//            viewModel.bearingAccuracy.value?.toInt()?.let { it1 -> testOverLay.setAccuracy(it1) }
+//            testOverLay.location = viewModel.currentPosition.value
+//        })
 
 
         // THIS IS JUST TO TEST THE TRACKING SERVICE
-        binding.tvFirstTextViewInTracking.apply {
+        binding.tvForTestsDELETEME.apply {
             text = "PRESS HERE TO TEST LOCATIONSERVICE"
             setOnClickListener {
                 if (viewModel.isTracking.value != true) {
@@ -228,12 +265,18 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onPause() {
         super.onPause()
         map.onPause()
+        orientationProvider.stopOrientationProvider()
     }
 
     override fun onResume() {
         super.onResume()
         map.onResume()
         viewModel.refreshList()
+        orientationProvider.startOrientationProvider { orientation, source ->
+                Log.d("InternalCompass", orientation.toString())
+                clMark.rotation = -orientation
+            map.invalidate()
+            }
     }
 
     override fun onDestroy() {
@@ -284,14 +327,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding.bottomNavTrackingFragment.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.miStartTracking -> {
-                    binding.svTrackingFragment.apply {
-                        if (visibility == View.VISIBLE) {
-                            visibility = View.GONE
-                            return@setOnItemSelectedListener false
-                        } else {
-                            visibility = View.VISIBLE
-                        }
-                    }
+
                 }
                 R.id.miGoToMyLocation -> {
                     if (viewModel.currentPosition.value != null) {
@@ -329,19 +365,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                         , null)
                     )
                 }
-//                val m = Marker(map)
-//                m.apply {
-//                    position = p
-//                    title = getLocationInformation(p.latitude, p.longitude)
-//                    isDraggable = true
-//                    setOnMarkerDragListener(
-//                        getMarkerDragListener()
-//                    )
-//                    showInfoWindow()
-//                }
-//                map.overlays.add(m)
-//                map.controller.animateTo(m.position)
-//                map.invalidate()
                 return true
             }
 
@@ -351,39 +374,17 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    private fun getMarkerDragListener(): OnMarkerDragListener {
-        return object : OnMarkerDragListener {
-            override fun onMarkerDrag(marker: Marker?) {
-
+    private fun getClearSelectedMarkerEventsReceiver(): MapEventsReceiver {
+        return object : MapEventsReceiver {
+            override fun singleTapConfirmedHelper(geoPoint: GeoPoint): Boolean {
+                if (!binding.btnSetAsTarget.isChecked)
+                    viewModel.clearSelectedMarker()
+                return true
             }
 
-            override fun onMarkerDragEnd(marker: Marker?) {
-                if (marker != null) {
-                    marker.position = marker.position
-                    marker.title =
-                        getLocationInformation(marker.position.latitude, marker.position.longitude)
-                    marker.showInfoWindow()
-                    map.controller.animateTo(marker.position)
-                }
+            override fun longPressHelper(p: GeoPoint): Boolean {
+                return false
             }
-
-            override fun onMarkerDragStart(marker: Marker?) {
-
-            }
-
         }
     }
-
-    private fun getLocationInformation(lat: Double, lng: Double): String? {
-        val gc = Geocoder(requireContext(), Locale.getDefault())
-        try {
-            val adrs = gc.getFromLocation(lat, lng, 1)
-            val ads = adrs!![0]
-            return ads.getAddressLine(0)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return ""
-    }
-
 }
