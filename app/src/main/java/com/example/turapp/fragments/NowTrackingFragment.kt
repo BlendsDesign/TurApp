@@ -1,25 +1,113 @@
 package com.example.turapp.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
+import com.example.turapp.databinding.FragmentNowTrackingBinding
+import com.example.turapp.databinding.FragmentTrackingBinding
+import com.example.turapp.utils.helperFiles.PermissionCheckUtility
+import com.example.turapp.viewmodels.NowTrackingViewModel
+import com.example.turapp.viewmodels.TrackingViewModel
+import kotlinx.coroutines.launch
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 
 class NowTrackingFragment : Fragment() {
+
+    private lateinit var binding: FragmentNowTrackingBinding
+
+    private lateinit var orientationProvider: InternalCompassOrientationProvider
+
+    private lateinit var map: MapView
+
+    private val clMark : Marker by lazy {
+        Marker(map).apply {
+            icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_my_location_arrow)
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+        }
+    }
+
+    private val viewModel: NowTrackingViewModel by lazy {
+        val app = requireNotNull(activity).application
+        ViewModelProvider(this, NowTrackingViewModel.Factory(app))[NowTrackingViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
+        if(!PermissionCheckUtility.hasLocationPermissions(requireContext())) {
+            Toast.makeText(requireContext(), "Missing Location Permission", Toast.LENGTH_LONG).show()
+            findNavController().popBackStack()
+        }
+        orientationProvider = InternalCompassOrientationProvider(requireContext())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = FragmentNowTrackingBinding.inflate(inflater)
+        binding.lifecycleOwner = viewLifecycleOwner
+
+        lifecycleScope.launchWhenCreated {
+            map = binding.trackingMap
+            map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT)
+            map.setTileSource(TileSourceFactory.MAPNIK)
+            map.controller.setZoom(18.0)
+            viewModel.currentLocation.observe(viewLifecycleOwner, Observer {
+                clMark.position = GeoPoint(it)
+                map.controller.animateTo(clMark.position)
+            })
+            viewModel.tracked.observe(viewLifecycleOwner, Observer { outerList ->
+                if (outerList.isNotEmpty()) {
+                    outerList.forEach { innerList ->
+                        val poli = Polyline()
+                        poli.color = Color.RED
+                        poli.setPoints(innerList)
+                        map.overlays.add(poli)
+                        map.invalidate()
+                    }
+                }
+            })
+        }
+
+        viewModel.timer.observe(viewLifecycleOwner, Observer {
+            binding.tvShowTimer.text = getFormattedTimerString(it)
+        })
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_now_tracking, container, false)
+        return binding.root
+    }
+
+    private fun getFormattedTimerString(time: Long) : String {
+        var res: String = ""
+        var remainder = time
+        val hours: Long = time / (360000)
+        res +=  if (hours < 10) "0$hours:" else "$hours"
+        remainder -= hours * 360000
+        val minutes = remainder / 6000
+        res +=  if (minutes < 10) "0$minutes:" else "$minutes:"
+        remainder -= minutes * 6000
+        val seconds = remainder / 100
+        res +=  if (seconds < 10) "0$seconds" else "0$seconds"
+        val centi = remainder - (seconds * 100)
+        res += if (centi < 10) "0$centi" else "$centi"
+        return res
     }
 }

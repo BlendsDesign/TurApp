@@ -24,6 +24,8 @@ typealias mPolylines = MutableList<mPolyline>
 
 class LocationService: Service() {
 
+    private val _trackedPoints: mPolylines = mutableListOf()
+
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private lateinit var locationClient: LocationClient
@@ -46,7 +48,7 @@ class LocationService: Service() {
         .setSilent(true)
         .setVisibility(VISIBILITY_PUBLIC)
 
-    private var notificationManager: NotificationManager? = null
+    private lateinit var notificationManager: NotificationManager
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -58,6 +60,7 @@ class LocationService: Service() {
             LocationServices.getFusedLocationProviderClient(applicationContext)
         )
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        trackedPoints.postValue(_trackedPoints)
 
     }
 
@@ -72,19 +75,18 @@ class LocationService: Service() {
 
     private fun startOrResumeService() {
         if(serviceIsStarting) {
+            _trackedPoints.add(mutableListOf())
             tracking = true
             serviceIsStarting = false
             startOrResumeTimer()
             val list = mutableListOf<mPolyline>()
-            trackedPoints.postValue(mutableListOf())
+            trackedPoints.postValue(list)
             startForeground(1, notification.build())
             start()
         } else if(!tracking) {
+            _trackedPoints.add(mutableListOf())
             switchTracking()
             startOrResumeTimer()
-            val list : mPolylines = trackedPoints.value?: mutableListOf()
-            list.add(mutableListOf())
-            trackedPoints.postValue(list)
             start()
         }
     }
@@ -100,20 +102,15 @@ class LocationService: Service() {
         locationClient.getLocationUpdates(1000L)
             .catch { e -> e.printStackTrace() }
             .onEach { location ->
-                val lat = location.latitude.toString()
-                val long = location.longitude.toString()
+                val lat = location.latitude
+                val long = location.longitude
                 val test = "Location: ($lat, $long)"
                 currentLocation.postValue(location)
-
+                val geo = GeoPoint(location)
                 if (tracking) {
-                    if (pausedTime != null) {
-                        pausedTime = null
-                        //TODO Save location in database with Restart Info
-                    } else {
-                        //TODO Save location in database
-                    }
+                    _trackedPoints.last().add(geo)
+                    trackedPoints.postValue(_trackedPoints)
                 }
-
                 Log.d("newLocation", test)
             }
             .launchIn(serviceScope)

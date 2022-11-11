@@ -27,6 +27,16 @@ class NowTrackingViewModel(private val app: Application): ViewModel() {
         }
     }
 
+    fun stopService() {
+        Intent(app.applicationContext, LocationService::class.java).apply {
+            action = LocationService.ACTION_STOP
+            app.applicationContext.startService(this)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+    }
 
     class Factory(private val app: Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

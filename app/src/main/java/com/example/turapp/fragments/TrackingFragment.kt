@@ -238,9 +238,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 //            testOverLay.location = viewModel.currentPosition.value
 //        })
 
-        LocationService.currentLocation.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
-        })
+
 
         // THIS IS JUST TO TEST THE TRACKING SERVICE
         binding.tvForTestsDELETEME.apply {
@@ -329,7 +327,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding.bottomNavTrackingFragment.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.miStartTracking -> {
-
+                    findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToNowTrackingFragment())
                 }
                 R.id.miGoToMyLocation -> {
                     if (viewModel.currentPosition.value != null) {

@@ -54,6 +54,9 @@
         <action
             android:id="@+id/action_trackingFragment_to_saveMyPointFragment"
             app:destination="@id/saveMyPointFragment" />
+        <action
+            android:id="@+id/action_trackingFragment_to_nowTrackingFragment"
+            app:destination="@id/nowTrackingFragment" />
     </fragment>
     <fragment
         android:id="@+id/savePictureFragment"
@@ -84,6 +87,11 @@
         android:name="com.example.turapp.fragments.GraphFragment"
         android:label="@string/graph"
         tools:layout="@layout/fragment_graph" />
+    <fragment
+        android:id="@+id/nowTrackingFragment"
+        android:name="com.example.turapp.fragments.NowTrackingFragment"
+        android:label="fragment_now_tracking"
+        tools:layout="@layout/fragment_now_tracking" />
 
 
 </navigation>
