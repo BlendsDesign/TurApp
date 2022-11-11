@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Context.SENSOR_SERVICE
 import android.content.ContextWrapper
 import android.content.Intent
+import android.graphics.Color
 import android.hardware.SensorManager
 import android.location.Geocoder
 import android.os.Build
@@ -43,6 +44,7 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Marker.OnMarkerDragListener
 import org.osmdroid.views.overlay.Overlay
+import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay
@@ -61,6 +63,10 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private val markersList = mutableListOf<Marker>()
 
     private lateinit var map: MapView // 3
+
+    private val pathToTarget = Polyline().apply {
+        color = Color.CYAN
+    }
 
     private var totalSteps = 0 //
     private var previousTotalSteps = 0f
@@ -139,8 +145,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
             val clMarker = Marker(map)
             clMarker.icon = getDrawable(requireContext(), R.drawable.ic_my_location)
-            viewModel.currentPosition.observe(viewLifecycleOwner, Observer {
-                clMarker.position = it
+            clMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+            viewModel.currentPosition.observe(viewLifecycleOwner, Observer { curPos ->
+                clMarker.position = curPos
             })
             map.overlayManager.add(clMarker)
             val myMapEventsOverlay: MapEventsOverlay = MapEventsOverlay(getEventsReceiver())
@@ -230,20 +237,28 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 map.overlays.add(clearSelectedMarkerOverlay)
             }
         })
+        viewModel.pathPointsToTarget.observe(viewLifecycleOwner, Observer {
+            if (it.size > 1) {
+                pathToTarget.setPoints(it)
+                map.overlays.add(pathToTarget)
+            } else {
+                map.overlays.remove(pathToTarget)
+            }
+        })
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var testOverLay = DirectedLocationOverlay(requireContext())
-        testOverLay.setShowAccuracy(true)
-        map.overlays.add(testOverLay)
-        viewModel.bearing.observe(viewLifecycleOwner, Observer {
-            testOverLay.setBearing(it)
-            viewModel.bearingAccuracy.value?.toInt()?.let { it1 -> testOverLay.setAccuracy(it1) }
-            testOverLay.location = viewModel.currentPosition.value
-        })
+//        var testOverLay = DirectedLocationOverlay(requireContext())
+//        testOverLay.setShowAccuracy(true)
+//        map.overlays.add(testOverLay)
+//        viewModel.bearing.observe(viewLifecycleOwner, Observer {
+//            testOverLay.setBearing(it)
+//            viewModel.bearingAccuracy.value?.toInt()?.let { it1 -> testOverLay.setAccuracy(it1) }
+//            testOverLay.location = viewModel.currentPosition.value
+//        })
 
 
         // THIS IS JUST TO TEST THE TRACKING SERVICE
@@ -388,17 +403,4 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             }
         }
     }
-
-    private fun getLocationInformation(lat: Double, lng: Double): String? {
-        val gc = Geocoder(requireContext(), Locale.getDefault())
-        try {
-            val adrs = gc.getFromLocation(lat, lng, 1)
-            val ads = adrs!![0]
-            return ads.getAddressLine(0)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return ""
-    }
-
 }

@@ -1,6 +1,7 @@
 package com.example.turapp.viewmodels
 
 import android.app.Application
+import android.graphics.Color
 import android.location.Location
 import android.util.Log
 import android.widget.Toast
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
 import java.sql.Time
 
 
@@ -41,6 +43,21 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     val selectedMarkerIsTarget: LiveData<Boolean> get() = _selectedMarkerIsTarget
     private val _distanceToTargetString = MutableLiveData<String?>()
     val distanceToTargetString: LiveData<String?> get() = _distanceToTargetString
+    private val _pathPointsToTarget = MutableLiveData<MutableList<GeoPoint>>()
+    val pathPointsToTarget : LiveData<MutableList<GeoPoint>> get() = _pathPointsToTarget
+    fun updatePathPointsToTarget() {
+        val list = mutableListOf<GeoPoint>()
+        _currentPosition.value?.let {
+            list.add(it)
+        }
+        _selectedMarker.value?.let {
+            list.add(it.position)
+        }
+        if(list.size > 1)
+            _pathPointsToTarget.value = list
+        else
+            _pathPointsToTarget.value = mutableListOf()
+    }
     fun setSelectedMarker(marker: Marker) {
         if (_selectedMarkerIsTarget.value != true) {
             marker.icon =
@@ -52,13 +69,17 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
         }
     }
     fun setSelectedAsTargetMarker(isChecked: Boolean) {
+
         _selectedMarkerIsTarget.value = isChecked
+        if (!isChecked)
+            _pathPointsToTarget.value = mutableListOf()
         _selectedMarker.value?.let {
             if (isChecked) {
                 it.icon = AppCompatResources.getDrawable(
                     app.applicationContext,
                     R.drawable.ic_marker_red
                 )
+                updatePathPointsToTarget()
             } else {
                 it.icon = AppCompatResources.getDrawable(
                     app.applicationContext,
@@ -76,6 +97,7 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             )
             _selectedMarker.value = null
             _distanceToTargetString.value = null
+            _pathPointsToTarget.value = mutableListOf()
         }
     }
 
@@ -156,6 +178,8 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
                 _currentPosition.value = geo
                 if (_selectedMarker.value != null) {
                     setDistanceToTargetString(geo)
+                    if (_selectedMarkerIsTarget.value == true)
+                        updatePathPointsToTarget()
                 }
 
                 if (_startingPoint.value == null)
