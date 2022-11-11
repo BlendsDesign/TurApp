@@ -273,8 +273,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         map.onResume()
         viewModel.refreshList()
         orientationProvider.startOrientationProvider { orientation, source ->
-                Log.d("InternalCompass", orientation.toString())
-                clMark.rotation = -orientation
+            clMark.rotation = -orientation
             map.invalidate()
             }
     }
@@ -361,8 +360,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     viewModel.setAddingCustomMarker()
                     findNavController().navigate(
                         TrackingFragmentDirections.actionTrackingFragmentToSaveMyPointFragment(
-                            geoPoint
-                        , null)
+                            geoPoint, null)
                     )
                 }
                 return true
