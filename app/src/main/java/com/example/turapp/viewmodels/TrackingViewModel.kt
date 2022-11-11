@@ -69,7 +69,6 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
         }
     }
     fun setSelectedAsTargetMarker(isChecked: Boolean) {
-
         _selectedMarkerIsTarget.value = isChecked
         if (!isChecked)
             _pathPointsToTarget.value = mutableListOf()

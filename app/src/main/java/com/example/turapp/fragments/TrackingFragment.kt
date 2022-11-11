@@ -243,6 +243,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 map.overlays.add(pathToTarget)
             } else {
                 map.overlays.remove(pathToTarget)
+                map.invalidate()
             }
         })
 
