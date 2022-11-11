@@ -13,17 +13,6 @@
         android:icon="@drawable/ic_map">
 
     </item>
-    <item
-        android:id="@+id/cameraFragment"
-        android:title="Camera"
-        android:icon="@drawable/ic_camera">
-    </item>
-
-    <item
-        android:id="@+id/liveSensorDataFragment"
-        android:title="SensorData"
-        android:icon="@drawable/ic_sensor">
-    </item>
 
     <item
         android:id="@+id/graphFragment"
