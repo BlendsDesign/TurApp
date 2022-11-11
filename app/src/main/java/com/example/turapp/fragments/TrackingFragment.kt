@@ -38,13 +38,14 @@ import pub.devrel.easypermissions.EasyPermissions
 
 class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
-    private var clearSelectedMarkerOverlay: MapEventsOverlay = MapEventsOverlay(getClearSelectedMarkerEventsReceiver())
+    private var clearSelectedMarkerOverlay: MapEventsOverlay =
+        MapEventsOverlay(getClearSelectedMarkerEventsReceiver())
 
     private lateinit var binding: FragmentTrackingBinding
 
     private val markersList = mutableListOf<Marker>()
 
-    private lateinit var orientationProvider : InternalCompassOrientationProvider
+    private lateinit var orientationProvider: InternalCompassOrientationProvider
 
     private lateinit var map: MapView // 3
 
@@ -52,7 +53,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         color = Color.CYAN
     }
 
-    private val clMark : Marker by lazy {
+    private val clMark: Marker by lazy {
         Marker(map).apply {
             icon = getDrawable(requireContext(), R.drawable.ic_my_location_arrow)
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
@@ -105,7 +106,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     ): View? {
         binding = FragmentTrackingBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
-
+        setUpBottomNavTrackingFragmentButtons()
         binding.fabTrackingHelp.setOnClickListener {
             //TODO Add an alertdialog for this
         }
@@ -148,8 +149,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 //            }
 //        })
 
-        setUpBottomNavTrackingFragmentButtons()
-
         viewModel.myPointList.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 lifecycleScope.launch {
@@ -185,7 +184,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
         // Observe selected point
         viewModel.selectedMarker.observe(viewLifecycleOwner, Observer {
-            if(it != null) {
+            if (it != null) {
                 map.overlays.add(clearSelectedMarkerOverlay)
                 binding.selectedMarkerDialog.visibility = View.VISIBLE
                 var title = it.title
@@ -239,28 +238,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 //        })
 
 
-
-        // THIS IS JUST TO TEST THE TRACKING SERVICE
-        binding.tvForTestsDELETEME.apply {
-            text = "PRESS HERE TO TEST LOCATIONSERVICE"
-            setOnClickListener {
-                if (viewModel.isTracking.value != true) {
-                    // Her starter vi Locationservice som skal brukes til tracking
-                    Intent(context, LocationService::class.java).apply {
-                        action = LocationService.ACTION_START_OR_RESUME_SERVICE
-                        context.startService(this)
-                    }
-                    viewModel.switchIsTracking()
-                } else {
-                    Intent(context, LocationService::class.java).apply {
-                        action = LocationService.ACTION_STOP
-                        context.startService(this)
-                    }
-                    viewModel.switchIsTracking()
-                }
-
-            }
-        }
     }
 
     override fun onPause() {
@@ -276,7 +253,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         orientationProvider.startOrientationProvider { orientation, source ->
             clMark.rotation = -orientation
             map.invalidate()
-            }
+        }
     }
 
     override fun onDestroy() {
@@ -324,34 +301,69 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     }
 
     private fun setUpBottomNavTrackingFragmentButtons() {
-        binding.bottomNavTrackingFragment.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.miStartTracking -> {
-                    findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToNowTrackingFragment())
+        binding.btnTrack.apply {
+            this.addOnCheckedChangeListener { button, isChecked ->
+                when (isChecked) {
+                    true -> button.isChecked = false
+                    false -> {}
                 }
-                R.id.miGoToMyLocation -> {
-                    if (viewModel.currentPosition.value != null) {
-                        map.controller.animateTo(viewModel.currentPosition.value)
-
-                    }
-                    return@setOnItemSelectedListener false
-                }
-                R.id.miAddPoint -> {
-                    if (viewModel.addingCustomMarker.value == true) {
-                        viewModel.setAddingCustomMarker()
-                        return@setOnItemSelectedListener false
-                    }
-                    Toast.makeText(
-                        requireContext(), "Click on map to add a point there",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    viewModel.setAddingCustomMarker()
-                }
-
             }
-            false
+            this.setOnClickListener {
+                findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToNowTrackingFragment())
+            }
         }
+        binding.btnGoToMyLocation.apply {
+            this.addOnCheckedChangeListener { button, isChecked ->
+                when (isChecked) {
+                    true -> button.isChecked = false
+                    false -> {}
+                }
+            }
+            this.setOnClickListener {
+                viewModel.currentPosition.value?.let {
+                    map.controller.animateTo(it)
+                }
+            }
+        }
+        binding.btnAddPoint.addOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                Toast.makeText(
+                    requireContext(),
+                    "Click on map to add a point there", Toast.LENGTH_SHORT
+                ).show()
+            }
+            viewModel.setAddingCustomMarker()
+        }
+
     }
+//        binding.bottomNavTrackingFragment.setOnItemSelectedListener {
+//            when (it.itemId) {
+//                R.id.miStartTracking -> {
+//                    findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToNowTrackingFragment())
+//                }
+//                R.id.miGoToMyLocation -> {
+//                    if (viewModel.currentPosition.value != null) {
+//                        map.controller.animateTo(viewModel.currentPosition.value)
+//
+//                    }
+//                    return@setOnItemSelectedListener false
+//                }
+//                R.id.miAddPoint -> {
+//                    if (viewModel.addingCustomMarker.value == true) {
+//                        viewModel.setAddingCustomMarker()
+//                        return@setOnItemSelectedListener false
+//                    }
+//                    Toast.makeText(
+//                        requireContext(), "Click on map to add a point there",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                    viewModel.setAddingCustomMarker()
+//                }
+//
+//            }
+//            false
+//        }
+//    }
 
     // This works with the MapEventsOverlay to add clicklisteners and lets us add POIs
     private fun getEventsReceiver(): MapEventsReceiver {
@@ -361,7 +373,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     viewModel.setAddingCustomMarker()
                     findNavController().navigate(
                         TrackingFragmentDirections.actionTrackingFragmentToSaveMyPointFragment(
-                            geoPoint, null)
+                            geoPoint, null
+                        )
                     )
                 }
                 return true
