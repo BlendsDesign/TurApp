@@ -12,6 +12,8 @@ import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.lifecycle.MutableLiveData
 import com.example.turapp.R
+import com.example.turapp.utils.Sensors.StepCounterSensor
+import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
@@ -37,6 +39,9 @@ class LocationService: Service() {
     private var timeTracked: Long = 0
 
     private var pausedTime: Long? = null
+
+    private var stepCounterSensor: StepCounterSensor? = null
+    private var _steps = 0
 
 
     private val notification = NotificationCompat.Builder(this, "location")
@@ -75,6 +80,8 @@ class LocationService: Service() {
 
     private fun startOrResumeService() {
         if(serviceIsStarting) {
+            steps.postValue(_steps)
+            startStepCounter()
             _trackedPoints.add(mutableListOf())
             tracking = true
             serviceIsStarting = false
@@ -93,8 +100,6 @@ class LocationService: Service() {
 
 
     private fun start() {
-        if (tracking)
-        Log.d("LocationService", "Started service")
 
         // Below here is where we want to do the magic and add points to the database
         // or viewmodel list (I dont't think viewModel will work but hey, can try)
@@ -134,6 +139,23 @@ class LocationService: Service() {
         }
     }
 
+    private fun startStepCounter() {
+        if (PermissionCheckUtility.hasActivityRecognitionPermissions(applicationContext)) {
+            serviceScope.launch {
+                stepCounterSensor = StepCounterSensor(requireNotNull(applicationContext))
+                stepCounterSensor?.let {
+                    it.setOnSensorValuesChangedListener { _ ->
+                        if (tracking) {
+                            _steps += 1
+                            steps.postValue(_steps)
+                        }
+                    }
+                    it.startListening()
+                }
+            }
+        }
+    }
+
     private fun switchTracking() {
         if (tracking) {
             pausedTime = System.currentTimeMillis()
@@ -163,5 +185,6 @@ class LocationService: Service() {
         val currentLocation = MutableLiveData<Location>()
         val trackedPoints = MutableLiveData<mPolylines>()
         val timerHundreds  = MutableLiveData<Long>()
+        val steps = MutableLiveData<Int>()
     }
 }

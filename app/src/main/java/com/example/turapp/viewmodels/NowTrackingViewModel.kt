@@ -20,6 +20,9 @@ class NowTrackingViewModel(private val app: Application): ViewModel() {
     private val _timer = LocationService.timerHundreds
     val timer: LiveData<Long> get() = _timer
 
+    private val _steps = LocationService.steps
+    val steps : LiveData<Int> get() = _steps
+
     init {
         Intent(app.applicationContext, LocationService::class.java).apply {
             action = LocationService.ACTION_START_OR_RESUME_SERVICE

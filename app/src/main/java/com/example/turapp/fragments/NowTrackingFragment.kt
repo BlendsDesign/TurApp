@@ -69,6 +69,7 @@ class NowTrackingFragment : Fragment() {
             map = binding.trackingMap
             map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT)
             map.setTileSource(TileSourceFactory.MAPNIK)
+            map.overlays.add(clMark)
             map.controller.setZoom(18.0)
             viewModel.currentLocation.observe(viewLifecycleOwner, Observer {
                 clMark.position = GeoPoint(it)
@@ -91,6 +92,14 @@ class NowTrackingFragment : Fragment() {
             binding.tvShowTimer.text = getFormattedTimerString(it)
         })
 
+        viewModel.steps.observe(viewLifecycleOwner, Observer {
+            binding.tvShowSteps.text = "Steps: $it"
+        })
+
+        binding.stopService.setOnClickListener {
+            viewModel.stopService()
+        }
+
         // Inflate the layout for this fragment
         return binding.root
     }
@@ -103,7 +112,10 @@ class NowTrackingFragment : Fragment() {
         val hoursString = if (hours < 10) "0$hours:" else "$hours:"
         val minutesString = if (minutes < 10) "0$minutes:" else "$minutes:"
         val secondsString = if (seconds < 10) "0$seconds:" else "$seconds:"
-        val hundredsString = if (hundreds < 10) "0$hundreds:" else "$hundreds"
-        return hoursString + minutesString + secondsString + hundredsString
+        val hundredsString = if (hundreds < 10) "0$hundreds" else "$hundreds"
+        return if (hours < 1)
+            minutesString + secondsString + hundredsString
+        else
+            hoursString + minutesString + secondsString + hundredsString
     }
 }
