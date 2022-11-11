@@ -249,7 +249,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 if (viewModel.isTracking.value != true) {
                     // Her starter vi Locationservice som skal brukes til tracking
                     Intent(context, LocationService::class.java).apply {
-                        action = LocationService.ACTION_START
+                        action = LocationService.ACTION_START_OR_RESUME_SERVICE
                         context.startService(this)
                     }
                     viewModel.switchIsTracking()
