@@ -95,19 +95,15 @@ class NowTrackingFragment : Fragment() {
         return binding.root
     }
 
-    private fun getFormattedTimerString(time: Long) : String {
-        var res: String = ""
-        var remainder = time
-        val hours: Long = time / (360000)
-        res +=  if (hours < 10) "0$hours:" else "$hours"
-        remainder -= hours * 360000
-        val minutes = remainder / 6000
-        res +=  if (minutes < 10) "0$minutes:" else "$minutes:"
-        remainder -= minutes * 6000
-        val seconds = remainder / 100
-        res +=  if (seconds < 10) "0$seconds" else "0$seconds"
-        val centi = remainder - (seconds * 100)
-        res += if (centi < 10) "0$centi" else "$centi"
-        return res
+    private fun getFormattedTimerString(timeHundreds: Long) : String {
+        val hundreds = timeHundreds % 100
+        val seconds = (timeHundreds / 100) % 60
+        val minutes = (timeHundreds / 60000) % 60
+        val hours = (timeHundreds / 3600000)
+        val hoursString = if (hours < 10) "0$hours:" else "$hours:"
+        val minutesString = if (minutes < 10) "0$minutes:" else "$minutes:"
+        val secondsString = if (seconds < 10) "0$seconds:" else "$seconds:"
+        val hundredsString = if (hundreds < 10) "0$hundreds:" else "$hundreds"
+        return hoursString + minutesString + secondsString + hundredsString
     }
 }
