@@ -127,10 +127,10 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             viewModel.currentPosition.observe(viewLifecycleOwner, Observer { curPos ->
                 clMark.position = curPos
             })
-            map.overlayManager.add(clMark)
             val myMapEventsOverlay = MapEventsOverlay(getEventsReceiver())
             map.overlays.add(myMapEventsOverlay)
         }
+        map.overlayManager.add(clMark)
 
 //        viewModel.stepCountData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
 //            totalSteps++

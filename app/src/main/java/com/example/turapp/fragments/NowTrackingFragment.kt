@@ -129,6 +129,12 @@ class NowTrackingFragment : Fragment() {
             }
         }
 
+        viewModel.finishedSaving.observe(viewLifecycleOwner, Observer {
+            if(it == true) {
+                findNavController().navigate(NowTrackingFragmentDirections.actionNowTrackingFragmentToCameraFragment2())
+            }
+        })
+
         // Inflate the layout for this fragment
         return binding.root
     }

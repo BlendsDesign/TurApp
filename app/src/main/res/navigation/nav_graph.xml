@@ -91,7 +91,11 @@
         android:id="@+id/nowTrackingFragment"
         android:name="com.example.turapp.fragments.NowTrackingFragment"
         android:label="fragment_now_tracking"
-        tools:layout="@layout/fragment_now_tracking" />
+        tools:layout="@layout/fragment_now_tracking" >
+        <action
+            android:id="@+id/action_nowTrackingFragment_to_cameraFragment2"
+            app:destination="@id/cameraFragment" />
+    </fragment>
 
 
 </navigation>
