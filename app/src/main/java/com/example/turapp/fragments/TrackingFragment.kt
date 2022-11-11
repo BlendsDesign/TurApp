@@ -238,6 +238,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 //            testOverLay.location = viewModel.currentPosition.value
 //        })
 
+        LocationService.currentLocation.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
+        })
 
         // THIS IS JUST TO TEST THE TRACKING SERVICE
         binding.tvForTestsDELETEME.apply {

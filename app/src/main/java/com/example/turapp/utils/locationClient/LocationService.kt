@@ -4,11 +4,13 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
+import androidx.lifecycle.MutableLiveData
 import com.example.turapp.R
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +20,10 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.osmdroid.util.GeoPoint
+
+typealias mPolyline = MutableList<GeoPoint>
+typealias mPolylines = MutableList<mPolyline>
 
 class LocationService: Service() {
 
@@ -56,7 +62,7 @@ class LocationService: Service() {
         val notification = NotificationCompat.Builder(this, "location")
             .setContentTitle("Tracking location...")
             .setContentText("Location: null")
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.ic_logo)
             .setOngoing(true)
             .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
             .setSilent(true)
@@ -73,6 +79,7 @@ class LocationService: Service() {
                 val lat = location.latitude.toString()
                 val long = location.longitude.toString()
                 val test = "Location: ($lat, $long)"
+                currentLocation.postValue(location)
 
                 if (tracking) {
                     if (pausedTime != null) {
@@ -113,9 +120,13 @@ class LocationService: Service() {
         serviceScope.cancel()
     }
 
+
     companion object {
         const val ACTION_START = "ACTION_START"
         const val ACTION_STOP = "ACTION_STOP"
         const val ACTION_SWITCH_TRACKING = "ACTION_SWITCH_TRACKING"
+        val currentLocation = MutableLiveData<Location>()
+        val trackedPoints = MutableLiveData<mPolylines>()
+        val timerMillis  = MutableLiveData<Long>()
     }
 }
