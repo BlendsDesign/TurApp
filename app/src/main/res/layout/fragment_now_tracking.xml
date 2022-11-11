@@ -41,12 +41,35 @@
                 android:textSize="20sp"
                 android:textAlignment="center" />
 
-            <Button
-                android:id="@+id/stopService"
-                android:text="Stop Service"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/inputDescription"
+                app:singleSelection="true">
 
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPause"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Pause"
+                    app:iconGravity="textStart"
+                    app:icon="@drawable/ic_pause"/>
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnStop"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stop"
+                    app:iconGravity="textStart"
+                    app:icon="@drawable/ic_stop" />
+
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

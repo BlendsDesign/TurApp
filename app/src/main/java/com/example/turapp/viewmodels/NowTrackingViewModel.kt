@@ -9,19 +9,19 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.utils.locationClient.LocationService
 import org.osmdroid.util.GeoPoint
 
-class NowTrackingViewModel(private val app: Application): ViewModel() {
+class NowTrackingViewModel(private val app: Application) : ViewModel() {
 
     private val _currentLocation = LocationService.currentLocation
-    val currentLocation : LiveData<Location> get() = _currentLocation
+    val currentLocation: LiveData<Location> get() = _currentLocation
 
     private val _tracked = LocationService.trackedPoints
-    val tracked : LiveData<MutableList<MutableList<GeoPoint>>> get() = _tracked
+    val tracked: LiveData<MutableList<MutableList<GeoPoint>>> get() = _tracked
 
     private val _timer = LocationService.timerHundreds
     val timer: LiveData<Long> get() = _timer
 
     private val _steps = LocationService.steps
-    val steps : LiveData<Int> get() = _steps
+    val steps: LiveData<Int> get() = _steps
 
     init {
         Intent(app.applicationContext, LocationService::class.java).apply {
@@ -33,6 +33,20 @@ class NowTrackingViewModel(private val app: Application): ViewModel() {
     fun stopService() {
         Intent(app.applicationContext, LocationService::class.java).apply {
             action = LocationService.ACTION_STOP
+            app.applicationContext.startService(this)
+        }
+    }
+
+    fun pauseService() {
+        Intent(app.applicationContext, LocationService::class.java).apply {
+            action = LocationService.ACTION_PAUSE_TRACKING
+            app.applicationContext.startService(this)
+        }
+    }
+
+    fun resumeService() {
+        Intent(app.applicationContext, LocationService::class.java).apply {
+            action = LocationService.ACTION_START_OR_RESUME_SERVICE
             app.applicationContext.startService(this)
         }
     }

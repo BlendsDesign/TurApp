@@ -96,8 +96,37 @@ class NowTrackingFragment : Fragment() {
             binding.tvShowSteps.text = "Steps: $it"
         })
 
-        binding.stopService.setOnClickListener {
-            viewModel.stopService()
+        binding.btnPause.addOnCheckedChangeListener { button, isChecked ->
+            when(isChecked) {
+                true -> {
+                    viewModel.pauseService()
+                    button.icon = resources.getDrawable(R.drawable.ic_play_arrow)
+                    button.text = "Resume"
+                }
+                false -> {
+                    viewModel.resumeService()
+                    button.icon = resources.getDrawable(R.drawable.ic_pause)
+                    button.text = "Pause"
+                }
+            }
+        }
+        binding.btnStop.addOnCheckedChangeListener { button, isChecked ->
+            when(isChecked) {
+                true -> {
+                    viewModel.stopService()
+                    button.apply {
+                        text = "Restart Service"
+                        icon = resources.getDrawable(R.drawable.ic_play_arrow)
+                    }
+                }
+                false -> {
+                    viewModel.resumeService()
+                    button.apply {
+                        text = "Stop"
+                        icon = resources.getDrawable(R.drawable.ic_stop)
+                    }
+                }
+            }
         }
 
         // Inflate the layout for this fragment

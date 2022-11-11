@@ -157,9 +157,6 @@ class LocationService: Service() {
     }
 
     private fun switchTracking() {
-        if (tracking) {
-            pausedTime = System.currentTimeMillis()
-        }
         tracking = tracking != true
     }
 
