@@ -14,11 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentNowTrackingBinding
-import com.example.turapp.databinding.FragmentTrackingBinding
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.viewmodels.NowTrackingViewModel
-import com.example.turapp.viewmodels.TrackingViewModel
-import kotlinx.coroutines.launch
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
@@ -131,7 +128,8 @@ class NowTrackingFragment : Fragment() {
 
         viewModel.finishedSaving.observe(viewLifecycleOwner, Observer {
             if(it == true) {
-                findNavController().navigate(NowTrackingFragmentDirections.actionNowTrackingFragmentToCameraFragment2())
+                viewModel.resetFinishedSaving()
+                findNavController().navigate(NowTrackingFragmentDirections.actionNowTrackingFragmentToSelfieFragment())
             }
         })
 

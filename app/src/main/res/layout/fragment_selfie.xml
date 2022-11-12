@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".fragments.SelfieFragment">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.turapp.viewmodels.SelfieViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/selfieCameraView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/selfieCaptureButton"
+            style="@style/style_camera_button"
+            android:contentDescription="@string/take_photo"
+            app:layout_constraintBottom_toTopOf="@id/btnGroup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Image Preview"
+            android:visibility="gone"
+            app:loadUriImage="@{viewModel.pictureUri}" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/btnGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancelSelfie"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                app:icon="@drawable/ic_cancel"
+                app:iconGravity="textStart" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGroupButton2"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="switch camera"
+                app:icon="@drawable/ic_baseline_flip_camera"
+                app:iconGravity="textStart" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -33,6 +33,9 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
 
     private val _finishedSaving = MutableLiveData<Boolean>()
     val finishedSaving: LiveData<Boolean> get() = _finishedSaving
+    fun resetFinishedSaving() {
+        _finishedSaving.value = false
+    }
 
     init {
         Intent(app.applicationContext, LocationService::class.java).apply {

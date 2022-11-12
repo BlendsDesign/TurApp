@@ -93,8 +93,21 @@
         android:label="fragment_now_tracking"
         tools:layout="@layout/fragment_now_tracking" >
         <action
-            android:id="@+id/action_nowTrackingFragment_to_cameraFragment2"
-            app:destination="@id/cameraFragment" />
+            android:id="@+id/action_nowTrackingFragment_to_selfieFragment"
+            app:destination="@id/selfieFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/selfieFragment"
+        android:name="com.example.turapp.fragments.SelfieFragment"
+        android:label="fragment_selfie"
+        tools:layout="@layout/fragment_selfie" >
+        <action
+            android:id="@+id/action_selfieFragment_to_trackingFragment"
+            app:destination="@id/trackingFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popExitAnim="@anim/nav_default_exit_anim"
+            app:popUpTo="@id/trackingFragment" />
     </fragment>
 
 
