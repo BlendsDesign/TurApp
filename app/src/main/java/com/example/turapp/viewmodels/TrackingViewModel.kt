@@ -168,6 +168,8 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             .catch { e -> e.printStackTrace()/*Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show()*/ }
             .onEach { location ->
                 _currentLocation.value = location
+                getLocation.postValue(location)
+                Log.d("TrackingViewModel", "Updated getLocation")
                 val lat = location.latitude
                 val long = location.longitude
                 val alt = location.altitude
@@ -189,6 +191,10 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+    }
+
+    companion object {
+        val getLocation = MutableLiveData<Location>()
     }
 
 
