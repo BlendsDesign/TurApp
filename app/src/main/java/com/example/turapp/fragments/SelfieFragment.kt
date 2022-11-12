@@ -123,8 +123,7 @@ class SelfieFragment : Fragment() {
             }
         })
 
-
-
+        // Return the Layout
         return binding.root
     }
 
@@ -137,8 +136,7 @@ class SelfieFragment : Fragment() {
             override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                 val msg = "Photo capture succeeded: ${output.savedUri}"
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                Log.d("ShotCamera", msg)
-                //viewModel.setTakingPicture()
+                Log.d("SelfieCamera", msg)
                 val test = output.savedUri
                 if(test != null) {
                     viewModel.setPictureUri(test)
