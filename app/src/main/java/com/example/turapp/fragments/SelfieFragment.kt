@@ -73,6 +73,9 @@ class SelfieFragment : Fragment() {
             it.let {
                 selfieCam = SelfieCamera(requireContext(), cameraView, this, it)
                 selfieCam.startCamera()
+                binding.selfieCaptureButton.setOnClickListener {
+                    selfieCam.takePhoto(getImageSavedCallback())
+                }
             }
         })
 
@@ -90,9 +93,7 @@ class SelfieFragment : Fragment() {
             }
         }
 
-        binding.selfieCaptureButton.setOnClickListener {
-            selfieCam.takePhoto(getImageSavedCallback())
-        }
+
         binding.btnCancelSelfie.addOnCheckedChangeListener { button, isChecked ->
             when(isChecked) {
                 true -> {
@@ -109,6 +110,9 @@ class SelfieFragment : Fragment() {
                 findNavController().navigate(SelfieFragmentDirections.actionSelfieFragmentToTrackingFragment())
             }
         }
+
+        // Observe if we have a picture
+        // TODO Implement save picture button
         viewModel.pictureUri.observe(viewLifecycleOwner, Observer {
             if(it != null) {
                 binding.btnSwichCamera.visibility = View.GONE
@@ -118,6 +122,7 @@ class SelfieFragment : Fragment() {
                 binding.btnSaveImage.visibility = View.GONE
             }
         })
+
 
 
         return binding.root
