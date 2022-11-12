@@ -278,7 +278,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     "Click on map to add a point there", Toast.LENGTH_SHORT
                 ).show()
             }
-            viewModel.setAddingCustomMarker()
+            viewModel.setAddingCustomMarker(isChecked)
         }
 
     }
@@ -288,7 +288,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         return object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(geoPoint: GeoPoint): Boolean {
                 if (viewModel.addingCustomMarker.value == true) {
-                    viewModel.setAddingCustomMarker()
+                    viewModel.setAddingCustomMarker(false)
+                    binding.btnAddPoint.isChecked = false
                     findNavController().navigate(
                         TrackingFragmentDirections.actionTrackingFragmentToSaveMyPointFragment(
                             geoPoint, null
