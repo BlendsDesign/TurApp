@@ -41,11 +41,11 @@ class SelfieFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
-        requestPermissions()
 
-        // TODO ASK FOR PERMISSIONS
+        requestPermissions()
         if (!PermissionCheckUtility.hasCameraPermissions(requireContext())) {
             Toast.makeText(requireContext(), "Missing Camera Permissions", Toast.LENGTH_SHORT).show()
+            // TODO Navigate to SaveMyPointFragment and NOT JUST POP if we have a run
             findNavController().popBackStack(R.id.trackingFragment, false)
         }
 
