@@ -192,6 +192,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onResume() {
         super.onResume()
         map.onResume()
+        viewModel.currentPosition.value?.let {
+            map.controller.animateTo(it)
+        }
         viewModel.refreshList()
         orientationProvider.startOrientationProvider { orientation, source ->
             clMark.rotation = -orientation

@@ -72,6 +72,22 @@ class SelfieFragment : Fragment() {
         binding.selfieCaptureButton.setOnClickListener {
             // TODO getImageSavedCallback() And more
         }
+        binding.cancelSelfie.addOnCheckedChangeListener { button, isChecked ->
+            when(isChecked) {
+                true -> {
+                    button.isChecked = false
+                }
+                else -> {}
+            }
+        }
+        binding.cancelSelfie.setOnClickListener {
+            if (viewModel.pictureUri.value != null) {
+                viewModel.deleteTakenPicture()
+            } else {
+                // TODO This is a simplification, we want to go to SaveMyPointFragment to SAVE THE RUN
+                findNavController().navigate(SelfieFragmentDirections.actionSelfieFragmentToTrackingFragment())
+            }
+        }
 
         return binding.root
     }

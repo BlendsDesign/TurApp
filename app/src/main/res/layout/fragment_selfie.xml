@@ -45,21 +45,17 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cancelSelfie"
-                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/cancel"
-                app:icon="@drawable/ic_cancel"
-                app:iconGravity="textStart" />
+                app:icon="@drawable/ic_baseline_cancel_24"
+                app:iconGravity="start" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGroupButton2"
-                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="switch camera"
                 app:icon="@drawable/ic_baseline_flip_camera"
-                app:iconGravity="textStart" />
+                app:iconGravity="end" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
