@@ -3,6 +3,7 @@ package com.example.turapp.viewmodels
 import android.app.Application
 import android.net.Uri
 import android.util.Log
+import androidx.camera.core.CameraSelector
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,19 @@ class SelfieViewModel(private val app: Application): ViewModel() {
     val keepPicture: LiveData<Boolean> get() = _keepPicture
     fun savePicture() {
         _keepPicture.value = true
+    }
+    private val _selectedCamera = MutableLiveData<CameraSelector>()
+    val selectedCamera: LiveData<CameraSelector> get() = _selectedCamera
+    fun setSelectedCamera() {
+        if (_selectedCamera.value != CameraSelector.DEFAULT_FRONT_CAMERA) {
+            _selectedCamera.value = CameraSelector.DEFAULT_FRONT_CAMERA
+        } else {
+            _selectedCamera.value = CameraSelector.DEFAULT_BACK_CAMERA
+        }
+    }
+
+    init {
+        _selectedCamera.value = CameraSelector.DEFAULT_FRONT_CAMERA
     }
 
     fun setPictureUri(uri: Uri?) {

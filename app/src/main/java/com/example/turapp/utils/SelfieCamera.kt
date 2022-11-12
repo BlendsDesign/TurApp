@@ -19,7 +19,8 @@ import java.util.*
 class SelfieCamera(
     private val mContext: Context,
     private val cameraView: PreviewView,
-    private val selfieFragment: SelfieFragment
+    private val selfieFragment: SelfieFragment,
+    private val cameraSelector: CameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 ) {
     private var imageCapture: ImageCapture? = null
     private var name : String? = null
@@ -59,7 +60,6 @@ class SelfieCamera(
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(mContext), myCallBack
-
         )
 
     }
@@ -80,9 +80,6 @@ class SelfieCamera(
                 }
 
             imageCapture = ImageCapture.Builder().build()
-
-            // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
             try {
                 // Unbind use cases before rebinding

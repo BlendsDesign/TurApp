@@ -8,9 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.view.PreviewView
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
@@ -61,12 +63,31 @@ class SelfieFragment : Fragment() {
 
         cameraView = binding.selfieCameraView
 
+        if (!PermissionCheckUtility.hasCameraPermissions(requireContext())) {
+            findNavController().popBackStack()
+        }
+
         selfieCam = SelfieCamera(requireContext(), cameraView, this)
 
-        if (PermissionCheckUtility.hasCameraPermissions(requireContext())) {
-            selfieCam.startCamera()
-        } else {
-            findNavController().popBackStack()
+        viewModel.selectedCamera.observe(viewLifecycleOwner, Observer {
+            it.let {
+                selfieCam = SelfieCamera(requireContext(), cameraView, this, it)
+                selfieCam.startCamera()
+            }
+        })
+
+        binding.btnGroupButton2.apply {
+            addOnCheckedChangeListener { button, isChecked ->
+                when(isChecked) {
+                    true -> {
+                        button.isChecked = false
+                    }
+                    else -> {}
+                }
+            }
+            setOnClickListener {
+                viewModel.setSelectedCamera()
+            }
         }
 
         binding.selfieCaptureButton.setOnClickListener {
