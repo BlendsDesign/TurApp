@@ -44,18 +44,26 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/cancelSelfie"
+                android:id="@+id/btnCancelSelfie"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_baseline_cancel_24"
                 app:iconGravity="start" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnGroupButton2"
+                android:id="@+id/btnSwichCamera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/ic_baseline_flip_camera"
                 app:iconGravity="end" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_save"
+                app:iconGravity="end"
+                android:visibility="gone"/>
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 

@@ -76,7 +76,7 @@ class SelfieFragment : Fragment() {
             }
         })
 
-        binding.btnGroupButton2.apply {
+        binding.btnSwichCamera.apply {
             addOnCheckedChangeListener { button, isChecked ->
                 when(isChecked) {
                     true -> {
@@ -91,9 +91,9 @@ class SelfieFragment : Fragment() {
         }
 
         binding.selfieCaptureButton.setOnClickListener {
-            // TODO getImageSavedCallback() And more
+            selfieCam.takePhoto(getImageSavedCallback())
         }
-        binding.cancelSelfie.addOnCheckedChangeListener { button, isChecked ->
+        binding.btnCancelSelfie.addOnCheckedChangeListener { button, isChecked ->
             when(isChecked) {
                 true -> {
                     button.isChecked = false
@@ -101,7 +101,7 @@ class SelfieFragment : Fragment() {
                 else -> {}
             }
         }
-        binding.cancelSelfie.setOnClickListener {
+        binding.btnCancelSelfie.setOnClickListener {
             if (viewModel.pictureUri.value != null) {
                 viewModel.deleteTakenPicture()
             } else {
@@ -109,6 +109,16 @@ class SelfieFragment : Fragment() {
                 findNavController().navigate(SelfieFragmentDirections.actionSelfieFragmentToTrackingFragment())
             }
         }
+        viewModel.pictureUri.observe(viewLifecycleOwner, Observer {
+            if(it != null) {
+                binding.btnSwichCamera.visibility = View.GONE
+                binding.btnSaveImage.visibility = View.VISIBLE
+            } else {
+                binding.btnSwichCamera.visibility = View.VISIBLE
+                binding.btnSaveImage.visibility = View.GONE
+            }
+        })
+
 
         return binding.root
     }
