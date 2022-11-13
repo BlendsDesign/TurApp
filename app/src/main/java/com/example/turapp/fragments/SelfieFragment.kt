@@ -40,6 +40,7 @@ class SelfieFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            //TODO Implement a way to get Tracked data here
         }
 
         requestPermissions()
