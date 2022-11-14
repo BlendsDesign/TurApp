@@ -1,6 +1,7 @@
 package com.example.turapp.fragments
 
 import android.location.Geocoder
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -28,7 +29,6 @@ class SaveMyPointFragment : Fragment() {
     private lateinit var viewModel: SaveMyPointViewModel
 
     private var location: GeoPoint? = null
-    private var image: String? = null
     private lateinit var map: MapView
 
     private var marker: Marker? = null
@@ -40,11 +40,17 @@ class SaveMyPointFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             val typeArgument = it.getString(NAVIGATION_ARGUMENT_SAVING_TYPE)
+            if (typeArgument == null) {
+                Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+            }
             location = it.get("location") as GeoPoint?
-            image = it.getString("uri")
+            val imageUri: Uri? = it.get("uri") as Uri?
             if (typeArgument != null) {
                 val app = requireNotNull(activity).application
-                viewModel = ViewModelProvider(this, SaveMyPointViewModel.Factory(app, typeArgument))[SaveMyPointViewModel::class.java]
+                viewModel = ViewModelProvider(this,
+                    SaveMyPointViewModel.Factory(app, typeArgument!!, imageUri)
+                )[SaveMyPointViewModel::class.java]
             } else {
                 Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(SaveMyPointFragmentDirections.actionSaveMyPointFragmentToTrackingFragment())
@@ -57,6 +63,9 @@ class SaveMyPointFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSaveMyPointBinding.inflate(inflater)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+
         lifecycleScope.launchWhenCreated {
             map = binding.mapHolder
             map.setTileSource(TileSourceFactory.MAPNIK)
@@ -77,8 +86,6 @@ class SaveMyPointFragment : Fragment() {
             if(it)
                 findNavController().navigate(SaveMyPointFragmentDirections.actionSaveMyPointFragmentToTrackingFragment())
         })
-
-
 
         return binding.root
     }

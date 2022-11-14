@@ -14,39 +14,58 @@ import androidx.camera.view.PreviewView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.turapp.R
 import com.example.turapp.databinding.FragmentSelfieBinding
+import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
+import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.utils.SelfieCamera
+import com.example.turapp.utils.helperFiles.NAVIGATION_ARGUMENT_SAVING_TYPE
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.utils.helperFiles.REQUEST_CODE_CAMERA_PERMISSION
 import com.example.turapp.viewmodels.SelfieViewModel
+import com.example.turapp.viewmodels.TrackingViewModel
+import org.osmdroid.util.GeoPoint
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class SelfieFragment : Fragment() {
 
-    private lateinit var binding : FragmentSelfieBinding
+    private lateinit var binding: FragmentSelfieBinding
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraView: PreviewView
     private lateinit var selfieCam: SelfieCamera
+    private var pictureLocation: GeoPoint? = null
 
-    private val viewModel: SelfieViewModel by lazy {
-        val app = requireNotNull(activity).application
-        ViewModelProvider(this, SelfieViewModel.Factory(app))[SelfieViewModel::class.java]
-    }
+    private lateinit var viewModel: SelfieViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            //TODO Implement a way to get Tracked data here
+            val typeArgument = it.getString(NAVIGATION_ARGUMENT_SAVING_TYPE)
+            if (typeArgument == null) {
+                Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+            }
+            val app = requireNotNull(activity).application
+            viewModel = ViewModelProvider(
+                this, SelfieViewModel.Factory(app, typeArgument!!)
+            )[SelfieViewModel::class.java]
         }
 
         requestPermissions()
         if (!PermissionCheckUtility.hasCameraPermissions(requireContext())) {
-            Toast.makeText(requireContext(), "Missing Camera Permissions", Toast.LENGTH_SHORT).show()
-            // TODO Navigate to SaveMyPointFragment and NOT JUST POP if we have a run
-            findNavController().popBackStack(R.id.trackingFragment, false)
+            Toast.makeText(requireContext(), "Missing Camera Permissions", Toast.LENGTH_SHORT)
+                .show()
+
+            if (viewModel.typeArgument == TYPE_TRACKING) {
+                findNavController().navigate(
+                    SelfieFragmentDirections.actionSelfieFragmentToSaveMyPointFragment(
+                        viewModel.typeArgument, null, null
+                    )
+                )
+            } else {
+                findNavController().popBackStack()
+            }
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -106,15 +125,35 @@ class SelfieFragment : Fragment() {
             if (viewModel.pictureUri.value != null) {
                 viewModel.deleteTakenPicture()
             } else {
-                // TODO This is a simplification, we want to go to SaveMyPointFragment to SAVE THE RUN
-                findNavController().navigate(SelfieFragmentDirections.actionSelfieFragmentToTrackingFragment())
+                when (viewModel.typeArgument) {
+                    TYPE_SNAPSHOT -> {
+                        findNavController().navigate(SelfieFragmentDirections.actionSelfieFragmentToTrackingFragment())
+                    }
+                    else -> {
+                        findNavController().navigate(
+                            SelfieFragmentDirections.actionSelfieFragmentToSaveMyPointFragment(
+                                viewModel.typeArgument, null, null
+                            )
+                        )
+                    }
+                }
             }
+        }
+        binding.btnSaveImage.setOnClickListener {
+            viewModel.savePicture()
+
+            findNavController().navigate(
+                SelfieFragmentDirections.actionSelfieFragmentToSaveMyPointFragment(
+                    viewModel.typeArgument,
+                    pictureLocation,
+                    viewModel.pictureUri.value
+                )
+            )
         }
 
         // Observe if we have a picture
-        // TODO Implement save picture button
         viewModel.pictureUri.observe(viewLifecycleOwner, Observer {
-            if(it != null) {
+            if (it != null) {
                 binding.btnSwichCamera.visibility = View.GONE
                 binding.btnSaveImage.visibility = View.VISIBLE
             } else {
@@ -138,8 +177,11 @@ class SelfieFragment : Fragment() {
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                 Log.d("SelfieCamera", msg)
                 val test = output.savedUri
-                if(test != null) {
+                if (test != null) {
                     viewModel.setPictureUri(test)
+                    TrackingViewModel.getLocation.value?.let {
+                        pictureLocation = GeoPoint(it)
+                    }
                 }
             }
         }
@@ -163,7 +205,7 @@ class SelfieFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
-        if(viewModel.keepPicture.value != true) {
+        if (viewModel.keepPicture.value != true) {
             viewModel.deleteTakenPicture()
         }
     }

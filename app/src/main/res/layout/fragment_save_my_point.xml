@@ -5,6 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragments.SaveMyPointFragment">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.turapp.viewmodels.SaveMyPointViewModel" />
+    </data>
+
     <com.example.turapp.utils.helperFiles.LockableScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -61,7 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="The Image connected to this point"
-                    android:src="@drawable/ic_baseline_broken_image" />
+                    loadUriImage="@{viewModel.imageUri}" />
 
 
                 <org.osmdroid.views.MapView

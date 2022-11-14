@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentNowTrackingBinding
+import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.viewmodels.NowTrackingViewModel
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -111,7 +112,9 @@ class NowTrackingFragment : Fragment() {
             when(isChecked) {
                 true -> {
                     viewModel.saveTreck()
-                    findNavController().navigate(NowTrackingFragmentDirections.actionNowTrackingFragmentToSelfieFragment())
+                    findNavController().navigate(
+                        NowTrackingFragmentDirections.actionNowTrackingFragmentToSelfieFragment(TYPE_TRACKING)
+                    )
                     button.apply {
                         text = "Restart Service"
                         icon = resources.getDrawable(R.drawable.ic_play_arrow)

@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-class SelfieViewModel(private val app: Application): ViewModel() {
+class SelfieViewModel(private val app: Application, val typeArgument: String): ViewModel() {
 
     private val _pictureUri = MutableLiveData<Uri?>()
     val pictureUri: LiveData<Uri?> get() = _pictureUri
@@ -49,11 +49,11 @@ class SelfieViewModel(private val app: Application): ViewModel() {
         _pictureUri.value = null
     }
 
-    class Factory(private val app: Application) : ViewModelProvider.Factory {
+    class Factory(private val app: Application, private val typeArgument: String) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(SelfieViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return SelfieViewModel(app) as T
+                return SelfieViewModel(app, typeArgument) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

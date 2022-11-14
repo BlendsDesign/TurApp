@@ -1,20 +1,20 @@
 package com.example.turapp.viewmodels
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.turapp.repository.trackingDb.entities.PointGeoData
-import com.example.turapp.repository.trackingDb.entities.TYPE_POI
 import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.utils.MyPointRepository
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 
-class SaveMyPointViewModel(private val app: Application, private val typeArgument: String): ViewModel() {
+class SaveMyPointViewModel(private val app: Application, private val typeArgument: String, uri: Uri?): ViewModel() {
 
     private val repository: MyPointRepository = MyPointRepository(app)
 
@@ -24,10 +24,16 @@ class SaveMyPointViewModel(private val app: Application, private val typeArgumen
     private val _trackedLocations = MutableLiveData<MutableList<MutableList<GeoPoint>>?>()
     val trackedLocations: LiveData<MutableList<MutableList<GeoPoint>>?> get() = _trackedLocations
 
+    private val _imageUri = MutableLiveData<Uri>()
+    val imageUri: LiveData<Uri> get() = _imageUri
+
     init {
         if (typeArgument == TYPE_TRACKING) {
             val tempTracked = NowTrackingViewModel.getTreck()
             _trackedLocations.value = tempTracked
+        }
+        if(uri != null) {
+            _imageUri.value = uri!!
         }
     }
 
@@ -49,11 +55,11 @@ class SaveMyPointViewModel(private val app: Application, private val typeArgumen
         }
     }
 
-    class Factory(private val app: Application, private val typeArgument: String) : ViewModelProvider.Factory {
+    class Factory(private val app: Application, private val typeArgument: String, private val uri: Uri?) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(SaveMyPointViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return SaveMyPointViewModel(app, typeArgument) as T
+                return SaveMyPointViewModel(app, typeArgument, uri) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }
