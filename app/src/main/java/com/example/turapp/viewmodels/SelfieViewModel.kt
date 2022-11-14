@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 
 class SelfieViewModel(private val app: Application, val typeArgument: String): ViewModel() {
 
@@ -29,7 +30,10 @@ class SelfieViewModel(private val app: Application, val typeArgument: String): V
     }
 
     init {
-        _selectedCamera.value = CameraSelector.DEFAULT_FRONT_CAMERA
+        if (typeArgument == TYPE_TRACKING)
+            _selectedCamera.value = CameraSelector.DEFAULT_FRONT_CAMERA
+        else
+            _selectedCamera.value = CameraSelector.DEFAULT_BACK_CAMERA
     }
 
     fun setPictureUri(uri: Uri?) {
