@@ -44,6 +44,7 @@ class SaveMyPointViewModel(private val app: Application, private val typeArgumen
                 val geo = PointGeoData(-1, System.currentTimeMillis(), marker.position)
                 geoList.add(geo)
                 repository.createMyPointWithGeo(
+                    imageUri = _imageUri.value,
                     title = title,
                     desc = description,
                     type = typeArgument,

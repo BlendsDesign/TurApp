@@ -1,6 +1,7 @@
 package com.example.turapp.utils
 
 import android.app.Application
+import android.net.Uri
 import com.example.turapp.repository.trackingDb.MyPointDAO
 import com.example.turapp.repository.trackingDb.MyPointDB
 import com.example.turapp.repository.trackingDb.entities.MyPoint
@@ -25,14 +26,20 @@ class MyPointRepository(app: Application) {
     }
 
     suspend fun createMyPointWithGeo(
+        imageUri: Uri?,
         title: String,
         desc: String?,
         type: String,
         adress: String?,
         geoList: List<PointGeoData>
     ): Boolean {
+        var uriString : String? = null
+        if (imageUri != null)
+            uriString = imageUri.toString()
+
         val myPointId = dao.insertMyPoint(
             MyPoint(
+                image = uriString,
                 title = title,
                 description = desc,
                 adress = adress,
