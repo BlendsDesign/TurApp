@@ -186,6 +186,12 @@ class SelfieFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (viewModel.keepPicture.value == true)
+            viewModel.resetKeepPicture()
+    }
+
     companion object {}
 
     private fun requestPermissions() {

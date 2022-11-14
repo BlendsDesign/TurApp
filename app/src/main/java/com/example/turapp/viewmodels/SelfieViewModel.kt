@@ -19,6 +19,9 @@ class SelfieViewModel(private val app: Application, val typeArgument: String): V
     fun savePicture() {
         _keepPicture.value = true
     }
+    fun resetKeepPicture() {
+        _keepPicture.value = false
+    }
     private val _selectedCamera = MutableLiveData<CameraSelector>()
     val selectedCamera: LiveData<CameraSelector> get() = _selectedCamera
     fun setSelectedCamera() {

@@ -2,6 +2,7 @@ package com.example.turapp.viewmodels
 
 import android.app.Application
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -53,6 +54,18 @@ class SaveMyPointViewModel(private val app: Application, private val typeArgumen
                 )
                 _finishedSavingPoint.value = true
             }
+        }
+    }
+
+    fun deleteTakenPicture() {
+        try {
+            _imageUri.value?.let {
+                app.applicationContext.contentResolver.delete(
+                    it, null, null
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("SelfieViewModel","Error deleting image", e)
         }
     }
 

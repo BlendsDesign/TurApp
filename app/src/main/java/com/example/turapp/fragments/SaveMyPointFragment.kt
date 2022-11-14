@@ -159,4 +159,10 @@ class SaveMyPointFragment : Fragment() {
 
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(viewModel.finishedSavingPoint.value != true)
+            viewModel.deleteTakenPicture()
+    }
 }
