@@ -113,7 +113,7 @@ class SaveMyPointFragment : Fragment() {
             }
         }
         binding.btnCancel.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(SaveMyPointFragmentDirections.actionSaveMyPointFragmentToTrackingFragment())
         }
     }
 
