@@ -26,9 +26,8 @@
         android:label="fragment_camera"
         tools:layout="@layout/fragment_camera" >
         <action
-            android:id="@+id/action_cameraFragment_to_savePictureFragment"
-            app:destination="@id/savePictureFragment"
-            app:enterAnim="@anim/nav_default_exit_anim" />
+            android:id="@+id/action_cameraFragment_to_saveMyPointFragment"
+            app:destination="@id/saveMyPointFragment" />
     </fragment>
     <fragment
         android:id="@+id/pointOfInterestFragment"

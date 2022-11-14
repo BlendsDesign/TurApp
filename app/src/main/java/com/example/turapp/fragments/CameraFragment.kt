@@ -103,8 +103,10 @@ class CameraFragment : Fragment() {
                 //viewModel.setTakingPicture()
                 val test = output.savedUri
                 if(test != null) {
-                    findNavController().navigate(CameraFragmentDirections
-                        .actionCameraFragmentToSavePictureFragment(test.toString()))
+                    findNavController().navigate(CameraFragmentDirections.actionCameraFragmentToSaveMyPointFragment(
+                        null,test.toString())
+                    )
+                        //.actionCameraFragmentToSavePictureFragment(test.toString()))
                     //viewModel.saveMyPoint(test)
 
                 }
