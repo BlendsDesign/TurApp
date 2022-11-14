@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.turapp.repository.trackingDb.entities.PointGeoData
 import com.example.turapp.repository.trackingDb.entities.TYPE_POI
+import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.utils.MyPointRepository
-import com.example.turapp.utils.helperFiles.NAVIGATION_ARGUMENT_SAVING_TYPE_TRACKING
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
@@ -25,7 +25,7 @@ class SaveMyPointViewModel(private val app: Application, private val typeArgumen
     val trackedLocations: LiveData<MutableList<MutableList<GeoPoint>>?> get() = _trackedLocations
 
     init {
-        if (typeArgument == NAVIGATION_ARGUMENT_SAVING_TYPE_TRACKING) {
+        if (typeArgument == TYPE_TRACKING) {
             val tempTracked = NowTrackingViewModel.getTreck()
             _trackedLocations.value = tempTracked
         }
@@ -40,7 +40,7 @@ class SaveMyPointViewModel(private val app: Application, private val typeArgumen
                 repository.createMyPointWithGeo(
                     title = title,
                     desc = description,
-                    type = TYPE_POI,
+                    type = typeArgument,
                     geoList = geoList,
                     adress = marker.title
                 )

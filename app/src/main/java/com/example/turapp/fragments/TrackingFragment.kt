@@ -16,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentTrackingBinding
-import com.example.turapp.utils.helperFiles.NAVIGATION_ARGUMENT_SAVING_TYPE_POI
+import com.example.turapp.repository.trackingDb.entities.TYPE_POI
 import com.example.turapp.utils.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.viewmodels.TrackingViewModel
@@ -296,7 +296,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     binding.btnAddPoint.isChecked = false
                     findNavController().navigate(
                         TrackingFragmentDirections.actionTrackingFragmentToSaveMyPointFragment(
-                            NAVIGATION_ARGUMENT_SAVING_TYPE_POI,
+                            TYPE_POI,
                             geoPoint,
                             null
                         )
