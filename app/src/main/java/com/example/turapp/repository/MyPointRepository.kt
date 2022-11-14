@@ -18,6 +18,23 @@ class MyPointRepository(app: Application) {
         return dao.getAllMyPointWithGeo()
     }
 
+    suspend fun getMyPointWithGeo(id: Int): MyPointWithGeo? {
+        return dao.getMyPointById(id)
+    }
+
+    suspend fun deleteMyPointWithGeo(point: MyPointWithGeo): Boolean {
+        return try {
+            point.geoData.forEach {
+                dao.deleteMyPointGeoData(it)
+            }
+            dao.deleteMyPoint(point.point)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
 
     suspend fun getSumRanLastSevenDays(): Long {
         val currentTime = System.currentTimeMillis()

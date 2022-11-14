@@ -2,13 +2,10 @@ package com.example.turapp.utils.RecyclerViewAdapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.turapp.R
 import com.example.turapp.databinding.RvItemLocationBinding
-import com.example.turapp.roomDb.SimplePoiAndActivities
-import com.example.turapp.roomDb.TypeOfPoint
 import com.example.turapp.fragments.StartFragmentDirections
 import com.example.turapp.repository.trackingDb.entities.TYPE_POI
 import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
@@ -23,11 +20,12 @@ class LocationAdapter(
     val nav: NavController
 ) : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
-    inner class LocationViewHolder(val binding: RvItemLocationBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class LocationViewHolder(val binding: RvItemLocationBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = RvItemLocationBinding.inflate(layoutInflater,parent,false)
+        val binding = RvItemLocationBinding.inflate(layoutInflater, parent, false)
         return LocationViewHolder(binding)
     }
 
@@ -48,12 +46,11 @@ class LocationAdapter(
                     else -> this.icon = resources.getDrawable(R.drawable.ic_help)
                 }
                 setOnClickListener {
-                    //nav.navigate(
-                    //StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(
-                    //    point.id, point.type
-                    //)
-                    //)
-                    Toast.makeText(requireNotNull(context), "HAS NOT IMPLEMENTED SHOW POINT YET", Toast.LENGTH_SHORT).show()
+                    nav.navigate(
+                        StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(
+                            point.point.pointId!!, point.point.type
+                        )
+                    )
                 }
             }
         }

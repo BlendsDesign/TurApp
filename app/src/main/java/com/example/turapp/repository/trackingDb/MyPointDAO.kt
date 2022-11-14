@@ -25,7 +25,7 @@ interface MyPointDAO {
 
     @Transaction
     @Query("SELECT * FROM my_point WHERE pointId = :pointId")
-    suspend fun getMyPointById(pointId: Int): MyPoint
+    suspend fun getMyPointById(pointId: Int): MyPointWithGeo?
 
 
     // PointGeoData
