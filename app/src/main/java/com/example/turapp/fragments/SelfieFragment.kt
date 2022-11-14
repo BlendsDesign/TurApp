@@ -41,14 +41,13 @@ class SelfieFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            val typeArgument = it.getString(NAVIGATION_ARGUMENT_SAVING_TYPE)
+            var typeArgument = it.getString(NAVIGATION_ARGUMENT_SAVING_TYPE)
             if (typeArgument == null) {
-                Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
-                findNavController().popBackStack()
+                typeArgument = TYPE_SNAPSHOT
             }
             val app = requireNotNull(activity).application
             viewModel = ViewModelProvider(
-                this, SelfieViewModel.Factory(app, typeArgument!!)
+                this, SelfieViewModel.Factory(app, typeArgument)
             )[SelfieViewModel::class.java]
         }
 
