@@ -110,7 +110,8 @@ class NowTrackingFragment : Fragment() {
         binding.btnStop.addOnCheckedChangeListener { button, isChecked ->
             when(isChecked) {
                 true -> {
-                    viewModel.stopService()
+                    viewModel.saveTreck()
+                    findNavController().navigate(NowTrackingFragmentDirections.actionNowTrackingFragmentToSelfieFragment())
                     button.apply {
                         text = "Restart Service"
                         icon = resources.getDrawable(R.drawable.ic_play_arrow)
@@ -126,15 +127,20 @@ class NowTrackingFragment : Fragment() {
             }
         }
 
-        viewModel.finishedSaving.observe(viewLifecycleOwner, Observer {
+        viewModel.hasStoppedService.observe(viewLifecycleOwner, Observer {
             if(it == true) {
                 viewModel.resetFinishedSaving()
-                findNavController().navigate(NowTrackingFragmentDirections.actionNowTrackingFragmentToSelfieFragment())
             }
         })
 
         // Inflate the layout for this fragment
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (viewModel.hasStoppedService.value != true)
+            viewModel.cancelTreck()
     }
 
     private fun getFormattedTimerString(timeHundreds: Long) : String {
@@ -151,4 +157,5 @@ class NowTrackingFragment : Fragment() {
         else
             hoursString + minutesString + secondsString + hundredsString
     }
+
 }

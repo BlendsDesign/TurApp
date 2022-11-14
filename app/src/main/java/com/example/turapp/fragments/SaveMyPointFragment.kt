@@ -1,22 +1,18 @@
 package com.example.turapp.fragments
 
-import android.content.ContextWrapper
 import android.location.Geocoder
 import android.os.Bundle
-import android.text.Editable
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.turapp.R
 import com.example.turapp.databinding.FragmentSaveMyPointBinding
-import com.example.turapp.utils.helperFiles.Helper
+import com.example.turapp.utils.helperFiles.NAVIGATION_ARGUMENT_SAVING_TYPE
 import com.example.turapp.viewmodels.SaveMyPointViewModel
-import com.google.android.material.textfield.TextInputEditText
-import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
@@ -29,10 +25,7 @@ class SaveMyPointFragment : Fragment() {
 
     private lateinit var binding: FragmentSaveMyPointBinding
 
-    private val viewModel: SaveMyPointViewModel by lazy {
-        val app = requireNotNull(activity).application
-        ViewModelProvider(this, SaveMyPointViewModel.Factory(app))[SaveMyPointViewModel::class.java]
-    }
+    private lateinit var viewModel: SaveMyPointViewModel
 
     private var location: GeoPoint? = null
     private var image: String? = null
@@ -46,8 +39,16 @@ class SaveMyPointFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            val typeArgument = it.getString(NAVIGATION_ARGUMENT_SAVING_TYPE)
             location = it.get("location") as GeoPoint?
             image = it.getString("uri")
+            if (typeArgument != null) {
+                val app = requireNotNull(activity).application
+                viewModel = ViewModelProvider(this, SaveMyPointViewModel.Factory(app, typeArgument))[SaveMyPointViewModel::class.java]
+            } else {
+                Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(SaveMyPointFragmentDirections.actionSaveMyPointFragmentToTrackingFragment())
+            }
         }
     }
 
@@ -74,7 +75,7 @@ class SaveMyPointFragment : Fragment() {
 
         viewModel.finishedSavingPoint.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if(it)
-                findNavController().popBackStack()
+                findNavController().navigate(SaveMyPointFragmentDirections.actionSaveMyPointFragmentToTrackingFragment())
         })
 
 

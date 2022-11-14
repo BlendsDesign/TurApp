@@ -7,12 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import com.example.turapp.repository.trackingDb.entities.MyPoint
-import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.utils.MyPointRepository
 import com.example.turapp.utils.locationClient.LocationService
-import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 
 class NowTrackingViewModel(private val app: Application) : ViewModel() {
@@ -31,28 +27,45 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
     private val _steps = LocationService.steps
     val steps: LiveData<Int> get() = _steps
 
-    private val _finishedSaving = MutableLiveData<Boolean>()
-    val finishedSaving: LiveData<Boolean> get() = _finishedSaving
+    private val _hasStoppedService = MutableLiveData<Boolean>()
+    val hasStoppedService: LiveData<Boolean> get() = _hasStoppedService
     fun resetFinishedSaving() {
-        _finishedSaving.value = false
+        _hasStoppedService.value = false
     }
 
     init {
+        companionTreck = null
+        companionTimeInHundreds = null
+        companionSteps = null
         Intent(app.applicationContext, LocationService::class.java).apply {
             action = LocationService.ACTION_START_OR_RESUME_SERVICE
             app.applicationContext.startService(this)
         }
     }
 
-    fun stopService() {
-        viewModelScope.launch {
-            repository.insertMyPoint(MyPoint(title = "My Run",
-                type = TYPE_TRACKING))
-            Intent(app.applicationContext, LocationService::class.java).apply {
-                action = LocationService.ACTION_STOP
-                app.applicationContext.startService(this)
-            }
-            _finishedSaving.value = true
+    fun saveTreck() {
+        _tracked.value?.let {
+            companionTreck = it
+        }
+        _steps.value?.let {
+            companionSteps = it
+        }
+        _timer.value?.let {
+            companionTimeInHundreds = it
+        }
+        stopService()
+        _hasStoppedService.value = true
+    }
+
+    fun cancelTreck() {
+        stopService()
+        _hasStoppedService.value = true
+    }
+
+    private fun stopService() {
+        Intent(app.applicationContext, LocationService::class.java).apply {
+            action = LocationService.ACTION_STOP
+            app.applicationContext.startService(this)
         }
     }
 
@@ -70,8 +83,28 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
         }
     }
 
+    companion object {
+        private var companionTreck: MutableList<MutableList<GeoPoint>>? = null
+        private var companionTimeInHundreds: Long? = null
+        private var companionSteps: Int? = null
+        fun getTreck(): MutableList<MutableList<GeoPoint>>? {
+            return companionTreck
+        }
+
+        fun getTimeInHundreds(): Long? {
+            return companionTimeInHundreds
+        }
+
+        fun getSteps(): Int? {
+            return companionSteps
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
+        companionTreck = null
+        companionTimeInHundreds = null
+        companionSteps = null
     }
 
     class Factory(private val app: Application) : ViewModelProvider.Factory {

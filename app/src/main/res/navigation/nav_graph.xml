@@ -73,6 +73,9 @@
         android:label="fragment_save_my_point"
         tools:layout="@layout/fragment_save_my_point" >
         <argument
+            android:name="NAVIGATION_ARGUMENT_SAVING_TYPE"
+            app:argType="string" />
+        <argument
             android:name="location"
             app:argType="org.osmdroid.util.GeoPoint"
             app:nullable="true" />
@@ -80,6 +83,10 @@
             android:name="uri"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_saveMyPointFragment_to_trackingFragment"
+            app:destination="@id/trackingFragment"
+            app:popUpTo="@id/trackingFragment" />
     </fragment>
 
     <fragment
