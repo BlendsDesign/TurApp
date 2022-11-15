@@ -1,102 +1,96 @@
 package com.example.turapp.viewmodels
 
+import android.app.Application
 import android.graphics.Color
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.example.turapp.repository.trackingDb.entities.MyPoint
-import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
+import androidx.lifecycle.*
+import com.example.turapp.repository.trackingDb.entities.MyPointWeek
+import com.example.turapp.utils.MyPointRepository
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import java.lang.IllegalArgumentException
-import java.time.Instant
-import java.util.Date
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 
-class GraphViewModel : ViewModel() {
+class GraphViewModel(app: Application) : ViewModel() {
 
-    val rawData = MutableLiveData(mutableListOf(
-        MyPoint(
-            createdAt = Date.from(Instant.parse("2022-11-01T13:00:00.00Z")).time,
-            type = TYPE_TRACKING,
-            steps = 1200,
-            timeTaken = 30 * 60 * 1000, // milliseconds
-            distanceInMeters = 800f,
-        ),
-        MyPoint(
-            createdAt = Date.from(Instant.parse("2022-11-02T13:00:00.00Z")).time,
-            type = TYPE_TRACKING,
-            steps = 1300,
-            timeTaken = 35 * 60 * 1000, // milliseconds
-            distanceInMeters = 900f,
-        ),
-        MyPoint(
-            createdAt = Date.from(Instant.parse("2022-11-03T13:00:00.00Z")).time,
-            type = TYPE_TRACKING,
-            steps = 1070,
-            timeTaken = 25 * 60 * 1000, // milliseconds
-            distanceInMeters = 850f,
-        ),
-        MyPoint(
-            createdAt = Date.from(Instant.parse("2022-11-04T13:00:00.00Z")).time,
-            type = TYPE_TRACKING,
-            steps = 1270,
-            timeTaken = 37 * 60 * 1000, // milliseconds
-            distanceInMeters = 780f,
-        ),
-        MyPoint(
-            createdAt = Date.from(Instant.parse("2022-11-05T13:00:00.00Z")).time,
-            type = TYPE_TRACKING,
-            steps = 1200,
-            timeTaken = 30 * 60 * 1000, // milliseconds
-            distanceInMeters = 800f,
-        ),
-        MyPoint(
-            createdAt = Date.from(Instant.parse("2022-11-06T13:00:00.00Z")).time,
-            type = TYPE_TRACKING,
-            steps = 1450,
-            timeTaken = 40 * 60 * 1000, // milliseconds
-            distanceInMeters = 1000f,
-        ),
-        MyPoint(
-            createdAt = Date.from(Instant.parse("2022-11-07T13:00:00.00Z")).time,
-            type = TYPE_TRACKING,
-            steps = 1300,
-            timeTaken = 38 * 60 * 1000, // milliseconds
-            distanceInMeters = 900f,
-        ),
-    ))
+    private val repository = MyPointRepository(app)
+    val currentWeek: MutableLiveData<MyPointWeek> = MutableLiveData()
+    val showSteps = MutableLiveData(true)
+    val showDistance = MutableLiveData(true)
+    val showTimeTaken = MutableLiveData(true)
+    private val channel = Channel<Unit>()
 
-    val data = MutableLiveData(getBarData())
+    init {
+        showSteps.observeForever(::update)
+        showDistance.observeForever(::update)
+        showTimeTaken.observeForever(::update)
+        currentWeek.observeForever(::updateWeek)
+    }
 
+    override fun onCleared() {
+        super.onCleared()
+        showSteps.removeObserver(::update)
+        showDistance.removeObserver(::update)
+        showTimeTaken.removeObserver(::update)
+        currentWeek.removeObserver(::updateWeek)
+    }
 
-    private fun getBarData() = BarData(
+    private fun update(@Suppress("UNUSED_PARAMETER") enabled: Boolean) {
+        viewModelScope.launch { channel.send(Unit) }
+    }
+    private fun updateWeek(@Suppress("UNUSED_PARAMETER") week: MyPointWeek) {
+        viewModelScope.launch { channel.send(Unit) }
+    }
+
+    val rawData = liveData {
+        channel.receiveAsFlow().cancellable().collectLatest {
+            currentWeek.value?.let { week ->
+                repository.getAllMyPointsByWeek(week).cancellable().collectLatest { pointsWithGeo ->
+                    this@liveData.emit(pointsWithGeo.map { pointWithGeo -> pointWithGeo.point})
+                }
+            }
+        }
+
+    }
+
+    fun getBarData() = BarData(
         listOf(
-            BarDataSet(rawData.value?.mapIndexed { i, it ->
+            BarDataSet(rawData.value?.takeIf { showSteps.value == true }?.mapIndexed { i, it ->
                 BarEntry(i.toFloat(), it.steps?.toFloat() ?: 0f)
             } ?: listOf(), "Steps").apply {
                 color = Color.RED
-                                          },
-            BarDataSet(rawData.value?.mapIndexed { i, it ->
+            },
+            BarDataSet(rawData.value?.takeIf { showDistance.value == true }?.mapIndexed { i, it ->
                 BarEntry(i.toFloat(), it.distanceInMeters ?: 0f)
             } ?: listOf(), "Distance").apply {
                 color = Color.BLUE
-                                             },
-            BarDataSet(rawData.value?.mapIndexed { i, it ->
+            },
+            BarDataSet(rawData.value?.takeIf { showTimeTaken.value == true }?.mapIndexed { i, it ->
                 BarEntry(i.toFloat(), ((it.timeTaken?.toFloat() ?: 0f) / 1000) / 60)
             } ?: listOf(), "Time taken").apply {
                 color = Color.GREEN
-                                               },
+
+            },
         )
     ).apply {
         barWidth = 0.30f
     }
 
-    class Factory : ViewModelProvider.Factory {
+
+    val weeks = liveData {
+        repository.getAllMyPointWeeks().cancellable().collectLatest {
+            emit(it)
+        }
+    }
+
+    class Factory(private val app: Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(GraphViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return GraphViewModel() as T
+                return GraphViewModel(app) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }
