@@ -49,7 +49,7 @@ class SaveMyPointFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             val typeArgument = it.getString(NAVIGATION_ARGUMENT_SAVING_TYPE)
-            Log.d("SaveMyPointFragment TYPE", typeArgument?: "null")
+            Log.d("SaveMyPointFragment TYPE", typeArgument ?: "null")
             if (typeArgument == null) {
                 Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
@@ -105,7 +105,8 @@ class SaveMyPointFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (viewModel.typeArgument == TYPE_TRACKING) {
-            viewModel.trackedLocations.observe(viewLifecycleOwner
+            viewModel.trackedLocations.observe(
+                viewLifecycleOwner
             ) { outerList ->
                 if (!outerList.isNullOrEmpty() && outerList.first().isNotEmpty()) {
                     drawTrackedLocations(outerList)
@@ -123,21 +124,23 @@ class SaveMyPointFragment : Fragment() {
             }
             map.overlays.add(marker)
             map.controller.animateTo(location)
-            binding.btnGrpLocation.isChecked = true
-        } else if (viewModel.typeArgument != TYPE_TRACKING) {
-            binding.btnGrpLocation.isCheckable = false
-            binding.btnGrpImage.isChecked = true
-            binding.mapHolder.visibility = View.GONE
         }
 
         binding.btnGrpImage.addOnCheckedChangeListener { button, isChecked ->
             if (isChecked) {
-                binding.mapHolder.visibility = View.GONE
-
+                binding.imgHolder.visibility = View.VISIBLE
             } else {
-                binding.mapHolder.visibility = View.VISIBLE
+                binding.imgHolder.visibility = View.GONE
             }
         }
+        binding.btnGrpLocation.addOnCheckedChangeListener { button, isChecked ->
+            if (isChecked) {
+                binding.frameForMap.visibility = View.VISIBLE
+            } else {
+                binding.frameForMap.visibility = View.GONE
+            }
+        }
+
         binding.btnCancel.setOnClickListener {
             findNavController().navigate(SaveMyPointFragmentDirections.actionSaveMyPointFragmentToTrackingFragment())
         }
@@ -225,7 +228,7 @@ class SaveMyPointFragment : Fragment() {
                 showInfoWindow()
                 position = endPoint
             }
-            if(endPoint.distanceToAsDouble(startPoint) < 3) {
+            if (endPoint.distanceToAsDouble(startPoint) < 3) {
                 endMarker.title = "Start/End"
                 endMarker.showInfoWindow()
             }

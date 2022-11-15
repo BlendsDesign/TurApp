@@ -6,143 +6,159 @@
     tools:context=".fragments.SaveMyPointFragment">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.example.turapp.viewmodels.SaveMyPointViewModel" />
     </data>
 
-    <com.example.turapp.utils.helperFiles.LockableScrollView
-        android:id="@+id/scrollView"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/btnGrpSaveOrCancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true">
+            app:layout_constraintTop_toTopOf="parent">
 
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/btnLocImgGroup"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:selectionRequired="true"
-                app:singleSelection="true">
+                android:layout_weight="1"
+                app:icon="@drawable/ic_delete"
+                app:iconGravity="top"
+                android:text="@string/cancel" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnGrpImage"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="image"
-                    app:icon="@drawable/ic_image"
-                    app:iconGravity="top"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveMyPoint"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:icon="@drawable/ic_save"
+                app:iconGravity="top"
+                android:text="@string/save_poi" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnGrpLocation"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="location"
-                    app:icon="@drawable/ic_map"
-                    app:iconGravity="top"/>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+        <com.example.turapp.utils.helperFiles.LockableScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnGrpSaveOrCancel">
 
-            <FrameLayout
-                android:id="@+id/frameForImageOrMap"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnLocImgGroup">
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputTitle"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Title"
+                    android:minWidth="88dp"
+                    app:layout_constraintBottom_toTopOf="@+id/inputDescription"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/titleInputField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputDescription"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Description"
+                    android:minWidth="88dp"
+                    app:layout_constraintBottom_toTopOf="@+id/btnGrpLocationOrImage"
+                    app:layout_constraintTop_toBottomOf="@+id/inputTitle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/descInputField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/btnGrpLocationOrImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@+id/frameForMap"
+                    app:layout_constraintTop_toBottomOf="@+id/inputDescription"
+                    app:selectionRequired="false"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGrpImage"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="image"
+                        app:icon="@drawable/ic_image"
+                        app:iconGravity="top" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGrpLocation"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="location"
+                        app:icon="@drawable/ic_map"
+                        app:iconGravity="top" />
+
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+                <FrameLayout
+                    android:id="@+id/frameForMap"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@+id/imgHolder"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btnGrpLocationOrImage">
+
+                    <org.osmdroid.views.MapView
+                        android:id="@+id/mapHolder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:focusable="true" />
+
+
+                </FrameLayout>
 
                 <ImageView
-                    android:background="@color/white"
                     android:id="@+id/imgHolder"
+                    loadUriImage="@{viewModel.imageUri}"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
                     android:contentDescription="The Image connected to this point"
-                    loadUriImage="@{viewModel.imageUri}" />
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/frameForMap" />
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.example.turapp.utils.helperFiles.LockableScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <org.osmdroid.views.MapView
-                    android:id="@+id/mapHolder"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_baseline_broken_image"
-                    android:focusable="true"/>
-
-
-            </FrameLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputTitle"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Title"
-                android:minWidth="88dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/frameForImageOrMap">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/titleInputField"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputDescription"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Description"
-                android:minWidth="88dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/inputTitle">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/descInputField"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/btnGrpSaveOrCancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/inputDescription">
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCancel"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cancel" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSaveMyPoint"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/save_poi" />
-
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
-
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.example.turapp.utils.helperFiles.LockableScrollView>
 </layout>

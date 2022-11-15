@@ -23,14 +23,12 @@ fun bindImage(imageView: ImageView, imageUrl: String?) {
 fun bindUriImage(imageView: ImageView, imageUrl: Uri?) {
     if (imageUrl == null) {
         imageView.visibility = View.GONE
-    } else {
-        imageView.visibility = View.VISIBLE
     }
     imageUrl?.let {
         Glide.with(imageView.context).load(imageUrl).apply(
             RequestOptions()
-                .placeholder(R.drawable.loading_animation)
                 .error(R.drawable.ic_baseline_broken_image)
-        ).into(imageView)
+        ).into(imageView).view.apply {
+        }
     }
 }
