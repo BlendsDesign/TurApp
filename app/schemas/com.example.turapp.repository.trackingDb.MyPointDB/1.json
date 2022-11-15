@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "273153d15f095cbe955f61944bd3163d",
+    "identityHash": "eabc429fb1cbc182148fd2bd76c51aba",
     "entities": [
       {
         "tableName": "my_point",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title` TEXT, `description` TEXT, `type` TEXT NOT NULL, `image` TEXT, `createdAt` INTEGER NOT NULL, `hasAdditionalData` INTEGER NOT NULL, `pointId` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title` TEXT, `description` TEXT, `type` TEXT NOT NULL, `image` TEXT, `createdAt` INTEGER NOT NULL, `distanceInMeters` REAL, `timeTaken` INTEGER, `steps` INTEGER, `hasAdditionalData` INTEGER NOT NULL, `pointId` INTEGER PRIMARY KEY AUTOINCREMENT)",
         "fields": [
           {
             "fieldPath": "title",
@@ -37,6 +37,24 @@
             "columnName": "createdAt",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "distanceInMeters",
+            "columnName": "distanceInMeters",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "timeTaken",
+            "columnName": "timeTaken",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "steps",
+            "columnName": "steps",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "hasAdditionalData",
@@ -146,7 +164,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '273153d15f095cbe955f61944bd3163d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'eabc429fb1cbc182148fd2bd76c51aba')"
     ]
   }
 }

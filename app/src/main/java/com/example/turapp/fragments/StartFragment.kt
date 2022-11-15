@@ -30,9 +30,13 @@ class StartFragment : Fragment() {
         binding = StartFragmentBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+        viewModel.refreshList()
 
         viewModel.isLoading.observe(viewLifecycleOwner, Observer {
-            if(!it) {
+            if (!it && viewModel.points.value?.isEmpty() == true) {
+                binding.startFragmentListIsEmpty.visibility = View.VISIBLE
+                binding.statusImage.visibility = View.GONE
+            } else if (!it) {
                 lifecycleScope.launch {
                     binding.rvLocations.apply {
                         val navControl = findNavController()
@@ -40,11 +44,14 @@ class StartFragment : Fragment() {
                         layoutManager = LinearLayoutManager(context)
                     }
                     binding.statusImage.visibility = View.GONE
+                    binding.startFragmentListIsEmpty.visibility = View.GONE
                 }
             } else {
                 binding.statusImage.visibility = View.VISIBLE
             }
         })
+
+
 
         return binding.root
     }

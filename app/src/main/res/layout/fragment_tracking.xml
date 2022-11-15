@@ -6,73 +6,155 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         tools:context=".fragments.TrackingFragment">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabTrackingHelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_help" />
 
         <org.osmdroid.views.MapView
             android:id="@+id/trackingMap"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:flow_horizontalBias="0.5"
-            app:layout_constraintBottom_toTopOf="@+id/svTrackingFragment"
+            app:layout_constraintBottom_toTopOf="@+id/selectedMarkerDialog"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_weight="2"
-            tools:layout_editor_absoluteX="47dp">
+            app:layout_constraintStart_toStartOf="parent">
 
 
         </org.osmdroid.views.MapView>
 
-        <ScrollView
-            android:id="@+id/svTrackingFragment"
+        <LinearLayout
+            android:id="@+id/selectedMarkerDialog"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:flow_horizontalBias="0.5"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/bottomNavTrackingFragment"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/trackingMap"
-            app:layout_constraintVertical_weight="1">
+            android:visibility="gone">
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:hint="Title"
+                android:minWidth="88dp">
 
-                <TextView
-                    android:id="@+id/tvFirstTextViewInTracking"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/current_location" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="Current Step Count:"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvStepCount"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/titleInputField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="0"
-                    android:textSize="18sp" />
+                    android:enabled="false"
+                    android:textColor="@color/makeDisabledEditTextLookGood" />
 
 
-            </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        </ScrollView>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Distance"
+                android:minWidth="88dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/distanceInputField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:textColor="@color/makeDisabledEditTextLookGood" />
 
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/selectedMarkerDialogBtnToggleGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGoToMyPointPage"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="open" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEdit"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="edit" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSetAsTarget"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Target" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/bottomNavTrackingFragment"
             android:layout_width="match_parent"
-            android:layout_height="75dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/map_fragment_bottom_nav" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:singleSelection="true"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTrack"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start"
+                app:iconGravity="top"
+                android:layout_weight="1"
+                app:icon="@drawable/ic_track_changes"
+                android:checkable="false"/>
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddPoint"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add POI"
+                app:iconGravity="top"
+                android:layout_weight="1"
+                app:icon="@drawable/ic_add_location" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGoToMyLocation"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="here"
+                app:iconGravity="top"
+                android:layout_weight="1"
+                app:icon="@drawable/ic_arrow_circle_24"
+                android:checkable="false"/>
+
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

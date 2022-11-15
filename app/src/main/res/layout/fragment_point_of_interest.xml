@@ -4,109 +4,206 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragments.PointOfInterestFragment">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.turapp.viewmodels.PointOfInterestViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
 
-
-        <TextView
-            android:id="@+id/tvPoiName"
-            style="@style/heading_textSize"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tvPoiDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvPoiName" />
-
-        <TextView
-            android:id="@+id/tvPoiLength"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvPoiDate" />
-
-        <TextView
-            android:id="@+id/tvTotalPoiWithRecordingsSize"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvPoiLength" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvRecordings"
+        <com.example.turapp.utils.helperFiles.LockableScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@+id/btDelete"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTotalPoiWithRecordingsSize" />
-
-
-        <Button
-            android:id="@+id/btDelete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@color/theme_blue"
-            android:text="DELETE POI"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <!-- This is what shows the recording data on top of the other data -->
-        <LinearLayout
-            android:id="@+id/showRecordingView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="16dp"
-            android:background="@color/transparent_theme_blue"
-            android:orientation="vertical"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/btDelete"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:padding="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavPointOfInterestFragment"
             app:layout_constraintTop_toTopOf="parent">
 
-            <Button
-                android:id="@+id/btCloseRecordingView"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/theme_blue"
-                android:text="Close"
-                android:textColor="@color/white" />
+                android:animateLayoutChanges="true">
 
-            <ScrollView
-                android:id="@+id/svRecording"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/tvRecording"
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/btnLocImgGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGrpImage"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="image"
+                        app:icon="@drawable/ic_image"
+                        app:iconGravity="top" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGrpLocation"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="location"
+                        android:visibility="gone"
+                        app:icon="@drawable/ic_map"
+                        app:iconGravity="top" />
+
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                <FrameLayout
+                    android:id="@+id/frameForImageOrMap"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/btnLocImgGroup">
+
+                    <org.osmdroid.views.MapView
+                        android:id="@+id/mapHolder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:focusable="true"
+                        android:visibility="gone" />
+
+
+                    <ImageView
+                        android:id="@+id/imgHolder"
+                        loadUriImage="@{viewModel.imageUri}"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:background="@color/white"
+                        android:contentDescription="The Image connected to this point" />
+
+
+                </FrameLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/titleInputFieldHolder"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/theme_orange" />
-            </ScrollView>
-        </LinearLayout>
+                    android:hint="Title"
+                    android:minWidth="88dp"
+                    app:layout_constraintTop_toBottomOf="@+id/frameForImageOrMap">
 
-        <ImageView
-            android:id="@+id/status_image"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/titleInputField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:textColor="@color/makeDisabledEditTextLookGood" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/descInputFieldHolder"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Description"
+                    android:minWidth="88dp"
+                    app:layout_constraintTop_toBottomOf="@+id/titleInputFieldHolder">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/descInputField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:textColor="@color/makeDisabledEditTextLookGood" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/dateInputFieldHolder"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Date"
+                    android:minWidth="88dp"
+                    app:layout_constraintTop_toBottomOf="@+id/descInputFieldHolder">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/dateInputField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:textColor="@color/makeDisabledEditTextLookGood" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/otherInfoInputFieldHolder"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Other Info"
+                    android:minWidth="88dp"
+                    app:layout_constraintTop_toBottomOf="@+id/dateInputFieldHolder">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/otherInfoInputField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:textColor="@color/makeDisabledEditTextLookGood" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.example.turapp.utils.helperFiles.LockableScrollView>
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/bottomNavPointOfInterestFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/black"
-            android:contentDescription="Deleting in progress image"
-            android:visibility="gone"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/loading_animation" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/scrollView">
 
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEdit"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Edit"
+                app:icon="@drawable/ic_edit_24"
+                app:iconGravity="textTop" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDeleteMyPointOrSaveEdits"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Delete"
+                app:icon="@drawable/ic_delete"
+                app:iconGravity="textTop" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBack"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Back"
+                app:icon="@drawable/ic_arrow_back"
+                app:iconGravity="textTop" />
+
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

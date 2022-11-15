@@ -7,9 +7,13 @@ import androidx.room.PrimaryKey
 data class MyPoint(
     var title: String? = null,
     var description: String? = null,
+    var adress: String? = null,
     var type: String,
     var image: String? = null,
     val createdAt: Long = System.currentTimeMillis(),
+    var distanceInMeters: Float? = null,
+    var timeTaken: Long? = null,
+    var steps: Long? = null,
     var hasAdditionalData: Boolean = false
 ) {
     @PrimaryKey(autoGenerate = true)

@@ -24,13 +24,23 @@
             android:id="@+id/status_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/style_loading"
             android:contentDescription="Loading image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/loading_animation" />
+            />
 
+        <TextView
+            android:id="@+id/startFragmentListIsEmpty"
+            android:textAlignment="center"
+            android:text="Oh, there is nothing to show here.\nGet out there and record some activities"
+            android:padding="20dp"
+            style="@style/style_title_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

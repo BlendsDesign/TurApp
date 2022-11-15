@@ -40,9 +40,10 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 import java.io.IOException
 import java.util.*
 
-private val REQUEST_CODE = 123
+
 
 class MapFragment : Fragment() {
+    private val REQUEST_CODE = 123
 
     private lateinit var binding: FragmentMapBinding
 

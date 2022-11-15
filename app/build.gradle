@@ -80,6 +80,10 @@ dependencies {
     // Easy Permissions
     implementation 'pub.devrel:easypermissions:3.0.0'
 
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.13.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
+
     // Location Services PLAY STORE NEEDED
     implementation 'com.google.android.gms:play-services-location:21.0.0'
 
@@ -93,6 +97,7 @@ dependencies {
     implementation "androidx.camera:camera-view:${camerax_version}"
     implementation "androidx.camera:camera-extensions:${camerax_version}"
 
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
 
 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -15,6 +16,9 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.turapp.databinding.ActivityMainBinding
+import com.example.turapp.fragments.TrackingFragmentDirections
+import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -36,8 +40,44 @@ class MainActivity : AppCompatActivity() {
         navController = findViewById<View?>(R.id.navHostFragment).findNavController()
         binding.bottomNav.setupWithNavController(navController)
 
+
+        navController.apply {
+            addOnDestinationChangedListener { controller, destination, arguments ->
+                when (destination.id) {
+                    R.id.graphFragment -> {
+                        binding.bottomNav.apply {
+                            menu.clear()
+                            inflateMenu(R.menu.bottom_nav_menu_on_graph)
+                            visibility = View.VISIBLE
+                        }
+                    }
+                    R.id.trackingFragment -> {
+                        binding.bottomNav.apply {
+                            menu.clear()
+                            inflateMenu(R.menu.bottom_nav_menu)
+                            visibility = View.VISIBLE
+                        }
+                    }
+                    R.id.startFragment -> {
+                        binding.bottomNav.apply {
+                            menu.clear()
+                            inflateMenu(R.menu.bottom_nav_menu_on_list)
+                            visibility = View.VISIBLE
+                        }
+                    }
+                    else -> binding.bottomNav.visibility = View.GONE
+                }
+            }
+        }
+
         //val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
         setSupportActionBar(binding.turToolbar)
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.app_bar_menu, menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -63,7 +103,7 @@ class MainActivity : AppCompatActivity() {
                 alertDialog.setTitle(getString(R.string.about_app))
                 alertDialog.setMessage(getString(R.string.info_text))
                 alertDialog.setButton(
-                        AlertDialog.BUTTON_NEUTRAL, "OK"
+                    AlertDialog.BUTTON_NEUTRAL, "OK"
                 ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
                 alertDialog.show()
             }

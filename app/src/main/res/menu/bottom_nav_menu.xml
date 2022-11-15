@@ -8,21 +8,16 @@
 
     </item>
     <item
-        android:id="@+id/trackingFragment"
-        android:title="Map"
-        android:icon="@drawable/ic_map">
-
-    </item>
-    <item
-        android:id="@+id/cameraFragment"
+        android:id="@+id/action_trackingFragment_to_selfieFragment"
         android:title="Camera"
         android:icon="@drawable/ic_camera">
+
     </item>
 
     <item
-        android:id="@+id/liveSensorDataFragment"
-        android:title="SensorData"
-        android:icon="@drawable/ic_sensor">
+        android:id="@+id/graphFragment"
+        android:title="GraphFragment"
+        android:icon="@drawable/ic_baseline_auto_graph_24">
     </item>
 
 </menu>
