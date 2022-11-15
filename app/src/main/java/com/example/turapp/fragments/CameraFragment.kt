@@ -20,6 +20,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
+import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.utils.helperFiles.REQUEST_CODE_CAMERA_PERMISSION
 import pub.devrel.easypermissions.EasyPermissions
@@ -102,14 +103,14 @@ class CameraFragment : Fragment() {
                 Log.d("ShotCamera", msg)
                 //viewModel.setTakingPicture()
                 val test = output.savedUri
-                if(test != null) {
-                    findNavController().navigate(CameraFragmentDirections.actionCameraFragmentToSaveMyPointFragment(
-                        null,test.toString())
-                    )
-                        //.actionCameraFragmentToSavePictureFragment(test.toString()))
-                    //viewModel.saveMyPoint(test)
-
-                }
+//                if(test != null) {
+//                    findNavController().navigate(CameraFragmentDirections.actionCameraFragmentToSaveMyPointFragment(
+//                        TYPE_SNAPSHOT,null,test.toString())
+//                    )
+//                        //.actionCameraFragmentToSavePictureFragment(test.toString()))
+//                    //viewModel.saveMyPoint(test)
+//
+//                }
 
             }
         }
