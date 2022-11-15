@@ -2,13 +2,13 @@ package com.example.turapp.utils.RecyclerViewAdapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.turapp.R
 import com.example.turapp.databinding.RvItemLocationBinding
-import com.example.turapp.roomDb.SimplePoiAndActivities
-import com.example.turapp.roomDb.TypeOfPoint
 import com.example.turapp.fragments.StartFragmentDirections
+import com.example.turapp.repository.trackingDb.entities.TYPE_POI
+import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
 import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
 import kotlinx.android.synthetic.main.rv_item_location.view.*
@@ -20,11 +20,12 @@ class LocationAdapter(
     val nav: NavController
 ) : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
-    inner class LocationViewHolder(val binding: RvItemLocationBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class LocationViewHolder(val binding: RvItemLocationBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = RvItemLocationBinding.inflate(layoutInflater,parent,false)
+        val binding = RvItemLocationBinding.inflate(layoutInflater, parent, false)
         return LocationViewHolder(binding)
     }
 
@@ -36,15 +37,21 @@ class LocationAdapter(
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         holder.itemView.apply {
             val point = myPoints[position]
-            tvLocationName.text = point.point.title
-            tvDistance.text = if (point.point.type == TYPE_TRACKING) "Activity" else "POI"
-            setOnClickListener {
-                //nav.navigate(
-                    //StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(
-                    //    point.id, point.type
-                    //)
-                //)
-                Toast.makeText(requireNotNull(context), "HAS NOT IMPLEMENTED SHOW POINT YET", Toast.LENGTH_SHORT).show()
+            btnLocation.apply {
+                this.text = point.point.title
+                when (point.point.type) {
+                    TYPE_POI -> this.icon = resources.getDrawable(R.drawable.ic_marker_blue)
+                    TYPE_SNAPSHOT -> this.icon = resources.getDrawable(R.drawable.ic_camera)
+                    TYPE_TRACKING -> this.icon = resources.getDrawable(R.drawable.ic_run_man)
+                    else -> this.icon = resources.getDrawable(R.drawable.ic_help)
+                }
+                setOnClickListener {
+                    nav.navigate(
+                        StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(
+                            point.point.pointId!!, point.point.type
+                        )
+                    )
+                }
             }
         }
     }

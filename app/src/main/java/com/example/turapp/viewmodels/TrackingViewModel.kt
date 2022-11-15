@@ -1,17 +1,13 @@
 package com.example.turapp.viewmodels
 
 import android.app.Application
-import android.graphics.Color
 import android.location.Location
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.*
 import com.example.turapp.R
 import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
 import com.example.turapp.utils.MyPointRepository
-import com.example.turapp.utils.OSMDroidUtils
-import com.example.turapp.utils.Sensors.StepDetectorSensor
 import com.example.turapp.utils.locationClient.DefaultLocationClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.catch
@@ -20,8 +16,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.Polyline
-import java.sql.Time
 
 
 class TrackingViewModel(private val app: Application) : ViewModel() {
@@ -72,6 +66,7 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
         _selectedMarkerIsTarget.value = isChecked
         if (!isChecked)
             _pathPointsToTarget.value = mutableListOf()
+
         _selectedMarker.value?.let {
             if (isChecked) {
                 it.icon = AppCompatResources.getDrawable(
@@ -108,53 +103,18 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
         }
     }
 
-    //val locGeoPoint: LiveData<GeoPoint> = locationListener.locGeoPoint
+    private val _addingCustomMarker = MutableLiveData<Boolean>()
+    val addingCustomMarker : LiveData<Boolean> get() = _addingCustomMarker
+    fun setAddingCustomMarker(isChecked: Boolean) {
+        _addingCustomMarker.value = isChecked
+    }
 
-    private val _currentLocation = MutableLiveData<Location>()
-    val currentLocation: LiveData<Location> get() = _currentLocation
 
     private val _currentPosition = MutableLiveData<GeoPoint>()
     val currentPosition: LiveData<GeoPoint> get() = _currentPosition
 
     private val _startingPoint = MutableLiveData<GeoPoint>()
     val startingPoint: LiveData<GeoPoint> get() = _startingPoint
-
-    private val _markersForMap = MutableLiveData<MutableList<Marker>>()
-    val markersForMap: LiveData<MutableList<Marker>> get() = _markersForMap
-
-    private val _deviceOrientation = MutableLiveData<Float>()
-    val deviceOrientation: LiveData<Float> get() = _deviceOrientation
-
-    private val _isTracking = MutableLiveData<Boolean>()
-    val isTracking: LiveData<Boolean> get() = _isTracking
-
-    fun switchIsTracking() {
-        _isTracking.value = _isTracking.value != true
-    }
-
-    private val stepCountSensor = StepDetectorSensor(app)
-    private var _stepCountData = MutableLiveData<Float>()
-    val stepCountData: LiveData<Float> get() = _stepCountData
-
-    private val _bearing = MutableLiveData<Float>()
-    val bearing: LiveData<Float> get() = _bearing
-
-    private val _bearingAccuracy = MutableLiveData<Float>()
-    val bearingAccuracy: LiveData<Float> get() = _bearingAccuracy
-
-    private val _addingCustomMarker = MutableLiveData<Boolean>()
-    val addingCustomMarker: LiveData<Boolean> get() = _addingCustomMarker
-    fun setAddingCustomMarker() {
-        _addingCustomMarker.value = _addingCustomMarker.value != true
-    }
-
-
-    init {
-        stepCountSensor.startListening()
-        stepCountSensor.setOnSensorValuesChangedListener {
-            _stepCountData.value = it[0]
-        }
-    }
 
     fun refreshList() {
         viewModelScope.launch {
@@ -167,14 +127,12 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
         locationClient.getLocationUpdates(500L)
             .catch { e -> e.printStackTrace()/*Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show()*/ }
             .onEach { location ->
-                _currentLocation.value = location
-                val lat = location.latitude
-                val long = location.longitude
-                val alt = location.altitude
-                val geo = GeoPoint(lat, long, alt)
-                _bearingAccuracy.value = location.accuracy
-                _bearing.value = location.bearing
+                getLocation.postValue(location)
+
+                Log.d("TrackingViewModel", "Updated getLocation")
+                val geo = GeoPoint(location)
                 _currentPosition.value = geo
+
                 if (_selectedMarker.value != null) {
                     setDistanceToTargetString(geo)
                     if (_selectedMarkerIsTarget.value == true)
@@ -182,13 +140,18 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
                 }
 
                 if (_startingPoint.value == null)
-                    _startingPoint.value = GeoPoint(lat, long, alt)
+                    _startingPoint.value = geo
             }
             .launchIn(viewModelScope)
     }
 
     override fun onCleared() {
         super.onCleared()
+    }
+
+    // This allows us to get location from other fragments
+    companion object {
+        val getLocation = MutableLiveData<Location>()
     }
 
 

@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/startFragment"
-        android:title="List"
-        android:icon="@drawable/ic_list">
+        android:id="@+id/trackingFragment"
+        android:title="Map"
+        android:icon="@drawable/ic_map">
 
     </item>
     <item
-        android:id="@+id/action_trackingFragment_to_selfieFragment"
+        android:id="@+id/action_startFragment_to_selfieFragment"
         android:title="Camera"
         android:icon="@drawable/ic_camera">
 
