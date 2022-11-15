@@ -15,15 +15,15 @@ import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 
-class SaveMyPointViewModel(private val app: Application, private val typeArgument: String, uri: Uri?): ViewModel() {
+class SaveMyPointViewModel(private val app: Application, val typeArgument: String, uri: Uri?): ViewModel() {
 
     private val repository: MyPointRepository = MyPointRepository(app)
 
     private val _finishedSavingPoint = MutableLiveData<Boolean>()
     val finishedSavingPoint: LiveData<Boolean> get() = _finishedSavingPoint
 
-    private val _trackedLocations = MutableLiveData<MutableList<MutableList<GeoPoint>>?>()
-    val trackedLocations: LiveData<MutableList<MutableList<GeoPoint>>?> get() = _trackedLocations
+    private val _trackedLocations = MutableLiveData<MutableList<MutableList<GeoPoint>>>()
+    val trackedLocations: LiveData<MutableList<MutableList<GeoPoint>>> get() = _trackedLocations
 
     private val _imageUri = MutableLiveData<Uri>()
     val imageUri: LiveData<Uri> get() = _imageUri
@@ -31,7 +31,10 @@ class SaveMyPointViewModel(private val app: Application, private val typeArgumen
     init {
         if (typeArgument == TYPE_TRACKING) {
             val tempTracked = NowTrackingViewModel.getTreck()
-            _trackedLocations.value = tempTracked
+            if (tempTracked != null) {
+                _trackedLocations.value = tempTracked!!
+            }
+
         }
         if(uri != null) {
             _imageUri.value = uri!!
