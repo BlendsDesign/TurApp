@@ -70,6 +70,10 @@ class PointOfInterestFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
+        binding.btnBack.setOnClickListener {
+            findNavController().navigate(PointOfInterestFragmentDirections.actionPointOfInterestFragmentToStartFragment())
+        }
+
 
         viewModel.myPoint.observe(viewLifecycleOwner, Observer {
             if (it != null) {
@@ -79,6 +83,7 @@ class PointOfInterestFragment : Fragment() {
                     dateInputField.setText(
                         String.format("${Date(Timestamp(it.point.createdAt).time)}")
                     )
+                    descInputField.setText(it.point.description)
                     btnDeleteMyPointOrSaveEdits.setOnClickListener {
                         val alertDialog = AlertDialog.Builder(context).create()
                         if (viewModel?.isInEditMode?.value != true) {
@@ -237,10 +242,10 @@ class PointOfInterestFragment : Fragment() {
         if (point == null)
             return ""
         val distance = point.distanceInMeters ?: 0f
-        val timeInSeconds: Float = point.timeTaken?.div(100F) ?: 1f
+        val timeInSeconds = point.timeTaken?.div(100.0) ?: 1.0
         val speed = distance.div(timeInSeconds)
         return String.format(
-            "You ran %d meters in %.2f seconds at a speed of %.2f m/s",
+            "You ran %.2f meters in %.2f seconds at a speed of %.2f m/s",
             distance,
             timeInSeconds,
             speed
