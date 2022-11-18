@@ -285,6 +285,15 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             viewModel.setAddingCustomMarker(isChecked)
         }
 
+        binding.btnGoToMyPointPage.setOnClickListener{
+            Toast.makeText(
+                requireContext(),
+                "All aboard the AR train", Toast.LENGTH_SHORT
+            ).show()
+
+            findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToArFragment())
+        }
+
     }
 
     // This works with the MapEventsOverlay to add clicklisteners and lets us add POIs

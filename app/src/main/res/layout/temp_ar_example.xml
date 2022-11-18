@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="30dp"
+    >
+
+    <TextView
+        android:id="@+id/ar_distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exchange this with POI marker"
+        android:background="#111B55"
+        android:textColor="#fff">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/ar_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:background="#0A25E8"
+        android:textSize="24sp"
+        />
+
+</LinearLayout>
