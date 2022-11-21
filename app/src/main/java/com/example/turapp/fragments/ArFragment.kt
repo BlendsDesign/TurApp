@@ -21,25 +21,18 @@ import com.example.turapp.utils.ArCoreUtils
 import com.example.turapp.viewmodels.ArViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.ar.core.Plane
-import com.google.ar.core.Session
 import com.google.ar.core.TrackingState
 import com.google.ar.core.exceptions.CameraNotAvailableException
 import com.google.ar.core.exceptions.UnavailableException
+import com.google.ar.sceneform.ArSceneView
+import com.google.ar.sceneform.FrameTime
+import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.rendering.ViewRenderable
-import io.github.sceneview.ar.ArSceneView
-import io.github.sceneview.ar.Instructions
-import io.github.sceneview.ar.arcore.ArFrame
-import io.github.sceneview.ar.arcore.ArSession
-import io.github.sceneview.node.Node
-import io.github.sceneview.utils.FrameTime
 import uk.co.appoly.arcorelocation.LocationMarker
 import uk.co.appoly.arcorelocation.LocationScene
 import uk.co.appoly.arcorelocation.rendering.LocationNode
 import uk.co.appoly.arcorelocation.rendering.LocationNodeRender
 import uk.co.appoly.arcorelocation.utils.ARLocationPermissionHelper
-//import uk.co.appoly.arcorelocation.rendering.LocationNode
-//import uk.co.appoly.arcorelocation.rendering.LocationNodeRender
-//import uk.co.appoly.arcorelocation.utils.ARLocationPermissionHelper
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
 
@@ -71,6 +64,8 @@ class ArFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //checkIsSupportedDeviceOrFinish(requireActivity())
+
     }
 
     override fun onCreateView(
@@ -87,7 +82,7 @@ class ArFragment : Fragment() {
 
         val exampleLayout1: CompletableFuture<ViewRenderable> = ViewRenderable.builder()
             .setView(requireContext(), R.layout.temp_ar_example)
-            .build(lifecycle)
+            .build()
 
         CompletableFuture.allOf(exampleLayout1 /*, exampleLayout2*/)
             .handle<Any?> { notUsed: Void?, throwable: Throwable? ->
@@ -118,7 +113,7 @@ class ArFragment : Fragment() {
                 locationScene = LocationScene(requireContext(), requireActivity(), arSceneView)
                 layoutLocationMarker1 = LocationMarker(
                     63.29155, 9.08042,  //local sports arena
-                    Node(exampleLayoutRenderAble1)
+                    getExampleView(exampleLayoutRenderAble1)
                 )
 
                 // "onRender" event that renders every frame
@@ -135,9 +130,7 @@ class ArFragment : Fragment() {
                 locationScene!!.mLocationMarkers.add(layoutLocationMarker1)
             }
 
-            val earth = arSceneView.session?.earth ?: return
-
-            val frame = arSceneView!!.onArFrame ?: return@addOnUpdateListener
+            val frame = arSceneView!!.arFrame ?: return@addOnUpdateListener
             if (frame.camera.trackingState != TrackingState.TRACKING) {
                 return@addOnUpdateListener
             }
@@ -155,26 +148,26 @@ class ArFragment : Fragment() {
 
         Log.d("ARCoreCamera", "Request permission")
 
-//        ARLocationPermissionHelper.requestPermission(requireActivity())
+        ARLocationPermissionHelper.requestPermission(requireActivity())
 
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_ar, container, false)
         return binding.root
     }
 
-//    @SuppressLint("ClickableViewAccessibility")
-//    private fun getExampleView(renderable: ViewRenderable): Node {
-//        Log.d("ARCoreCamera", "getExampleView")
-//        val base = Node()
-//        base.renderable = renderable
-//        val c: Context = requireContext()
-//        val eView = renderable.view
-//        eView.setOnTouchListener { v: View?, event: MotionEvent? ->
-//            Toast.makeText(c, "Location marker touched", Toast.LENGTH_LONG).show()
-//            false
-//        }
-//        return base
-//    }
+    @SuppressLint("ClickableViewAccessibility")
+    private fun getExampleView(renderable: ViewRenderable?): Node {
+        Log.d("ARCoreCamera", "getExampleView")
+        val base = Node()
+        base.renderable = renderable
+        val c: Context = requireContext()
+        val eView = renderable?.view
+        eView?.setOnTouchListener { v: View?, event: MotionEvent? ->
+            Toast.makeText(c, "Location marker touched", Toast.LENGTH_LONG).show()
+            false
+        }
+        return base
+    }
 
     override fun onResume() {
         super.onResume()
@@ -182,31 +175,28 @@ class ArFragment : Fragment() {
             Log.d("ARCoreCamera", "resume locationscene")
             locationScene!!.resume()
         }
-        if (arSceneView!!.onArSessionCreated == null) {
+        if (arSceneView!!.session== null) {
             //if the session wasn't created yet, don't resume rendering.
             //This can happen if ARCore needs to be updated or permissions are not granted
             try {
                 Log.d("ARCoreCamera", "DemoUtils create session")
-                val session: Session? = Session(activity)//ArCoreUtils.createArSession(requireActivity(),installRequested)
-                //if (session == null) {
-                //    Log.d("ARCoreCamera", "session == null")
-                    //installRequested = ARLocationPermissionHelper.hasPermission(requireActivity())
-                //    return
-                //} else {
+                val session = ArCoreUtils.createArSession(requireActivity(),installRequested)
+                if (session == null) {
+                    Log.d("ARCoreCamera", "session == null")
+                    installRequested = ARLocationPermissionHelper.hasPermission(requireActivity())
+                   return
+                } else {
                     Log.d("ARCoreCamera", "setupSession")
-                    arSceneView?.let{
-                        it.onArFrame(ArFrame(session = session ,
-                            it.currentFrame!!.time, it.currentFrame))
-                    }
+                    arSceneView?.setupSession(session)
                     Log.d("ARCoreCamera", "setupSession done")
-                //}
+                }
             } catch (e: UnavailableException) {
                 Log.d("ARCoreCamera", "exception in DemoUtils")
                 ArCoreUtils.handleSessionException(requireActivity(), e)
             }
             try {
                 Log.d("ARCoreCamera", "resume arSceneView")
-                arSceneView!!.onResume(viewLifecycleOwner)
+                arSceneView!!.resume()
             } catch (ex: CameraNotAvailableException) {
                 Log.d("ARCoreCamera", "exception in DemoUtils")
                 ArCoreUtils.displayError(requireContext(), "Unable to get camera", ex)
@@ -215,7 +205,7 @@ class ArFragment : Fragment() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            if (arSceneView!!.onArSessionCreated != null) {
+            if (arSceneView!!.session != null) {
                 showLoadingMessage()
             }
         }
@@ -229,7 +219,7 @@ class ArFragment : Fragment() {
             Log.d(TAG, "onPause == null")
             locationScene!!.pause()
         }
-        arSceneView!!.onPause(viewLifecycleOwner)
+        arSceneView!!.pause()
     }
 
     override fun onDestroy() {
