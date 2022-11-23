@@ -17,7 +17,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.turapp.databinding.ActivityMainBinding
 import com.example.turapp.fragments.TrackingFragmentDirections
-import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 

@@ -36,7 +36,6 @@ import uk.co.appoly.arcorelocation.utils.ARLocationPermissionHelper
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
 
-
 private const val TAG = "ARCoreCamera"
 private const val MIN_OPENGL_VERSION = 3.0
 

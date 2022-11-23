@@ -135,7 +135,7 @@
     </fragment>
     <fragment
         android:id="@+id/arFragment"
-        android:name="com.example.turapp.ArFragment"
+        android:name="com.example.turapp.fragments.ArFragment"
         android:label="fragment_ar"
         tools:layout="@layout/fragment_ar" />
 

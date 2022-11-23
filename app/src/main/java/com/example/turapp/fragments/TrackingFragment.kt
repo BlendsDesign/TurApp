@@ -40,7 +40,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private var clearSelectedMarkerOverlay: MapEventsOverlay =
         MapEventsOverlay(getClearSelectedMarkerEventsReceiver())
 
-    private lateinit var binding: FragmentTrackingBinding
+    lateinit var binding: FragmentTrackingBinding
 
     private val markersList = mutableListOf<Marker>()
 
@@ -285,7 +285,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             viewModel.setAddingCustomMarker(isChecked)
         }
 
-        binding.btnGoToMyPointPage.setOnClickListener{
+        binding.btnEdit.setOnClickListener{
             Toast.makeText(
                 requireContext(),
                 "All aboard the AR train", Toast.LENGTH_SHORT
