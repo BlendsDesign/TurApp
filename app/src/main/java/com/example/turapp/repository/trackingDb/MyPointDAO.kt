@@ -45,7 +45,7 @@ interface MyPointDAO {
 
     @Transaction
     @Query("SELECT * FROM my_point ORDER BY createdAt DESC LIMIT :limit ")
-    suspend fun limitPoints(limit: Int): List<MyPointWithGeo>
+    suspend fun limitPoints(limit: Int): List<MyPoint>
 
 
 }

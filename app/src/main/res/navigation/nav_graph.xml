@@ -62,6 +62,9 @@
         <action
             android:id="@+id/action_trackingFragment_to_selfieFragment"
             app:destination="@id/selfieFragment" />
+        <action
+            android:id="@+id/action_trackingFragment_to_arFragment"
+            app:destination="@id/arFragment" />
     </fragment>
     <fragment
         android:id="@+id/savePictureFragment"
