@@ -23,6 +23,19 @@ class MyConverters {
     }
 
     @TypeConverter
+    fun stringToListOfGeoPoints(data: String?): MutableList<MutableList<GeoPoint>>? {
+        if (data == null) {
+            return null
+        }
+        val type: Type = object : TypeToken<MutableList<MutableList<GeoPoint>>>() {}.type
+        return Gson().fromJson<MutableList<MutableList<GeoPoint>>>(data, type)
+    }
+    @TypeConverter
+    fun listOfGeoPointsToString(data: MutableList<MutableList<GeoPoint>>?): String? {
+        return Gson().toJson(data)
+    }
+
+    @TypeConverter
     fun stringToGeoPoint(data: String?): GeoPoint? {
         if (data == null) {
             return null

@@ -16,7 +16,7 @@ import com.example.turapp.roomDb.entities.PointOfInterest
 import com.example.turapp.roomDb.entities.Recording
 import kotlinx.coroutines.launch
 import com.example.turapp.utils.Sensors.MagnetoMeterSensor
-import com.example.turapp.repository.MyRepository
+import com.example.turapp.roomDb.MyRepository
 import com.example.turapp.utils.Sensors.SensorFilterFunctions
 import java.lang.IllegalArgumentException
 import kotlin.math.sqrt

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+        <variable
+            name="myPoint"
+            type="com.example.turapp.repository.trackingDb.entities.MyPoint" />
+
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        >
+
+        <ImageView
+            android:id="@+id/rvIconView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/rvTextView"
+            app:layout_constraintBottom_toBottomOf="@+id/rvDateView"
+            setListAdapterIcon="@{myPoint}"/>
+
+        <TextView
+            android:id="@+id/rvTextView"
+            android:layout_margin="8dp"
+            android:layout_width="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="@{myPoint.title}"
+            android:textSize="20sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/rvIconView" />
+        <TextView
+            android:id="@+id/rvDateView"
+            app:layout_constraintTop_toBottomOf="@id/rvTextView"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/rvTextView"
+            android:layout_height="wrap_content"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

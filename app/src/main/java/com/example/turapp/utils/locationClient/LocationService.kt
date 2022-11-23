@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.lifecycle.MutableLiveData
 import com.example.turapp.R
 import com.example.turapp.utils.Sensors.StepCounterSensor
+import com.example.turapp.utils.Sensors.StepDetectorSensor
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.*
@@ -32,15 +33,17 @@ class LocationService: Service() {
 
     private lateinit var locationClient: LocationClient
 
+    private var _currentLocation: Location? = null
+
     private var tracking: Boolean = false
 
     private var serviceIsStarting: Boolean = true
 
     private var timeTracked: Long = 0
 
-    private var pausedTime: Long? = null
+    private var _distance: Float? = null
 
-    private var stepCounterSensor: StepCounterSensor? = null
+    private var stepDetectorSensor: StepDetectorSensor? = null
     private var _steps = 0
 
 
@@ -107,16 +110,17 @@ class LocationService: Service() {
         locationClient.getLocationUpdates(1000L)
             .catch { e -> e.printStackTrace() }
             .onEach { location ->
-                val lat = location.latitude
-                val long = location.longitude
-                val test = "Location: ($lat, $long)"
-                currentLocation.postValue(location)
-                val geo = GeoPoint(location)
                 if (tracking) {
+                    if (_distance == null)
+                        _distance = 0F
+                    _distance = _distance!! + location.distanceTo(_currentLocation?: location)
+                    val geo = GeoPoint(location)
                     _trackedPoints.last().add(geo)
+                    distance.postValue(_distance!!)
                     trackedPoints.postValue(_trackedPoints)
                 }
-                Log.d("newLocation", test)
+                _currentLocation = location
+                currentLocation.postValue(location)
             }
             .launchIn(serviceScope)
 
@@ -142,8 +146,8 @@ class LocationService: Service() {
     private fun startStepCounter() {
         if (PermissionCheckUtility.hasActivityRecognitionPermissions(applicationContext)) {
             serviceScope.launch {
-                stepCounterSensor = StepCounterSensor(requireNotNull(applicationContext))
-                stepCounterSensor?.let {
+                stepDetectorSensor = StepDetectorSensor(requireNotNull(applicationContext))
+                stepDetectorSensor?.let {
                     it.setOnSensorValuesChangedListener { _ ->
                         if (tracking) {
                             _steps += 1
@@ -183,5 +187,6 @@ class LocationService: Service() {
         val trackedPoints = MutableLiveData<mPolylines>()
         val timerHundreds  = MutableLiveData<Long>()
         val steps = MutableLiveData<Int>()
+        val distance = MutableLiveData<Float>()
     }
 }

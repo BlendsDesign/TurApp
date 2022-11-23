@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                             visibility = View.VISIBLE
                         }
                     }
-                    R.id.startFragment -> {
+                    R.id.listFragment -> {
                         binding.bottomNav.apply {
                             menu.clear()
                             inflateMenu(R.menu.bottom_nav_menu_on_list)

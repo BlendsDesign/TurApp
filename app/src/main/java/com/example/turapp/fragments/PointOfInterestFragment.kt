@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +21,6 @@ import com.example.turapp.viewmodels.PointOfInterestViewModel
 import com.example.turapp.utils.RecyclerViewAdapters.RecordingListAdapter
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
 import com.example.turapp.repository.trackingDb.entities.*
-import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
 import com.example.turapp.roomDb.TypeOfPoint
 import com.example.turapp.roomDb.entities.RecordedActivity
 import kotlinx.android.synthetic.main.fragment_save_my_point.*
@@ -50,7 +50,7 @@ class PointOfInterestFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val app = requireNotNull(activity).application
         arguments?.let {
-            val id = it.getInt("id")
+            val id = it.getLong("id")
             val type = it.getString("type")
             if (id != null && type != null) {
                 viewModel = ViewModelProvider(
@@ -71,28 +71,46 @@ class PointOfInterestFragment : Fragment() {
         binding.viewModel = viewModel
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigate(PointOfInterestFragmentDirections.actionPointOfInterestFragmentToStartFragment())
+            findNavController().popBackStack()
+        }
+
+        viewModel.trek.observe(viewLifecycleOwner) { outerList ->
+            var maxHeight = 0.0
+            try {
+                outerList.trekList.forEach { innerList ->
+                    innerList.forEach {
+                        if(it.altitude > maxHeight)
+                            maxHeight = it.altitude
+                    }
+                }
+            } catch (e: java.lang.NullPointerException) {
+                e.printStackTrace()
+            }
+            Toast.makeText(requireContext(), "${maxHeight}", Toast.LENGTH_SHORT).show()
         }
 
 
-        viewModel.myPoint.observe(viewLifecycleOwner, Observer {
+        viewModel.myPoint.observe(viewLifecycleOwner) {
             if (it != null) {
                 //Set up POI textviews
+                Toast.makeText(requireContext(), "${it.location?.altitude}", Toast.LENGTH_SHORT).show()
                 binding.apply {
-                    titleInputField.setText(it.point.title ?: " ")
+                    titleInputField.setText(it.title ?: " ")
                     dateInputField.setText(
-                        String.format("${Date(Timestamp(it.point.createdAt).time)}")
+                        String.format("${Date(Timestamp(it.createdAt).time)}")
                     )
-                    descInputField.setText(it.point.description)
-                    btnDeleteMyPointOrSaveEdits.setOnClickListener {
+                    descInputField.setText(it.description)
+                }
+                binding.btnDeleteMyPointOrSaveEdits.setOnClickListener {
                         val alertDialog = AlertDialog.Builder(context).create()
-                        if (viewModel?.isInEditMode?.value != true) {
+                        if (viewModel.isInEditMode.value != true) {
                             alertDialog.setTitle(getString(R.string.delete_are_you_sure))
                             alertDialog.setButton(
                                 AlertDialog.BUTTON_POSITIVE,
                                 "Yes"
                             ) { dialog: DialogInterface, _: Int ->
-                                viewModel?.deletePoi()
+                                Log.d("DELETE", "ALERTDIALOG")
+                                viewModel.deletePoi()
                             }
                         } else {
                             alertDialog.setTitle("Are you sure you want to save these changes")
@@ -100,14 +118,8 @@ class PointOfInterestFragment : Fragment() {
                                 AlertDialog.BUTTON_POSITIVE,
                                 "Yes"
                             ) { dialog: DialogInterface, _: Int ->
-                                viewModel?.saveEdits()
+                                viewModel.saveEdits()
                             }
-                        }
-                        alertDialog.setButton(
-                            AlertDialog.BUTTON_POSITIVE,
-                            "Yes"
-                        ) { dialog: DialogInterface, _: Int ->
-                            viewModel?.deletePoi()
                         }
                         alertDialog.setButton(
                             AlertDialog.BUTTON_NEUTRAL,
@@ -119,10 +131,10 @@ class PointOfInterestFragment : Fragment() {
                     }
                 }
                 // Set up map
-                if (it.geoData.isNotEmpty())
+                if (it.location != null)
                     setUpMap()
             }
-        })
+
 
         viewModel.finishedDeleting.observe(viewLifecycleOwner, Observer {
             if (it) {
@@ -135,69 +147,69 @@ class PointOfInterestFragment : Fragment() {
 
     private fun setUpMap(): Boolean {
         Toast.makeText(requireContext(), "setUpMap() ran", Toast.LENGTH_SHORT).show()
-        val myPointWithGeo = viewModel.myPoint.value
-        if (myPointWithGeo == null || myPointWithGeo.geoData.isEmpty())
+        val myPoint = viewModel.myPoint.value
+        if (myPoint?.location == null)
             return false
         lifecycleScope.launch {
             map = binding.mapHolder
             map.setTileSource(TileSourceFactory.MAPNIK)
             val geoPoints = mutableListOf<GeoPoint>()
             val marker = Marker(map)
-            if (myPointWithGeo.point.type == TYPE_TRACKING) {
-                val geoPointsForBoundingBox = mutableListOf<GeoPoint>()
-                val endMarker = Marker(map)
-                myPointWithGeo.geoData.forEach {
-
-                    // Use this to
-                    geoPoints.add(it.geoPoint)
-                    geoPointsForBoundingBox.add(it.geoPoint)
-                    // Check if it is a starting or pause point
-                    when (it.type) {
-                        TRACKING_STARTING_POINT -> {
-                            marker.apply {
-                                icon = AppCompatResources.getDrawable(
-                                    requireContext(),
-                                    R.drawable.ic_marker_blue
-                                )
-                                position = geoPoints[0]
-                                title = "Starting Point"
-                                subDescription =
-                                    getActivityInformationString(viewModel.myPoint.value?.point)
-                                showInfoWindow()
-                            }
-                        }
-                        TRACKING_END_POINT -> {
-                            endMarker.apply {
-                                icon = AppCompatResources.getDrawable(
-                                    requireContext(),
-                                    R.drawable.ic_marker_blue
-                                )
-                                position = geoPoints[0]
-                                title = "Starting Point"
-                                subDescription =
-                                    getActivityInformationString(viewModel.myPoint.value?.point)
-                                showInfoWindow()
-                            }
-                        }
-                        TRACKING_PAUSE_POINT -> {
-                            val poli = Polyline()
-                            poli.color = Color.RED
-                            geoPoints.forEach {
-                                poli.addPoint(it)
-                            }
-                            map.overlays.add(poli)
-                            geoPoints.clear()
-                        }
-                    }
-                }
-                map.overlays.add(endMarker)
-                map.zoomToBoundingBox(
-                    BoundingBox.fromGeoPointsSafe(geoPointsForBoundingBox),
-                    true
-                )
+            if (myPoint.type == TYPE_TRACKING) {
+//                val geoPointsForBoundingBox = mutableListOf<GeoPoint>()
+//                val endMarker = Marker(map)
+//                myPoint.geoData.forEach {
+//
+//                    // Use this to
+//                    geoPoints.add(it.geoPoint)
+//                    geoPointsForBoundingBox.add(it.geoPoint)
+//                    // Check if it is a starting or pause point
+//                    when (it.type) {
+//                        TRACKING_STARTING_POINT -> {
+//                            marker.apply {
+//                                icon = AppCompatResources.getDrawable(
+//                                    requireContext(),
+//                                    R.drawable.ic_marker_blue
+//                                )
+//                                position = geoPoints[0]
+//                                title = "Starting Point"
+//                                subDescription =
+//                                    getActivityInformationString(viewModel.myPoint.value?.point)
+//                                showInfoWindow()
+//                            }
+//                        }
+//                        TRACKING_END_POINT -> {
+//                            endMarker.apply {
+//                                icon = AppCompatResources.getDrawable(
+//                                    requireContext(),
+//                                    R.drawable.ic_marker_blue
+//                                )
+//                                position = geoPoints[0]
+//                                title = "Starting Point"
+//                                subDescription =
+//                                    getActivityInformationString(viewModel.myPoint.value?.point)
+//                                showInfoWindow()
+//                            }
+//                        }
+//                        TRACKING_PAUSE_POINT -> {
+//                            val poli = Polyline()
+//                            poli.color = Color.RED
+//                            geoPoints.forEach {
+//                                poli.addPoint(it)
+//                            }
+//                            map.overlays.add(poli)
+//                            geoPoints.clear()
+//                        }
+//                    }
+//                }
+//                map.overlays.add(endMarker)
+//                map.zoomToBoundingBox(
+//                    BoundingBox.fromGeoPointsSafe(geoPointsForBoundingBox),
+//                    true
+//                )
             } else {
                 marker.apply {
-                    icon = if (myPointWithGeo.point.type == TYPE_POI) {
+                    icon = if (myPoint.type == TYPE_POI) {
                         AppCompatResources.getDrawable(
                             requireContext(),
                             R.drawable.ic_marker_blue
@@ -208,8 +220,8 @@ class PointOfInterestFragment : Fragment() {
                             R.drawable.ic_camera
                         )
                     }
-                    position = myPointWithGeo.geoData.first().geoPoint
-                    title = getLocationInformation(myPointWithGeo.geoData.first().geoPoint)
+                    position = myPoint.location
+                    title = getLocationInformation(myPoint.location)
                     showInfoWindow()
                 }
                 map.controller.apply {
@@ -221,6 +233,7 @@ class PointOfInterestFragment : Fragment() {
         }
         binding.mapHolder.visibility = View.VISIBLE
         binding.btnGrpLocation.visibility = View.VISIBLE
+
 
         return true
     }

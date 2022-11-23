@@ -6,8 +6,8 @@ import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.*
 import com.example.turapp.R
-import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
-import com.example.turapp.utils.MyPointRepository
+import com.example.turapp.repository.trackingDb.entities.MyPoint
+import com.example.turapp.repository.MyPointRepository
 import com.example.turapp.utils.locationClient.DefaultLocationClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.catch
@@ -28,8 +28,8 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     )
 
 
-    private val _myPointList = MutableLiveData<List<MyPointWithGeo>>()
-    val myPointList: LiveData<List<MyPointWithGeo>> get() = _myPointList
+    private val _myPointList = MutableLiveData<List<MyPoint>>()
+    val myPointList: LiveData<List<MyPoint>> get() = _myPointList
 
     private val _selectedMarker = MutableLiveData<Marker?>()
     val selectedMarker: LiveData<Marker?> get() = _selectedMarker
@@ -118,7 +118,9 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
 
     fun refreshList() {
         viewModelScope.launch {
-            _myPointList.value = repository.getAllMyPointsWithGeo()
+            repository.getAllMyPoints().collect {
+                _myPointList.value = it
+            }
         }
     }
 

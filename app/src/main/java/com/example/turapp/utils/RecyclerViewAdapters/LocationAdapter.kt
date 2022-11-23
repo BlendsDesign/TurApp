@@ -7,16 +7,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.turapp.R
 import com.example.turapp.databinding.RvItemLocationBinding
 import com.example.turapp.fragments.StartFragmentDirections
+import com.example.turapp.repository.trackingDb.entities.MyPoint
 import com.example.turapp.repository.trackingDb.entities.TYPE_POI
 import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
 import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
-import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
 import kotlinx.android.synthetic.main.rv_item_location.view.*
 
 // BASED ON https://youtu.be/HtwDXRWjMcU
 
 class LocationAdapter(
-    var myPoints: List<MyPointWithGeo>,
+    var myPoints: List<MyPoint>,
     val nav: NavController
 ) : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
@@ -38,8 +38,8 @@ class LocationAdapter(
         holder.itemView.apply {
             val point = myPoints[position]
             btnLocation.apply {
-                this.text = point.point.title
-                when (point.point.type) {
+                this.text = point.title
+                when (point.type) {
                     TYPE_POI -> this.icon = resources.getDrawable(R.drawable.ic_marker_blue)
                     TYPE_SNAPSHOT -> this.icon = resources.getDrawable(R.drawable.ic_camera)
                     TYPE_TRACKING -> this.icon = resources.getDrawable(R.drawable.ic_run_man)
@@ -48,7 +48,7 @@ class LocationAdapter(
                 setOnClickListener {
                     nav.navigate(
                         StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(
-                            point.point.pointId!!, point.point.type
+                            point.pointId!!, point.type
                         )
                     )
                 }

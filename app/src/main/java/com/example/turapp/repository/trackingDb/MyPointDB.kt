@@ -2,27 +2,32 @@ package com.example.turapp.repository.trackingDb
 
 import android.content.Context
 import androidx.room.*
+import androidx.room.migration.AutoMigrationSpec
 import com.example.turapp.repository.trackingDb.entities.MyPoint
-import com.example.turapp.repository.trackingDb.entities.PointGeoData
-import com.example.turapp.repository.trackingDb.entities.TempGeoData
+import com.example.turapp.repository.trackingDb.entities.TrekLocations
 
 @Database(
     entities = [
         MyPoint::class,
-        PointGeoData::class,
-        TempGeoData::class
+        TrekLocations::class,
     ],
-    version = 4,
+    version = 5,
     autoMigrations = [AutoMigration(
-        from = 3,
-        to = 4
+        from = 4,
+        to = 5,
+        spec = MyPointDB.Migration4To5::class
     )
     ],
-    exportSchema = true
+    exportSchema = true,
 )
 @TypeConverters(MyConverters::class)
 abstract class MyPointDB: RoomDatabase() {
     abstract val myPointDao: MyPointDAO
+
+
+    @DeleteTable(tableName = "geo_data")
+    @DeleteTable(tableName = "temp_geo_data")
+    class Migration4To5 : AutoMigrationSpec {}
 
     companion object {
         @Volatile
