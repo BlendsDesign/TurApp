@@ -113,15 +113,14 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     markersList.clear()
 
                     it.forEach { point ->
-                        if (point.geoData.isNotEmpty()) {
                             // Could do a check here to draw polyline if the list is multiple points
                             val temp = Marker(map)
                             temp.apply {
-                                position = point.geoData.first().geoPoint
-                                title = point.point.title
-                                subDescription = point.point.description
+                                position = GeoPoint(point.location)
+                                title = point.title
+                                subDescription = point.description
                                 icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
-                                id = point.point.pointId.toString()
+                                id = point.pointId.toString()
                                 setOnMarkerClickListener { marker, _ ->
                                     if (!binding.btnSetAsTarget.isChecked) {
                                         viewModel.setSelectedMarker(marker)
@@ -131,7 +130,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                             }
                             markersList.add(temp)
                             map.overlays.add(temp)
-                        }
+
                     }
                 }
             }

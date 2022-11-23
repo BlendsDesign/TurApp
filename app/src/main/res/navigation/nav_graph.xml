@@ -39,7 +39,7 @@
         tools:layout="@layout/fragment_point_of_interest" >
         <argument
             android:name="id"
-            app:argType="integer" />
+            app:argType="long" />
         <action
             android:id="@+id/action_pointOfInterestFragment_to_startFragment"
             app:destination="@id/startFragment"
@@ -62,9 +62,6 @@
         <action
             android:id="@+id/action_trackingFragment_to_selfieFragment"
             app:destination="@id/selfieFragment" />
-        <action
-            android:id="@+id/action_trackingFragment_to_arFragment"
-            app:destination="@id/arFragment" />
     </fragment>
     <fragment
         android:id="@+id/savePictureFragment"
@@ -132,6 +129,14 @@
             app:destination="@id/saveMyPointFragment"
             app:popUpTo="@id/selfieFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.example.turapp.fragments.ListFragment"
+        android:label="ListFragment" >
+        <action
+            android:id="@+id/action_listFragment_to_pointOfInterestFragment"
+            app:destination="@id/pointOfInterestFragment" />
     </fragment>
     <fragment
         android:id="@+id/arFragment"

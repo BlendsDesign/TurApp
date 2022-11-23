@@ -7,13 +7,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.turapp.utils.MyPointRepository
+import com.example.turapp.repository.MyPointRepository
 import com.example.turapp.utils.locationClient.LocationService
 import org.osmdroid.util.GeoPoint
 
 class NowTrackingViewModel(private val app: Application) : ViewModel() {
-
-    private val repository = MyPointRepository(app)
 
     private val _currentLocation = LocationService.currentLocation
     val currentLocation: LiveData<Location> get() = _currentLocation
@@ -27,6 +25,9 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
     private val _steps = LocationService.steps
     val steps: LiveData<Int> get() = _steps
 
+    private val _distance = LocationService.distance
+    val distance: LiveData<Float> get() = _distance
+
     private val _hasStoppedService = MutableLiveData<Boolean>()
     val hasStoppedService: LiveData<Boolean> get() = _hasStoppedService
     fun resetFinishedSaving() {
@@ -37,6 +38,7 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
         companionTreck = null
         companionTimeInHundreds = null
         companionSteps = null
+        companionDistance = null
         Intent(app.applicationContext, LocationService::class.java).apply {
             action = LocationService.ACTION_START_OR_RESUME_SERVICE
             app.applicationContext.startService(this)
@@ -52,6 +54,9 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
         }
         _timer.value?.let {
             companionTimeInHundreds = it
+        }
+        _distance.value?.let {
+            companionDistance = it
         }
         stopService()
         _hasStoppedService.value = true
@@ -87,6 +92,7 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
         private var companionTreck: MutableList<MutableList<GeoPoint>>? = null
         private var companionTimeInHundreds: Long? = null
         private var companionSteps: Int? = null
+        private var companionDistance: Float? = null
         fun getTreck(): MutableList<MutableList<GeoPoint>>? {
             return companionTreck
         }
@@ -105,6 +111,7 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
         companionTreck = null
         companionTimeInHundreds = null
         companionSteps = null
+        companionDistance = null
     }
 
     class Factory(private val app: Application) : ViewModelProvider.Factory {

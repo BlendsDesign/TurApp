@@ -33,7 +33,7 @@
             android:layout_height="match_parent"
             android:contentDescription="Image Preview"
             android:visibility="gone"
-            app:loadUriImage="@{viewModel.pictureUri}" />
+            app:selfieShowImage="@{viewModel.pictureUri}" />
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/btnGroup"
