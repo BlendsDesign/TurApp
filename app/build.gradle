@@ -103,8 +103,8 @@ dependencies {
     //implementation 'io.github.sceneview:arsceneview:0.9.0' // kotlin sceneview
     //implementation "com.gorisse.thomas.sceneform:sceneform:1.21.0" //maintained sceneform
 
-    implementation 'com.google.ar:sceneform.ux:sceneform-ux:1.17.1'
-    implementation 'com.google.ar:sceneform:core:1.17.1'
+    implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.17.1'
+    implementation 'com.google.ar.sceneform:core:1.17.1'
     implementation 'com.google.ar:core:1.34.0'
     implementation 'com.github.appoly:ARCore-Location:1.1.2'
 

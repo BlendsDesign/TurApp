@@ -34,6 +34,9 @@ class MyPointRepository(app: Application) {
         }
     }
 
+    suspend fun limitPoints(limit:Int) {
+        dao.limitPoints(limit)
+    }
 
     suspend fun getSumRanLastSevenDays(): Long {
         val currentTime = System.currentTimeMillis()

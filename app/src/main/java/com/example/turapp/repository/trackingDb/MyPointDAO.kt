@@ -42,4 +42,10 @@ interface MyPointDAO {
     @Transaction
     @Query("SELECT Sum(distanceInMeters) FROM my_point WHERE createdAt BETWEEN :fromDateInMillis AND :toDateInMillis")
     suspend fun getSumDistanceBetweenDates(fromDateInMillis: Long, toDateInMillis: Long): Long
+
+    @Transaction
+    @Query("SELECT * FROM my_point ORDER BY createdAt DESC LIMIT :limit ")
+    suspend fun limitPoints(limit: Int): List<MyPointWithGeo>
+
+
 }
