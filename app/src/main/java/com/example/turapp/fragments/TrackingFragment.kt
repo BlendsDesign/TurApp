@@ -289,8 +289,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 requireContext(),
                 "All aboard the AR train", Toast.LENGTH_SHORT
             ).show()
-
-            findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToArFragment())
+            val marked = viewModel.selectedMarker.value
+            findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToArFragment(marked))
         }
 
     }

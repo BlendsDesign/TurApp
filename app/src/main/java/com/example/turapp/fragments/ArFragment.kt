@@ -2,6 +2,7 @@ package com.example.turapp.fragments
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -28,6 +30,7 @@ import com.google.ar.sceneform.ArSceneView
 import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.rendering.ViewRenderable
+import org.osmdroid.views.overlay.Marker
 import uk.co.appoly.arcorelocation.LocationMarker
 import uk.co.appoly.arcorelocation.LocationScene
 import uk.co.appoly.arcorelocation.rendering.LocationNode
@@ -55,6 +58,10 @@ class ArFragment : Fragment() {
     private var locationScene: LocationScene? = null
     private var layoutLocationMarker1: LocationMarker? = null
 
+    private var marker: Marker? = null
+    private var latitude : Double = 0.0
+    private var longitude : Double = 0.0
+
     private val viewModel: ArViewModel by lazy {
         val app = requireNotNull(activity).application
         ViewModelProvider(this, ArViewModel.Factory(app))[ArViewModel::class.java]
@@ -63,7 +70,12 @@ class ArFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //checkIsSupportedDeviceOrFinish(requireActivity())
+        //checkIsSupportedDeviceOrFinish(MainActivity())
+        arguments?.let {
+            marker = it.get("marker") as Marker?
+            latitude = marker?.position?.latitude!!
+            longitude = marker?.position?.longitude!!
+        }
 
     }
 
@@ -80,7 +92,7 @@ class ArFragment : Fragment() {
 
 
         val exampleLayout1: CompletableFuture<ViewRenderable> = ViewRenderable.builder()
-            .setView(requireContext(), R.layout.temp_ar_example)
+            .setView(requireContext(), R.layout.ar_poi_marker)
             .build()
 
         CompletableFuture.allOf(exampleLayout1 /*, exampleLayout2*/)
@@ -111,7 +123,7 @@ class ArFragment : Fragment() {
             if (locationScene == null) {
                 locationScene = LocationScene(requireContext(), requireActivity(), arSceneView)
                 layoutLocationMarker1 = LocationMarker(
-                    63.29155, 9.08042,  //local sports arena
+                    longitude, latitude,
                     getExampleView(exampleLayoutRenderAble1)
                 )
 
@@ -119,10 +131,11 @@ class ArFragment : Fragment() {
                 // updates the layout with the marker's distance
                 layoutLocationMarker1!!.renderEvent = LocationNodeRender { node: LocationNode ->
                     val eView = exampleLayoutRenderAble1!!.view
+                    //val markerView = eView.findViewById<ImageView>(R.id.ar_marker)
                     val distanceTextView = eView.findViewById<TextView>(R.id.ar_distance)
-                    distanceTextView.text = node.distance.toString() + "M"
-                    val nameView = eView.findViewById<TextView>(R.id.ar_name)
-                    nameView.text = "Some location..."
+                    distanceTextView.text = node.distance.toString()
+//                    val nameView = eView.findViewById<TextView>(R.id.ar_name)
+//                    nameView.text = "Some location..."
                 }
 
                 //adding the marker

@@ -145,7 +145,12 @@
         android:id="@+id/arFragment"
         android:name="com.example.turapp.fragments.ArFragment"
         android:label="fragment_ar"
-        tools:layout="@layout/fragment_ar" />
+        tools:layout="@layout/fragment_ar" >
+        <argument
+            android:name="marker"
+            app:argType="org.osmdroid.views.overlay.Marker"
+            app:nullable="true" />
+    </fragment>
 
 
 </navigation>
