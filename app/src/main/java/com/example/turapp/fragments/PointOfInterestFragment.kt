@@ -2,7 +2,6 @@ package com.example.turapp.fragments
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -12,18 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.viewmodels.PointOfInterestViewModel
-import com.example.turapp.utils.RecyclerViewAdapters.RecordingListAdapter
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
 import com.example.turapp.repository.trackingDb.entities.*
-import com.example.turapp.roomDb.TypeOfPoint
-import com.example.turapp.roomDb.entities.RecordedActivity
-import kotlinx.android.synthetic.main.fragment_save_my_point.*
 import kotlinx.coroutines.launch
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -52,7 +46,7 @@ class PointOfInterestFragment : Fragment() {
         arguments?.let {
             val id = it.getLong("id")
             val type = it.getString("type")
-            if (id != null && type != null) {
+            if (id != 0L && type != null) {
                 viewModel = ViewModelProvider(
                     this,
                     PointOfInterestViewModel.Factory(app, id, type)
@@ -79,7 +73,7 @@ class PointOfInterestFragment : Fragment() {
             try {
                 outerList.trekList.forEach { innerList ->
                     innerList.forEach {
-                        if(it.altitude > maxHeight)
+                        if (it.altitude > maxHeight)
                             maxHeight = it.altitude
                     }
                 }
@@ -93,7 +87,8 @@ class PointOfInterestFragment : Fragment() {
         viewModel.myPoint.observe(viewLifecycleOwner) {
             if (it != null) {
                 //Set up POI textviews
-                Toast.makeText(requireContext(), "${it.location?.altitude}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "${it.location?.altitude}", Toast.LENGTH_SHORT)
+                    .show()
                 binding.apply {
                     titleInputField.setText(it.title ?: " ")
                     dateInputField.setText(
@@ -102,45 +97,48 @@ class PointOfInterestFragment : Fragment() {
                     descInputField.setText(it.description)
                 }
                 binding.btnDeleteMyPointOrSaveEdits.setOnClickListener {
-                        val alertDialog = AlertDialog.Builder(context).create()
-                        if (viewModel.isInEditMode.value != true) {
-                            alertDialog.setTitle(getString(R.string.delete_are_you_sure))
-                            alertDialog.setButton(
-                                AlertDialog.BUTTON_POSITIVE,
-                                "Yes"
-                            ) { dialog: DialogInterface, _: Int ->
-                                Log.d("DELETE", "ALERTDIALOG")
-                                viewModel.deletePoi()
-                            }
-                        } else {
-                            alertDialog.setTitle("Are you sure you want to save these changes")
-                            alertDialog.setButton(
-                                AlertDialog.BUTTON_POSITIVE,
-                                "Yes"
-                            ) { dialog: DialogInterface, _: Int ->
-                                viewModel.saveEdits()
-                            }
-                        }
+                    val alertDialog = AlertDialog.Builder(context).create()
+                    if (viewModel.isInEditMode.value != true) {
+                        alertDialog.setTitle(getString(R.string.delete_are_you_sure))
                         alertDialog.setButton(
-                            AlertDialog.BUTTON_NEUTRAL,
-                            "No"
+                            AlertDialog.BUTTON_POSITIVE,
+                            "Yes"
                         ) { dialog: DialogInterface, _: Int ->
-                            dialog.dismiss()
+                            Log.d("DELETE", "ALERTDIALOG")
+                            viewModel.deletePoi()
                         }
-                        alertDialog.show()
+                    } else {
+                        alertDialog.setTitle("Are you sure you want to save these changes")
+                        alertDialog.setButton(
+                            AlertDialog.BUTTON_POSITIVE,
+                            "Yes"
+                        ) { dialog: DialogInterface, _: Int ->
+                            viewModel.saveEdits()
+                        }
                     }
+                    alertDialog.setButton(
+                        AlertDialog.BUTTON_NEUTRAL,
+                        "No"
+                    ) { dialog: DialogInterface, _: Int ->
+                        dialog.dismiss()
+                    }
+                    alertDialog.show()
                 }
                 // Set up map
                 if (it.location != null)
                     setUpMap()
+
+                if (it.type == TYPE_TRACKING)
+                    binding.otherInfoInputField.setText(getActivityInformationString(it))
             }
+        }
 
 
-        viewModel.finishedDeleting.observe(viewLifecycleOwner, Observer {
+        viewModel.finishedDeleting.observe(viewLifecycleOwner) {
             if (it) {
                 findNavController().popBackStack()
             }
-        })
+        }
 
         return binding.root
     }
@@ -225,7 +223,7 @@ class PointOfInterestFragment : Fragment() {
                     showInfoWindow()
                 }
                 map.controller.apply {
-                    setZoom(18)
+                    setZoom(18.0)
                     animateTo(marker.position)
                 }
             }
@@ -255,7 +253,7 @@ class PointOfInterestFragment : Fragment() {
         if (point == null)
             return ""
         val distance = point.distanceInMeters ?: 0f
-        val timeInSeconds = point.timeTaken?.div(100.0) ?: 1.0
+        val timeInSeconds = point.timeTaken?.div(10.0) ?: 1.0
         val speed = distance.div(timeInSeconds)
         return String.format(
             "You ran %.2f meters in %.2f seconds at a speed of %.2f m/s",
