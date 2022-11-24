@@ -284,7 +284,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             viewModel.setAddingCustomMarker(isChecked)
         }
 
-        binding.btnEdit.setOnClickListener{
+        binding.btnViewInArMode.setOnClickListener{
             Toast.makeText(
                 requireContext(),
                 "All aboard the AR train", Toast.LENGTH_SHORT

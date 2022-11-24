@@ -89,12 +89,12 @@
                     android:text="open" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnEdit"
+                    android:id="@+id/btnViewInArMode"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="edit" />
+                    android:text="See in AR" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSetAsTarget"
