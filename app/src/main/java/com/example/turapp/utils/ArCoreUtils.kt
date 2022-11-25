@@ -59,20 +59,20 @@ class ArCoreUtils {
          */
 
         @Throws(UnavailableException::class)
-        fun createArSession(activity: Activity?, installRequested: Boolean): Session? {
+        fun createArSession(activity: Activity?, /*installRequested: Boolean*/): Session? {
             var session: Session? = null
             // if we have the camera permission, create the session
-            if (ARLocationPermissionHelper.hasPermission(activity)) {
+            /*if (ARLocationPermissionHelper.hasPermission(activity)) {
                 when (ArCoreApk.getInstance().requestInstall(activity, !installRequested)) {
                     InstallStatus.INSTALL_REQUESTED -> return null
                     InstallStatus.INSTALLED -> {}
-                }
+                }*/
                 session = Session(activity)
                 // IMPORTANT!!!  ArSceneView needs to use the non-blocking update mode.
                 val config = Config(session)
                 config.updateMode = Config.UpdateMode.LATEST_CAMERA_IMAGE
                 session.configure(config)
-            }
+            //}
             return session
         }
 

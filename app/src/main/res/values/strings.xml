@@ -38,5 +38,5 @@
     <string name="stop_capture">Stop Capture</string>
     <string name="graph">Graph</string>
     <string name="unknown">Unknown</string>
-    <string name="plane_finding">detecting plane</string>
+    <string name="plane_finding">detecting plane…</string>
 </resources>

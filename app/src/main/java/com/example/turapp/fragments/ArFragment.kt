@@ -1,5 +1,6 @@
 package com.example.turapp.fragments
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.Application
@@ -20,6 +21,8 @@ import com.example.turapp.MainActivity
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentArBinding
 import com.example.turapp.utils.ArCoreUtils
+import com.example.turapp.utils.helperFiles.PermissionCheckUtility
+import com.example.turapp.utils.helperFiles.REQUEST_CODE_CAMERA_AND_LOCATION
 import com.example.turapp.viewmodels.ArViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.ar.core.Plane
@@ -31,7 +34,7 @@ import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.rendering.ViewRenderable
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.overlay.Marker
+import pub.devrel.easypermissions.EasyPermissions
 import uk.co.appoly.arcorelocation.LocationMarker
 import uk.co.appoly.arcorelocation.LocationScene
 import uk.co.appoly.arcorelocation.rendering.LocationNode
@@ -81,10 +84,27 @@ class ArFragment : Fragment() {
 
     }
 
+    private fun requestPermissions() {
+        if (PermissionCheckUtility.hasCameraPermissions(requireContext()) and
+            PermissionCheckUtility.hasLocationPermissions(requireContext())) {
+            return
+        }
+        EasyPermissions.requestPermissions(
+            this,
+            "You need to accept camera permissions to use this app.",
+            //REQUEST_CODE_CAMERA_PERMISSION,
+            REQUEST_CODE_CAMERA_AND_LOCATION,
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        requestPermissions()
 
         binding = FragmentArBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
@@ -133,11 +153,8 @@ class ArFragment : Fragment() {
                 // updates the layout with the marker's distance
                 layoutLocationMarker1!!.renderEvent = LocationNodeRender { node: LocationNode ->
                     val eView = exampleLayoutRenderAble1!!.view
-                    //val markerView = eView.findViewById<ImageView>(R.id.ar_marker)
                     val distanceTextView = eView.findViewById<TextView>(R.id.ar_distance)
-                    distanceTextView.text = node.distance.toString()
-//                    val nameView = eView.findViewById<TextView>(R.id.ar_name)
-//                    nameView.text = "Some location..."
+                    distanceTextView.text = node.distance.toString().plus("m")
                 }
 
                 //adding the marker
@@ -162,7 +179,7 @@ class ArFragment : Fragment() {
 
         Log.d("ARCoreCamera", "Request permission")
 
-        ARLocationPermissionHelper.requestPermission(requireActivity())
+        //ARLocationPermissionHelper.requestPermission(requireActivity())
 
         return binding.root
     }
@@ -192,10 +209,10 @@ class ArFragment : Fragment() {
             //This can happen if ARCore needs to be updated or permissions are not granted
             try {
                 Log.d("ARCoreCamera", "DemoUtils create session")
-                val session = ArCoreUtils.createArSession(requireActivity(),installRequested)
+                val session = ArCoreUtils.createArSession(requireActivity()/*,installRequested*/)
                 if (session == null) {
                     Log.d("ARCoreCamera", "session == null")
-                    installRequested = ARLocationPermissionHelper.hasPermission(requireActivity())
+                    //installRequested = ARLocationPermissionHelper.hasPermission(requireActivity())
                    return
                 } else {
                     Log.d("ARCoreCamera", "setupSession")
@@ -241,7 +258,8 @@ class ArFragment : Fragment() {
     }
 
     private fun showLoadingMessage() {
-        if (loadingMessageSnackBar != null && loadingMessageSnackBar!!.isShownOrQueued()) {
+        //https://m2.material.io/components/snackbars#anatomy
+        if (loadingMessageSnackBar != null && loadingMessageSnackBar!!.isShownOrQueued) {
             return
         }
         loadingMessageSnackBar = Snackbar.make(

@@ -64,6 +64,14 @@ class MainActivity : AppCompatActivity() {
                             visibility = View.VISIBLE
                         }
                     }
+                    R.id.arFragment -> {
+                        binding.bottomNav.apply {
+                            menu.clear()
+                            inflateMenu(R.menu.bottom_nav_menu_on_graph) //borrowing the back button
+                            visibility = View.VISIBLE
+                        }
+                    }
+
                     else -> binding.bottomNav.visibility = View.GONE
                 }
             }

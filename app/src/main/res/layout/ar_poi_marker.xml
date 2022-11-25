@@ -10,42 +10,9 @@
     app:drawableStartCompat="@drawable/ic_marker_red"
     android:drawablePadding="2dip"
     android:paddingStart="30dip"
+    android:textColor="@color/colorOnPrimary"
     android:paddingEnd="26dip"
     android:singleLine="true"
     android:gravity="center"
     android:textSize="13sp"
     />
-
-    <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    android:orientation="vertical"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:padding="30dp"-->
-<!--    >-->
-
-
-
-<!--    <TextView-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:id="@+id/ar_distance"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="My Compound Button"-->
-<!--        android:background="#111B55"-->
-<!--        android:textColor="#fff"-->
-<!--        app:drawableRightCompat="@drawable/ic_marker_red"-->
-<!--        android:padding="5dp">-->
-
-<!--    </TextView>-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/ar_name"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:textColor="#fff"-->
-<!--        android:background="#0A25E8"-->
-<!--        android:textSize="24sp"-->
-<!--        />-->
-
-<!--</LinearLayout>-->
