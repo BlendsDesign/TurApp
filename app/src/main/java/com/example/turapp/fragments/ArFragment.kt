@@ -30,6 +30,7 @@ import com.google.ar.sceneform.ArSceneView
 import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.rendering.ViewRenderable
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 import uk.co.appoly.arcorelocation.LocationMarker
 import uk.co.appoly.arcorelocation.LocationScene
@@ -58,23 +59,24 @@ class ArFragment : Fragment() {
     private var locationScene: LocationScene? = null
     private var layoutLocationMarker1: LocationMarker? = null
 
-    private var marker: Marker? = null
-    private var latitude : Double = 0.0
-    private var longitude : Double = 0.0
-
     private val viewModel: ArViewModel by lazy {
         val app = requireNotNull(activity).application
         ViewModelProvider(this, ArViewModel.Factory(app))[ArViewModel::class.java]
     }
 
+    private var point: GeoPoint? = null
+    private var latitude : Double = 0.0
+    private var longitude : Double = 0.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //checkIsSupportedDeviceOrFinish(MainActivity())
+
         arguments?.let {
-            marker = it.get("marker") as Marker?
-            latitude = marker?.position?.latitude!!
-            longitude = marker?.position?.longitude!!
+            point = it.get("poi") as GeoPoint?
+            latitude = point?.latitude!!
+            longitude = point?.longitude!!
         }
 
     }
@@ -162,8 +164,6 @@ class ArFragment : Fragment() {
 
         ARLocationPermissionHelper.requestPermission(requireActivity())
 
-        // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_ar, container, false)
         return binding.root
     }
 
@@ -261,7 +261,7 @@ class ArFragment : Fragment() {
         loadingMessageSnackBar = null
     }
 
-    fun checkIsSupportedDeviceOrFinish(activity: MainActivity): Boolean {
+    private fun checkIsSupportedDeviceOrFinish(activity: MainActivity): Boolean {
         val openGLVersionString =
             (activity.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager)
                 .deviceConfigurationInfo

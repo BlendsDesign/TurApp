@@ -285,12 +285,28 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
 
         binding.btnViewInArMode.setOnClickListener{
-            Toast.makeText(
-                requireContext(),
-                "All aboard the AR train", Toast.LENGTH_SHORT
-            ).show()
-            val marked = viewModel.selectedMarker.value
-            findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToArFragment(marked))
+            val markedGeoPoint = viewModel.selectedMarker.value?.position
+
+            if(markedGeoPoint != null) {
+                Toast.makeText(
+                    requireContext(),
+                    "All aboard the AR train", Toast.LENGTH_SHORT
+                ).show()
+
+                findNavController().navigate(
+                    TrackingFragmentDirections.actionTrackingFragmentToArFragment(
+                        markedGeoPoint
+                    )
+                )
+            }
+            else
+            {
+                Toast.makeText(
+                    requireContext(),
+                    "You must select a marker(poi) first!", Toast.LENGTH_SHORT
+                ).show()
+
+            }
         }
 
     }

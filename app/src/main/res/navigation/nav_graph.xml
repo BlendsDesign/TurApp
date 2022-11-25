@@ -147,8 +147,8 @@
         android:label="fragment_ar"
         tools:layout="@layout/fragment_ar" >
         <argument
-            android:name="marker"
-            app:argType="org.osmdroid.views.overlay.Marker"
+            android:name="poi"
+            app:argType="org.osmdroid.util.GeoPoint"
             app:nullable="true" />
     </fragment>
 
