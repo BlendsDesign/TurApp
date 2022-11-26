@@ -3,13 +3,15 @@ package com.example.turapp.fragments
 import android.Manifest
 import android.content.Intent
 import android.graphics.Color
+import android.hardware.GeomagneticField
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -17,10 +19,10 @@ import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentTrackingBinding
 import com.example.turapp.repository.trackingDb.entities.TYPE_POI
-import com.example.turapp.utils.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
-import com.example.turapp.viewmodels.TrackingViewModel
+import com.example.turapp.utils.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.turapp.utils.locationClient.LocationService
+import com.example.turapp.viewmodels.TrackingViewModel
 import kotlinx.coroutines.launch
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -30,6 +32,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -47,6 +50,12 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private lateinit var orientationProvider: InternalCompassOrientationProvider
 
     private lateinit var map: MapView // 3
+
+    private lateinit var geoField : GeomagneticField
+
+    private lateinit var compass : CompassOverlay
+
+    private var declination : Float = 0F
 
     private val pathToTarget = Polyline().apply {
         color = Color.CYAN
@@ -179,6 +188,17 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 map.invalidate()
             }
         })
+
+//        compass = CompassOverlay(
+//            requireContext(),
+//            InternalCompassOrientationProvider(requireContext()), map
+//        )
+//
+//        Log.d("Azimuth",compass.azimuthOffset.toString())
+//
+//        compass.enableCompass()
+//        map.overlays.add(compass)
+
         return binding.root
     }
 
@@ -194,13 +214,36 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         map.onResume()
         viewModel.currentPosition.value?.let {
             map.controller.animateTo(it)
+
+//            geoField = GeomagneticField(
+//                it.latitude.toFloat(),
+//                it.longitude.toFloat(),
+//                it.altitude.toFloat(),
+//                System.currentTimeMillis()
+//            )
+//
+//            declination = geoField.declination
         }
+
         viewModel.refreshList()
         orientationProvider.startOrientationProvider { orientation, source ->
-            clMark.rotation = -orientation
+
+            //Log.d("Declination",declination.toString())
+            clMark.rotation = -orientation //- declination
             map.invalidate()
         }
         viewModel.currentPosition.observe(viewLifecycleOwner, Observer { curPos ->
+
+            //compute the magnetic declination from true north
+            geoField = GeomagneticField(
+                curPos.latitude.toFloat(),
+                curPos.longitude.toFloat(),
+                curPos.altitude.toFloat(),
+                System.currentTimeMillis()
+            )
+
+            declination = geoField.declination
+
             clMark.position = curPos
         })
     }
