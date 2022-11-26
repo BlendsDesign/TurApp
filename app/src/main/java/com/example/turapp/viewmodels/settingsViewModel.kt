@@ -41,6 +41,11 @@ class SettingsViewModel(private val prefs: SharedPreferences): ViewModel() {
         editor.apply()
     }
 
+    fun setNumberOfPoints(progressChangedValue: Int) {
+        editor.putInt("limit",progressChangedValue)
+        editor.apply()
+    }
+
 
     class Factory(private val prefs: SharedPreferences) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -1,6 +1,7 @@
 package com.example.turapp.fragments
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.hardware.GeomagneticField
@@ -225,7 +226,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 //            declination = geoField.declination
         }
 
-        viewModel.refreshList()
+        val sharedPrefs = activity?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val limit = sharedPrefs?.getInt("limit",5)
+        viewModel.refreshList(limit!!)
         orientationProvider.startOrientationProvider { orientation, source ->
 
             //Log.d("Declination",declination.toString())

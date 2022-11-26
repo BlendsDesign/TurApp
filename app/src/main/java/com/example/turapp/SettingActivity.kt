@@ -3,13 +3,19 @@ package com.example.turapp
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Switch
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 
+
 class SettingActivity : AppCompatActivity() {
+
+    private var limitChangedValue = 0
 
     private val viewModel: SettingsViewModel by lazy {
         val sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
@@ -20,6 +26,33 @@ class SettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
+
+        val seekBar  = findViewById<SeekBar>(R.id.sbSeekBar)
+        seekBar.min = 1 //0 means all points
+
+        val pref = getSharedPreferences("myprefs",Context.MODE_PRIVATE)
+        seekBar.progress = pref.getInt("limit",5)
+
+
+        seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                limitChangedValue = progress
+                viewModel.setNumberOfPoints(limitChangedValue)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                Toast.makeText(
+                    this@SettingActivity, "Seek bar progress is :$limitChangedValue",
+                    Toast.LENGTH_SHORT
+                ).show()
+                //savedInstanceState!!.putInt("currentLimit",limitChangedValue)
+            }
+        })
+
 
         val switch = findViewById<Switch>(R.id.switch_darkmode)
 
@@ -35,8 +68,11 @@ class SettingActivity : AppCompatActivity() {
                 viewModel.setIsNight()
             }
         }
+    }
 
-
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+        savedInstanceState.putInt("currentLimit", limitChangedValue)
     }
 
 

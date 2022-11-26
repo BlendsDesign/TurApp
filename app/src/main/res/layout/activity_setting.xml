@@ -15,4 +15,30 @@
         android:id="@+id/switch_darkmode"
         tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
 
+    <TextView
+        android:id="@+id/tvPoiLimit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Limit Points Of Interest On Map:"
+        android:textColor="@color/colorPrimaryDark"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch_darkmode">
+
+    </TextView>
+
+    <SeekBar
+        android:id="@+id/sbSeekBar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:padding="16dp"
+        android:progress="5"
+        android:thumb="@drawable/ic_marker_orange"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPoiLimit" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
