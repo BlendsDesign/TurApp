@@ -1,18 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".SettingActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <Switch
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Dark Mode"
-        app:layout_constraintTop_toTopOf="parent"
-        android:padding="16dp"
-        android:id="@+id/switch_darkmode"
-        tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
+        android:layout_height="match_parent"
+        tools:context=".SettingActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Switch
+            android:id="@+id/switch_darkmode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Dark Mode"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
+
+        <TextView
+            android:id="@+id/tvPoiLimit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Limit Points Of Interest On Map:"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switch_darkmode">
+
+        </TextView>
+
+        <SeekBar
+            android:id="@+id/sbSeekBar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:max="10"
+            android:padding="16dp"
+            android:thumb="@drawable/ic_marker_orange"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvPoiLimit" />
+
+        <Button
+            android:id="@+id/btnApplyLimit"
+            android:text="Apply Limit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/sbSeekBar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
