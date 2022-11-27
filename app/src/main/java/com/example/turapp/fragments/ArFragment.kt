@@ -3,7 +3,6 @@ package com.example.turapp.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ActivityManager
-import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -24,7 +22,6 @@ import com.example.turapp.utils.ArCoreUtils
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.utils.helperFiles.REQUEST_CODE_CAMERA_AND_LOCATION
 import com.example.turapp.viewmodels.ArViewModel
-import com.google.android.material.snackbar.Snackbar
 import com.google.ar.core.Plane
 import com.google.ar.core.TrackingState
 import com.google.ar.core.exceptions.CameraNotAvailableException
@@ -53,8 +50,6 @@ class ArFragment : Fragment() {
 
     private var installRequested = false
     private var hasFinishedLoading = false
-
-    private var loadingMessageSnackBar: Snackbar? = null
 
     private var arSceneView: ArSceneView? = null
 
@@ -109,6 +104,8 @@ class ArFragment : Fragment() {
         binding = FragmentArBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+
+        val loadingView = binding.tvLoading
 
         arSceneView = binding.arSceneView
 
@@ -166,7 +163,7 @@ class ArFragment : Fragment() {
                 return@addOnUpdateListener
             }
             locationScene?.processFrame(frame)
-            if (loadingMessageSnackBar != null) {
+            if (loadingView.visibility == View.VISIBLE) {
                 for (plane in frame.getUpdatedTrackables(
                     Plane::class.java
                 )) {
@@ -258,25 +255,14 @@ class ArFragment : Fragment() {
     }
 
     private fun showLoadingMessage() {
-        //https://m2.material.io/components/snackbars#anatomy
-        if (loadingMessageSnackBar != null && loadingMessageSnackBar!!.isShownOrQueued) {
-            return
+        binding.tvLoading.apply {
+            text = "Plane is loading"
+            visibility = View.VISIBLE
         }
-        loadingMessageSnackBar = Snackbar.make(
-            requireActivity().findViewById(android.R.id.content),
-            R.string.plane_finding,
-            Snackbar.LENGTH_INDEFINITE
-        )
-        loadingMessageSnackBar!!.view.setBackgroundColor(-0x40cdcdce)
-        loadingMessageSnackBar!!.show()
     }
 
     private fun hideLoadingMessage() {
-        if (loadingMessageSnackBar == null) {
-            return
-        }
-        loadingMessageSnackBar!!.dismiss()
-        loadingMessageSnackBar = null
+        binding.tvLoading.visibility = View.GONE
     }
 
     private fun checkIsSupportedDeviceOrFinish(activity: MainActivity): Boolean {
