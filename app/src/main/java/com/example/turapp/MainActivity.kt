@@ -43,36 +43,14 @@ class MainActivity : AppCompatActivity() {
         navController.apply {
             addOnDestinationChangedListener { controller, destination, arguments ->
                 when (destination.id) {
-                    R.id.graphFragment -> {
-                        binding.bottomNav.apply {
-                            menu.clear()
-                            inflateMenu(R.menu.bottom_nav_menu_on_graph)
-                            visibility = View.VISIBLE
+                    R.id.graphFragment,
+                    R.id.trackingFragment,
+                    R.id.listFragment,
+                    R.id.selfieFragment -> {
+                        binding.bottomNav.visibility = View.VISIBLE
                         }
-                    }
-                    R.id.trackingFragment -> {
-                        binding.bottomNav.apply {
-                            menu.clear()
-                            inflateMenu(R.menu.bottom_nav_menu)
-                            visibility = View.VISIBLE
-                        }
-                    }
-                    R.id.listFragment -> {
-                        binding.bottomNav.apply {
-                            menu.clear()
-                            inflateMenu(R.menu.bottom_nav_menu_on_list)
-                            visibility = View.VISIBLE
-                        }
-                    }
-                    R.id.arFragment -> {
-                        binding.bottomNav.apply {
-                            menu.clear()
-                            inflateMenu(R.menu.bottom_nav_menu_on_graph) //borrowing the back button
-                            visibility = View.VISIBLE
-                        }
-                    }
-
                     else -> binding.bottomNav.visibility = View.GONE
+
                 }
             }
         }

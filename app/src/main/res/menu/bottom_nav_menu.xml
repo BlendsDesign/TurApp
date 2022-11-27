@@ -8,6 +8,14 @@
 
     </item>
     <item
+        android:id="@+id/trackingFragment"
+        android:title="Map"
+        android:icon="@drawable/ic_map">
+
+    </item>
+
+
+    <item
         android:id="@+id/action_trackingFragment_to_selfieFragment"
         android:title="Camera"
         android:icon="@drawable/ic_camera">

@@ -2,8 +2,6 @@ package com.example.turapp.utils
 
 import android.content.ContentValues
 import android.content.Context
-import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.core.CameraSelector
@@ -25,13 +23,6 @@ class SelfieCamera(
     private var imageCapture: ImageCapture? = null
     private var name : String? = null
 
-    // TODO Add a switch to change to frontfacing camera.
-    //  Look at fun startCamera() and val cameraSelector
-
-    fun getPath() : String {
-        //complete path, not accessible when using API 30 and up
-        return "${Environment.getExternalStorageDirectory()}/$name"
-    }
 
     fun takePhoto(myCallBack : ImageCapture.OnImageSavedCallback) {
         // Get a stable reference of the modifiable image capture use case
@@ -43,9 +34,7 @@ class SelfieCamera(
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
-            }
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
         }
 
         // Create output options object which contains file + metadata
