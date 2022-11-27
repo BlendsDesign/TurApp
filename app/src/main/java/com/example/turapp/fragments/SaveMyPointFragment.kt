@@ -153,7 +153,7 @@ class SaveMyPointFragment : Fragment() {
             val adrs = gc.getFromLocation(p.latitude, p.longitude, 1)
             val ads = adrs!![0]
             return ads.getAddressLine(0)
-        } catch (e: IOException) {
+        } catch (e: IndexOutOfBoundsException) {
             e.printStackTrace()
         }
         return ""
