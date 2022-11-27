@@ -70,9 +70,10 @@ fun bindSelfieUriImage(imageView: ImageView, imageUrl: Uri?) {
             RequestOptions()
                 .error(R.drawable.ic_baseline_broken_image)
         ).into(imageView).view.apply {
+            visibility = View.VISIBLE
         }
+
     }
-    imageView.visibility = View.VISIBLE
 }
 
 @BindingAdapter("listShowImage")

@@ -113,14 +113,6 @@ class SelfieFragment : Fragment() {
         }
 
 
-        binding.btnCancelSelfie.addOnCheckedChangeListener { button, isChecked ->
-            when(isChecked) {
-                true -> {
-                    button.isChecked = false
-                }
-                else -> {}
-            }
-        }
         binding.btnCancelSelfie.setOnClickListener {
             if (viewModel.pictureUri.value != null) {
                 viewModel.deleteTakenPicture()
@@ -173,9 +165,7 @@ class SelfieFragment : Fragment() {
             }
 
             override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                val msg = "Photo capture succeeded: ${output.savedUri}"
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                Log.d("SelfieCamera", msg)
+
                 val test = output.savedUri
                 if (test != null) {
                     viewModel.setPictureUri(test)
