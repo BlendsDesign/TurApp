@@ -6,73 +6,68 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.Switch
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
+import com.example.turapp.databinding.ActivitySettingBinding
+
 
 
 class SettingActivity : AppCompatActivity() {
 
-    private var limitChangedValue = 0
+    private lateinit var binding: ActivitySettingBinding
+
+    private var initialLimit: Int? = null
 
     private val viewModel: SettingsViewModel by lazy {
         val sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        initialLimit = sharedPrefs.getInt("limit", 1)
         ViewModelProvider(this, SettingsViewModel.Factory(sharedPrefs))[SettingsViewModel::class.java]
     }
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_setting)
 
-        val seekBar  = findViewById<SeekBar>(R.id.sbSeekBar)
-        seekBar.min = 1 //0 means all points
+        binding = ActivitySettingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val pref = getSharedPreferences("myprefs",Context.MODE_PRIVATE)
-        seekBar.progress = pref.getInt("limit",5)
+        viewModel.toString()
 
+        binding.sbSeekBar.progress = initialLimit?: 1
 
-        seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+        binding.sbSeekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                limitChangedValue = progress
-                viewModel.setNumberOfPoints(limitChangedValue)
+                viewModel.setNumberOfPoints(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
-                // TODO Auto-generated method stub
+
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                Toast.makeText(
-                    this@SettingActivity, "Seek bar progress is :$limitChangedValue",
-                    Toast.LENGTH_SHORT
-                ).show()
-                //savedInstanceState!!.putInt("currentLimit",limitChangedValue)
             }
         })
 
+        binding.btnApplyLimit.setOnClickListener {
+            viewModel.saveLimit()
+            finish()
+        }
 
-        val switch = findViewById<Switch>(R.id.switch_darkmode)
 
-        switch.isChecked = viewModel.isNightMode.value?: isUsingNightModeResources()
-        //switch.isChecked = isUsingNightModeResources()
-
-        switch.setOnCheckedChangeListener { compoundButton, b ->
-            if (b){
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                viewModel.setIsNight()
-            }else{
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                viewModel.setIsNight()
+        binding.switchDarkmode.apply {
+            isChecked = viewModel.isNightMode.value ?: isUsingNightModeResources()
+            //switch.isChecked = isUsingNightModeResources()
+            setOnCheckedChangeListener { compoundButton, b ->
+                if (b) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    viewModel.setIsNight()
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    viewModel.setIsNight()
+                }
             }
         }
-    }
-
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-        super.onSaveInstanceState(savedInstanceState)
-        savedInstanceState.putInt("currentLimit", limitChangedValue)
     }
 
 
