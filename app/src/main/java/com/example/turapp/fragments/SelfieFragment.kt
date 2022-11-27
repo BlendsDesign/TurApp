@@ -148,9 +148,11 @@ class SelfieFragment : Fragment() {
             if (it != null) {
                 binding.btnSwichCamera.visibility = View.GONE
                 binding.btnSaveImage.visibility = View.VISIBLE
+                binding.selfieCaptureButton.visibility = View.GONE
             } else {
                 binding.btnSwichCamera.visibility = View.VISIBLE
                 binding.btnSaveImage.visibility = View.GONE
+                binding.selfieCaptureButton.visibility = View.VISIBLE
             }
         })
 
