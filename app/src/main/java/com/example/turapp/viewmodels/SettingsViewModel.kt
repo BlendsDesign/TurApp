@@ -23,8 +23,6 @@ class SettingsViewModel(private val prefs: SharedPreferences): ViewModel() {
         _isNightMode.value = prefs.getBoolean("isNight", false)
         _stringtest.value = prefs.getString("stringInput", "No value put yet")
         _limit.value = prefs.getInt("limit", 5)
-        Log.d("Init limit value", _limit.value.toString())
-
     }
 
     fun setIsNight() {
@@ -41,11 +39,6 @@ class SettingsViewModel(private val prefs: SharedPreferences): ViewModel() {
                 apply()
             }
         }
-    }
-
-    fun setAStringInPref(value: String) {
-        editor.putString("stringInput", value)
-        editor.apply()
     }
 
     fun saveLimit() {

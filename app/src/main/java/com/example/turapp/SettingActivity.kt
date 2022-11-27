@@ -17,11 +17,8 @@ class SettingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingBinding
 
-    private var initialLimit: Int? = null
-
     private val viewModel: SettingsViewModel by lazy {
         val sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-        initialLimit = sharedPrefs.getInt("limit", 1)
         ViewModelProvider(this, SettingsViewModel.Factory(sharedPrefs))[SettingsViewModel::class.java]
     }
 
@@ -32,9 +29,9 @@ class SettingActivity : AppCompatActivity() {
         binding = ActivitySettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.toString()
-
-        binding.sbSeekBar.progress = initialLimit?: 1
+        viewModel.limit.value?.let {
+            binding.sbSeekBar.progress = it
+        }
 
         binding.sbSeekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
