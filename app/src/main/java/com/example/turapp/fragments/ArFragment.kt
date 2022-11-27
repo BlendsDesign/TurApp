@@ -105,6 +105,11 @@ class ArFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
+
+        binding.fabClose.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         val loadingView = binding.tvLoading
 
         arSceneView = binding.arSceneView
