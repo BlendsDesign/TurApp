@@ -126,7 +126,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                             // Could do a check here to draw polyline if the list is multiple points
                             val temp = Marker(map)
                             temp.apply {
-                                position = GeoPoint(point.location)
+                                point.location?.let {
+                                    position = it
+                                }
                                 title = point.title
                                 subDescription = point.description
                                 icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
