@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="Limit Points Of Interest On Map:"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/textColorBlack"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/switch_darkmode">
