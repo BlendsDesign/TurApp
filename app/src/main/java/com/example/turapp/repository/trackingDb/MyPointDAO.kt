@@ -7,10 +7,11 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.turapp.repository.trackingDb.entities.MyPoint
+import com.example.turapp.repository.trackingDb.entities.TrekLocations
+import kotlinx.coroutines.flow.Flow
 import com.example.turapp.repository.trackingDb.entities.MyPointWeek
 import com.example.turapp.repository.trackingDb.entities.PointGeoData
 import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MyPointDAO {
@@ -23,7 +24,7 @@ interface MyPointDAO {
 
     @Transaction
     @Query("SELECT * FROM my_point ORDER BY createdAt DESC")
-    suspend fun getAllMyPointWithGeo(): List<MyPointWithGeo>
+    fun getAllMyPoints(): Flow<MutableList<MyPoint>>
 
     @Transaction
     @Query("SELECT * FROM my_point WHERE createdAt >= :startDate AND createdAt <= :endDate ORDER BY createdAt DESC")
@@ -42,21 +43,27 @@ interface MyPointDAO {
 
     @Transaction
     @Query("SELECT * FROM my_point WHERE pointId = :pointId")
-    suspend fun getMyPointById(pointId: Int): MyPointWithGeo?
+    fun getMyPointById(pointId: Long): Flow<MyPoint>
 
 
-    // PointGeoData
+    // TrekLocations
+    @Transaction
+    @Query("SELECT * FROM trek WHERE myPointId= :pointId")
+    fun getTrekById(pointId: Long): Flow<TrekLocations>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMyPointGeoData(geoData: PointGeoData): Long
+    suspend fun insertTrek(trek: TrekLocations): Long
 
     @Delete
-    suspend fun deleteMyPointGeoData(geoData: PointGeoData)
-
-    @Transaction
-    @Query("SELECT * FROM geo_data WHERE pointId = :pointId ORDER BY timestamp ASC")
-    suspend fun getMyPointsOrderedGeoData(pointId: Int): List<PointGeoData>
+    suspend fun deleteTrekLocations(trek: TrekLocations)
 
     @Transaction
     @Query("SELECT Sum(distanceInMeters) FROM my_point WHERE createdAt BETWEEN :fromDateInMillis AND :toDateInMillis")
     suspend fun getSumDistanceBetweenDates(fromDateInMillis: Long, toDateInMillis: Long): Long
+
+    @Transaction
+    @Query("SELECT * FROM my_point ORDER BY createdAt DESC LIMIT :limit ")
+    fun limitPoints(limit: Int): Flow<MutableList<MyPoint>>
+
+
 }

@@ -78,7 +78,7 @@
 
                     <ImageView
                         android:id="@+id/imgHolder"
-                        loadUriImage="@{viewModel.imageUri}"
+                        listShowImage="@{viewModel.myPoint.image}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"

@@ -1,6 +1,7 @@
 package com.example.turapp.fragments
 
 import android.Manifest
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -112,14 +113,6 @@ class SelfieFragment : Fragment() {
         }
 
 
-        binding.btnCancelSelfie.addOnCheckedChangeListener { button, isChecked ->
-            when(isChecked) {
-                true -> {
-                    button.isChecked = false
-                }
-                else -> {}
-            }
-        }
         binding.btnCancelSelfie.setOnClickListener {
             if (viewModel.pictureUri.value != null) {
                 viewModel.deleteTakenPicture()
@@ -155,9 +148,11 @@ class SelfieFragment : Fragment() {
             if (it != null) {
                 binding.btnSwichCamera.visibility = View.GONE
                 binding.btnSaveImage.visibility = View.VISIBLE
+                binding.selfieCaptureButton.visibility = View.GONE
             } else {
                 binding.btnSwichCamera.visibility = View.VISIBLE
                 binding.btnSaveImage.visibility = View.GONE
+                binding.selfieCaptureButton.visibility = View.VISIBLE
             }
         })
 
@@ -172,9 +167,7 @@ class SelfieFragment : Fragment() {
             }
 
             override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                val msg = "Photo capture succeeded: ${output.savedUri}"
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                Log.d("SelfieCamera", msg)
+
                 val test = output.savedUri
                 if (test != null) {
                     viewModel.setPictureUri(test)

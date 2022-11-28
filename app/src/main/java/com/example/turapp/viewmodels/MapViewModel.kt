@@ -13,7 +13,7 @@ import android.location.LocationManager.GPS_PROVIDER
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.*
 import com.example.turapp.utils.Sensors.StepCounterSensor
-import com.example.turapp.repository.MyRepository
+import com.example.turapp.roomDb.MyRepository
 import com.example.turapp.roomDb.PoiDatabase
 import com.example.turapp.roomDb.entities.PointOfInterest
 import com.example.turapp.roomDb.entities.RecordedActivity

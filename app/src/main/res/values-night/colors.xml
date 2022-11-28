@@ -12,6 +12,8 @@
     <color name="transparent_theme_blue">#E62E3192</color>
     <color name="darker_gray">#E62E3192</color>
 
+    <color name="textColorBlack">@color/white</color>
+
 
     <color name="colorPrimary">@color/theme_orange</color>
     <color name="colorPrimaryVariant">@color/theme_orange</color>

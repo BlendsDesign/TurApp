@@ -2,11 +2,7 @@ package com.example.turapp.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.turapp.repository.trackingDb.entities.MyPoint
-import com.example.turapp.repository.trackingDb.entities.TYPE_POI
-import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
-import com.example.turapp.utils.MyPointRepository
-import kotlinx.coroutines.launch
+import com.example.turapp.repository.MyPointRepository
 
 class CameraViewModel(app: Application): ViewModel() {
 

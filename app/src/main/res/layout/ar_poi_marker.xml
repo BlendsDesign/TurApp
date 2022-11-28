@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ar_distance"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:text="temporary"
+    android:contentDescription="IMAGE DESCRIPTION"
+    app:drawableStartCompat="@drawable/ic_marker_red"
+    android:drawablePadding="2dip"
+    android:paddingStart="30dip"
+    android:textColor="@color/colorOnPrimary"
+    android:paddingEnd="26dip"
+    android:singleLine="true"
+    android:gravity="center"
+    android:textSize="13sp"
+    />

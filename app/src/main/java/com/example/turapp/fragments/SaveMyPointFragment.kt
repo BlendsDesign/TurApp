@@ -20,7 +20,6 @@ import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.utils.helperFiles.NAVIGATION_ARGUMENT_SAVING_TYPE
 import com.example.turapp.viewmodels.SaveMyPointViewModel
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -50,7 +49,7 @@ class SaveMyPointFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             val typeArgument = it.getString(NAVIGATION_ARGUMENT_SAVING_TYPE)
-            Log.d("SaveMyPointFragment TYPE", typeArgument?: "null")
+            Log.d("SaveMyPointFragment TYPE", typeArgument ?: "null")
             if (typeArgument == null) {
                 Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
@@ -61,7 +60,7 @@ class SaveMyPointFragment : Fragment() {
                 val app = requireNotNull(activity).application
                 viewModel = ViewModelProvider(
                     this,
-                    SaveMyPointViewModel.Factory(app, typeArgument!!, imageUri)
+                    SaveMyPointViewModel.Factory(app, typeArgument, imageUri)
                 )[SaveMyPointViewModel::class.java]
             } else {
                 Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
@@ -94,10 +93,10 @@ class SaveMyPointFragment : Fragment() {
             viewModel.saveSinglePoint(title = title, description = desc, marker = marker)
         }
 
-        viewModel.finishedSavingPoint.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.finishedSavingPoint.observe(viewLifecycleOwner) {
             if (it)
                 findNavController().navigate(SaveMyPointFragmentDirections.actionSaveMyPointFragmentToTrackingFragment())
-        })
+        }
 
         return binding.root
     }
@@ -106,12 +105,13 @@ class SaveMyPointFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (viewModel.typeArgument == TYPE_TRACKING) {
-            viewModel.trackedLocations.observe(viewLifecycleOwner,
-                androidx.lifecycle.Observer { outerList ->
-                    if (!outerList.isNullOrEmpty() && outerList.first().isNotEmpty()) {
-                        drawTrackedLocations(outerList)
-                    }
-                })
+            viewModel.trackedLocations.observe(
+                viewLifecycleOwner
+            ) { outerList ->
+                if (!outerList.isNullOrEmpty() && outerList.first().isNotEmpty()) {
+                    drawTrackedLocations(outerList)
+                }
+            }
 
         } else if (location != null) {
             marker = Marker(map)
@@ -124,21 +124,23 @@ class SaveMyPointFragment : Fragment() {
             }
             map.overlays.add(marker)
             map.controller.animateTo(location)
-            binding.btnGrpLocation.isChecked = true
-        } else if (viewModel.typeArgument != TYPE_TRACKING) {
-            binding.btnGrpLocation.isCheckable = false
-            binding.btnGrpImage.isChecked = true
-            binding.mapHolder.visibility = View.GONE
         }
 
         binding.btnGrpImage.addOnCheckedChangeListener { button, isChecked ->
             if (isChecked) {
-                binding.mapHolder.visibility = View.GONE
-
+                binding.imgHolder.visibility = View.VISIBLE
             } else {
-                binding.mapHolder.visibility = View.VISIBLE
+                binding.imgHolder.visibility = View.GONE
             }
         }
+        binding.btnGrpLocation.addOnCheckedChangeListener { button, isChecked ->
+            if (isChecked) {
+                binding.frameForMap.visibility = View.VISIBLE
+            } else {
+                binding.frameForMap.visibility = View.GONE
+            }
+        }
+
         binding.btnCancel.setOnClickListener {
             findNavController().navigate(SaveMyPointFragmentDirections.actionSaveMyPointFragmentToTrackingFragment())
         }
@@ -151,7 +153,7 @@ class SaveMyPointFragment : Fragment() {
             val adrs = gc.getFromLocation(p.latitude, p.longitude, 1)
             val ads = adrs!![0]
             return ads.getAddressLine(0)
-        } catch (e: IOException) {
+        } catch (e: IndexOutOfBoundsException) {
             e.printStackTrace()
         }
         return ""
@@ -183,7 +185,7 @@ class SaveMyPointFragment : Fragment() {
 
     private fun drawTrackedLocations(outerList: MutableList<MutableList<GeoPoint>>) {
         lifecycleScope.launch {
-            if (outerList.isNullOrEmpty() || outerList.first().isNullOrEmpty())
+            if (outerList.isEmpty() || outerList.first().isEmpty())
                 cancel("Empty or null list")
 
             val startPoint = outerList.first().first()
@@ -219,12 +221,16 @@ class SaveMyPointFragment : Fragment() {
             }
             val endMarker = Marker(map)
             endMarker.apply {
-                isDraggable = true
-                title = "Endpoint"
+                isDraggable = false
+                title = "End"
                 icon = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_marker_blue)
                 subDescription = getLocationInformation(endPoint)
                 showInfoWindow()
                 position = endPoint
+            }
+            if (endPoint.distanceToAsDouble(startPoint) < 3) {
+                endMarker.title = "Start/End"
+                endMarker.showInfoWindow()
             }
             map.overlays.apply {
                 add(marker)

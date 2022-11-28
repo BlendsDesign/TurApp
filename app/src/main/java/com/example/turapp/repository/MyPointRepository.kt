@@ -1,25 +1,25 @@
-package com.example.turapp.utils
+package com.example.turapp.repository
 
 import android.app.Application
-import android.net.Uri
 import com.example.turapp.repository.trackingDb.MyPointDB
-import com.example.turapp.repository.trackingDb.entities.MyPoint
-import com.example.turapp.repository.trackingDb.entities.MyPointWeek
-import com.example.turapp.repository.trackingDb.entities.PointGeoData
+import com.example.turapp.repository.trackingDb.entities.*
 import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
 import kotlinx.coroutines.flow.Flow
+import org.osmdroid.util.GeoPoint
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
+
 class MyPointRepository(app: Application) {
 
+    private val myApp = app
     private val dao = MyPointDB.getInstance(app).myPointDao
 
+    fun getAllMyPoints() = dao.getAllMyPoints()
 
-    suspend fun getAllMyPointsWithGeo(): List<MyPointWithGeo> {
-        return dao.getAllMyPointWithGeo()
-    }
+    fun getMyPoint(id: Long) = dao.getMyPointById(id)
 
+    fun getTrek(id: Long) = dao.getTrekById(id)
     fun getAllMyPointsByWeek(week: MyPointWeek): Flow<List<MyPointWithGeo>> {
         return dao.getMyPointByWeeks(
             Instant.parse("${week.earliest}T00:00:00.00Z").toEpochMilli(),
@@ -38,12 +38,13 @@ class MyPointRepository(app: Application) {
         return dao.getMyPointById(id)
     }
 
-    suspend fun deleteMyPointWithGeo(point: MyPointWithGeo): Boolean {
+
+    suspend fun deleteMyPoint(point: MyPoint, trekLocations: TrekLocations?): Boolean {
         return try {
-            point.geoData.forEach {
-                dao.deleteMyPointGeoData(it)
+            trekLocations?.let {
+                dao.deleteTrekLocations(it)
             }
-            dao.deleteMyPoint(point.point)
+            dao.deleteMyPoint(point)
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -51,6 +52,14 @@ class MyPointRepository(app: Application) {
         }
     }
 
+    fun limitPoints(limit: Int) = dao.limitPoints(limit)
+
+//    suspend fun limitPoints() : List<MyPoint> {
+//        val sharedPrefs = myApp.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+//        val limit = sharedPrefs.getInt("limit",5)
+//        return dao.limitPoints(limit)
+//        //return dao.limitPoints(limit)
+//    }
 
     suspend fun getSumRanLastSevenDays(): Long {
         val currentTime = System.currentTimeMillis()
@@ -58,46 +67,15 @@ class MyPointRepository(app: Application) {
         return dao.getSumDistanceBetweenDates(firstTime, currentTime)
     }
 
-    suspend fun createMyPointWithGeo(
-        imageUri: Uri?,
-        title: String,
-        desc: String?,
-        type: String,
-        adress: String?,
-        geoList: List<PointGeoData>
+    suspend fun insertMyPoint(
+        myPoint: MyPoint,
+        geoList: MutableList<MutableList<GeoPoint>>?
     ): Boolean {
-        var uriString : String? = null
-        if (imageUri != null)
-            uriString = imageUri.toString()
-
-        val myPointId = dao.insertMyPoint(
-            MyPoint(
-                image = uriString,
-                title = title,
-                description = desc,
-                adress = adress,
-                type = type
-            )
-        )
-        geoList.forEach {
-            it.pointId = myPointId.toInt()
-            dao.insertMyPointGeoData(it)
+        val pointId = dao.insertMyPoint(myPoint)
+        geoList?.let {
+            val trek = TrekLocations(pointId, it)
+            dao.insertTrek(trek)
         }
         return true
     }
-
-    suspend fun insertMyPoint(myPoint: MyPoint /*, geo: GeoPoint, timestamp: Long*/) : Int {
-        val pointId =  dao.insertMyPoint(myPoint).toInt()
-
-        /*val pointGeoData = PointGeoData(
-            pointId = pointId,
-            timestamp = timestamp,
-            geoPoint = geo
-        )
-
-        dao.insertMyPointGeoData(pointGeoData)
-        */
-        return pointId
-    }
-
 }

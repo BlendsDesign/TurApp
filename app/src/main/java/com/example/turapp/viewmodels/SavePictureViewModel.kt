@@ -4,16 +4,9 @@ import android.app.Application
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.*
-import com.example.turapp.repository.MyRepository
-import com.example.turapp.repository.trackingDb.MyPointDAO
-import com.example.turapp.repository.trackingDb.MyPointDB
 import com.example.turapp.repository.trackingDb.entities.MyPoint
 import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
-import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
-import com.example.turapp.roomDb.PoiDatabase
-import com.example.turapp.roomDb.SimplePoiAndActivities
-import com.example.turapp.roomDb.entities.PoiDao
-import com.example.turapp.utils.MyPointRepository
+import com.example.turapp.repository.MyPointRepository
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.IllegalArgumentException
@@ -60,7 +53,7 @@ class SavePictureViewModel(app: Application, val path: String) : ViewModel() {
                     description = description,
                     image = path,
                     type = TYPE_SNAPSHOT
-                )
+                ), null
             )
         }
     }

@@ -6,11 +6,12 @@ import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.*
 import com.example.turapp.R
-import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
-import com.example.turapp.utils.MyPointRepository
+import com.example.turapp.repository.trackingDb.entities.MyPoint
+import com.example.turapp.repository.MyPointRepository
 import com.example.turapp.utils.locationClient.DefaultLocationClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -28,8 +29,8 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     )
 
 
-    private val _myPointList = MutableLiveData<List<MyPointWithGeo>>()
-    val myPointList: LiveData<List<MyPointWithGeo>> get() = _myPointList
+    private val _myPointList = MutableLiveData<List<MyPoint>>()
+    val myPointList: LiveData<List<MyPoint>> get() = _myPointList
 
     private val _selectedMarker = MutableLiveData<Marker?>()
     val selectedMarker: LiveData<Marker?> get() = _selectedMarker
@@ -116,9 +117,17 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     private val _startingPoint = MutableLiveData<GeoPoint>()
     val startingPoint: LiveData<GeoPoint> get() = _startingPoint
 
-    fun refreshList() {
+    fun refreshList(limit:Int) {
         viewModelScope.launch {
-            _myPointList.value = repository.getAllMyPointsWithGeo()
+            repository.limitPoints(limit).collect {
+                _myPointList.value = it
+            }
+
+//            repository.getAllMyPoints().collect {
+//                _myPointList.value = it
+//            }
+
+
         }
     }
 

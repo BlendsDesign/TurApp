@@ -93,6 +93,11 @@ class NowTrackingFragment : Fragment() {
         viewModel.steps.observe(viewLifecycleOwner, Observer {
             binding.tvShowSteps.text = "Steps: $it"
         })
+        viewModel.distance.observe(viewLifecycleOwner) {
+            it?.let {
+                binding.tvShowDistance.text = String.format("Distance: %.2f m", it)
+            }
+        }
 
         binding.btnPause.addOnCheckedChangeListener { button, isChecked ->
             when(isChecked) {

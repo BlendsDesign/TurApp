@@ -8,9 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.turapp.repository.trackingDb.entities.PointGeoData
+import com.example.turapp.repository.trackingDb.entities.MyPoint
 import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
-import com.example.turapp.utils.MyPointRepository
+import com.example.turapp.repository.MyPointRepository
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
@@ -28,9 +28,14 @@ class SaveMyPointViewModel(private val app: Application, val typeArgument: Strin
     private val _imageUri = MutableLiveData<Uri>()
     val imageUri: LiveData<Uri> get() = _imageUri
 
+    private var _timeOfTrekInMillis : Long? = null
+
     init {
         if (typeArgument == TYPE_TRACKING) {
             val tempTracked = NowTrackingViewModel.getTreck()
+            NowTrackingViewModel.getTimeInHundreds()?.let {
+                _timeOfTrekInMillis = it * 10
+            }
             if (tempTracked != null) {
                 _trackedLocations.value = tempTracked!!
             }
@@ -43,20 +48,27 @@ class SaveMyPointViewModel(private val app: Application, val typeArgument: Strin
 
     fun saveSinglePoint(title: String, description: String, marker: Marker?) {
         viewModelScope.launch {
-            val geoList = mutableListOf<PointGeoData>()
-            if (marker != null) {
-                val geo = PointGeoData(-1, System.currentTimeMillis(), marker.position)
-                geoList.add(geo)
-                repository.createMyPointWithGeo(
-                    imageUri = _imageUri.value,
-                    title = title,
-                    desc = description,
-                    type = typeArgument,
-                    geoList = geoList,
-                    adress = marker.title
-                )
-                _finishedSavingPoint.value = true
+            var image : String? = null
+            _imageUri.value?.let {
+                image = it.toString()
             }
+
+            val myPoint = MyPoint(
+                image = image,
+                type = typeArgument,
+                title = title,
+                description = description,
+                timeTaken = _timeOfTrekInMillis,
+                location = marker?.position
+            )
+            var geoList : MutableList<MutableList<GeoPoint>>? = null
+            if (typeArgument == TYPE_TRACKING)  {
+                _trackedLocations.value?.let {
+                    geoList = it
+                }
+            }
+
+            _finishedSavingPoint.value = repository.insertMyPoint(myPoint, geoList)
         }
     }
 

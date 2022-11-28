@@ -17,7 +17,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.turapp.databinding.ActivityMainBinding
 import com.example.turapp.fragments.TrackingFragmentDirections
-import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -44,28 +43,14 @@ class MainActivity : AppCompatActivity() {
         navController.apply {
             addOnDestinationChangedListener { controller, destination, arguments ->
                 when (destination.id) {
-                    R.id.graphFragment -> {
-                        binding.bottomNav.apply {
-                            menu.clear()
-                            inflateMenu(R.menu.bottom_nav_menu_on_graph)
-                            visibility = View.VISIBLE
+                    R.id.graphFragment,
+                    R.id.trackingFragment,
+                    R.id.listFragment,
+                    R.id.selfieFragment -> {
+                        binding.bottomNav.visibility = View.VISIBLE
                         }
-                    }
-                    R.id.trackingFragment -> {
-                        binding.bottomNav.apply {
-                            menu.clear()
-                            inflateMenu(R.menu.bottom_nav_menu)
-                            visibility = View.VISIBLE
-                        }
-                    }
-                    R.id.startFragment -> {
-                        binding.bottomNav.apply {
-                            menu.clear()
-                            inflateMenu(R.menu.bottom_nav_menu_on_list)
-                            visibility = View.VISIBLE
-                        }
-                    }
                     else -> binding.bottomNav.visibility = View.GONE
+
                 }
             }
         }

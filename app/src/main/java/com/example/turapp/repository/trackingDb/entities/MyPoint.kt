@@ -2,6 +2,7 @@ package com.example.turapp.repository.trackingDb.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import org.osmdroid.util.GeoPoint
 
 @Entity(tableName = "my_point")
 data class MyPoint(
@@ -10,6 +11,7 @@ data class MyPoint(
     var adress: String? = null,
     var type: String,
     var image: String? = null,
+    var location: GeoPoint? = null,
     val createdAt: Long = System.currentTimeMillis(),
     var distanceInMeters: Float? = null,
     var timeTaken: Long? = null,
@@ -17,5 +19,5 @@ data class MyPoint(
     var hasAdditionalData: Boolean = false
 ) {
     @PrimaryKey(autoGenerate = true)
-    var pointId: Int? = null
+    var pointId: Long? = null
 }
