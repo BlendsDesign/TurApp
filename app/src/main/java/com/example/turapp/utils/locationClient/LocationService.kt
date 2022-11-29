@@ -165,68 +165,6 @@ class LocationService: Service() {
         }
     }
 
-    private var _magnetoSensorData = mutableListOf<Float>()
-    private var _accSensorData = mutableListOf<Float>()
-    private val rotationMatrix = FloatArray(9)
-    private val orientationAngles = FloatArray(3)
-
-    private fun startAccAndMag(){
-        serviceScope.launch {
-            magnetoMeterSensor = MagnetoMeterSensor(requireNotNull(applicationContext))
-            accelerometerSensor = AccelerometerSensor(requireNotNull(applicationContext))
-
-            magnetoMeterSensor?.let {
-                it.setOnSensorValuesChangedListener { reading ->
-                    _magnetoSensorData = reading as MutableList<Float>
-                    updateDeclination()
-                }
-
-                it.startListening()
-            }
-
-            accelerometerSensor?.let { it ->
-                it.setOnSensorValuesChangedListener { reading ->
-                    _accSensorData = reading as MutableList<Float>
-                    updateDeclination()
-                }
-                it.startListening()
-            }
-
-        }
-    }
-
-    //https://developer.android.com/guide/topics/sensors/sensors_position#sensors-pos-orient
-    private fun updateDeclination() {
-            // Update rotation matrix, which is needed to update orientation angles.
-            SensorManager.getRotationMatrix(
-                rotationMatrix,
-                null,
-                _accSensorData.toFloatArray(),
-                _magnetoSensorData.toFloatArray()
-            )
-            // "rotationMatrix" now has up-to-date information.
-
-            val orient = SensorManager.getOrientation(rotationMatrix, orientationAngles).toMutableList()
-
-            //convert to degrees from radians
-            val azimuth =  Math.toDegrees(orient[0].toDouble()).toFloat()
-
-        getTrueNorth(azimuth)
-    }
-
-    private fun getTrueNorth(_azimuth:Float){
-        var azimuth = _azimuth
-        val geoField = GeomagneticField(
-            _currentLocation?.latitude!!.toFloat(),
-            _currentLocation?.longitude!!.toFloat() ,
-            _currentLocation?.altitude!!.toFloat(),
-            System.currentTimeMillis()
-        )
-        azimuth += geoField.declination
-        //val bearing: Float = _currentLocation.bearingTo(target) // (it's already in degrees)
-        //val direction = azimuth - bearing
-    }
-
     private fun switchTracking() {
         tracking = tracking != true
     }

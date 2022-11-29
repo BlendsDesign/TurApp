@@ -95,6 +95,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             //TODO Add an alertdialog for this
         }
 
+
         // Set up Map handling
         map = binding.trackingMap
         lifecycleScope.launchWhenCreated {
@@ -218,37 +219,21 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         viewModel.currentPosition.value?.let {
             map.controller.animateTo(it)
 
-//            geoField = GeomagneticField(
-//                it.latitude.toFloat(),
-//                it.longitude.toFloat(),
-//                it.altitude.toFloat(),
-//                System.currentTimeMillis()
-//            )
-//
-//            declination = geoField.declination
         }
 
         val sharedPrefs = activity?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         val limit = sharedPrefs?.getInt("limit",5)
         viewModel.refreshList(limit!!)
-        orientationProvider.startOrientationProvider { orientation, source ->
 
+        viewModel.startOrientationprovider()
+
+        viewModel.orientation.observe(viewLifecycleOwner) {
             //Log.d("Declination",declination.toString())
-            clMark.rotation = -orientation //- declination
+            clMark.rotation = it
             map.invalidate()
         }
+
         viewModel.currentPosition.observe(viewLifecycleOwner, Observer { curPos ->
-
-            //compute the magnetic declination from true north
-            geoField = GeomagneticField(
-                curPos.latitude.toFloat(),
-                curPos.longitude.toFloat(),
-                curPos.altitude.toFloat(),
-                System.currentTimeMillis()
-            )
-
-            declination = geoField.declination
-
             clMark.position = curPos
         })
     }

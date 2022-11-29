@@ -1,6 +1,7 @@
 package com.example.turapp.viewmodels
 
 import android.app.Application
+import android.hardware.GeomagneticField
 import android.location.Location
 import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
@@ -8,8 +9,10 @@ import androidx.lifecycle.*
 import com.example.turapp.R
 import com.example.turapp.repository.trackingDb.entities.MyPoint
 import com.example.turapp.repository.MyPointRepository
+import com.example.turapp.utils.OrientationProvider
 import com.example.turapp.utils.locationClient.DefaultLocationClient
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
@@ -27,6 +30,9 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
         app.applicationContext,
         LocationServices.getFusedLocationProviderClient(app.applicationContext)
     )
+
+    private val orientationProvider = OrientationProvider(app.applicationContext)
+
 
 
     private val _myPointList = MutableLiveData<List<MyPoint>>()
@@ -114,6 +120,8 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     private val _currentPosition = MutableLiveData<GeoPoint>()
     val currentPosition: LiveData<GeoPoint> get() = _currentPosition
 
+    private var declination = 0f
+
     private val _startingPoint = MutableLiveData<GeoPoint>()
     val startingPoint: LiveData<GeoPoint> get() = _startingPoint
 
@@ -131,31 +139,64 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
         }
     }
 
+    private val _orientation = MutableLiveData<Float>()
+    val orientation: LiveData<Float> get() = _orientation
+    private var orientationProviderIsRunning: Boolean = false
+
+    fun startOrientationprovider() {
+        viewModelScope.launch {
+            orientationProvider.startAccAndMag()
+            orientationProviderIsRunning = true
+            while(orientationProviderIsRunning) {
+                val temp = orientationProvider.getAzimuth()
+                _orientation.value = -temp + declination
+                delay(50)
+            }
+            orientationProvider.stopAccAndMag()
+        }
+    }
+    fun stopOrientationProvider() {
+        orientationProviderIsRunning = false
+    }
+
     fun startLocationClient() {
         // This is only for the map, and not for the tracking service
-        locationClient.getLocationUpdates(500L)
-            .catch { e -> e.printStackTrace()/*Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show()*/ }
-            .onEach { location ->
-                getLocation.postValue(location)
+        viewModelScope.launch {
+            locationClient.getLocationUpdates(500L)
+                .catch { e -> e.printStackTrace()/*Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show()*/ }
+                .onEach { location ->
+                    getLocation.postValue(location)
+                    declination = getDeclination(location)
 
-                Log.d("TrackingViewModel", "Updated getLocation")
-                val geo = GeoPoint(location)
-                _currentPosition.value = geo
+                    Log.d("TrackingViewModel", "Updated getLocation")
+                    val geo = GeoPoint(location)
+                    _currentPosition.value = geo
 
-                if (_selectedMarker.value != null) {
-                    setDistanceToTargetString(geo)
-                    if (_selectedMarkerIsTarget.value == true)
-                        updatePathPointsToTarget()
+                    if (_selectedMarker.value != null) {
+                        setDistanceToTargetString(geo)
+                        if (_selectedMarkerIsTarget.value == true)
+                            updatePathPointsToTarget()
+                    }
+
+                    if (_startingPoint.value == null)
+                        _startingPoint.value = geo
                 }
-
-                if (_startingPoint.value == null)
-                    _startingPoint.value = geo
-            }
-            .launchIn(viewModelScope)
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
+    }
+
+
+
+    fun getDeclination(location: Location): Float {
+        return  GeomagneticField(
+            location?.latitude!!.toFloat(),
+            location?.longitude!!.toFloat(),
+            location.altitude!!.toFloat(),
+            System.currentTimeMillis()
+        ).declination
     }
 
     // This allows us to get location from other fragments
