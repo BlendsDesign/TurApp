@@ -26,6 +26,7 @@ import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import java.io.IOException
@@ -245,6 +246,14 @@ class SaveMyPointFragment : Fragment() {
 
             map.invalidate()
         }
+    }
+
+    fun takeMapSnapshot() {
+        //val mapSnapshot =
+        MapSnapshot(MapSnapshot.MapSnapshotable() {
+                                                  //TODO Do something with the snapshot
+        }, MapSnapshot.INCLUDE_FLAG_UPTODATE, map)
+
     }
 
     override fun onDestroy() {

@@ -58,6 +58,9 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
         _distance.value?.let {
             companionDistance = it
         }
+        _timer.value?.let {
+            companionTimeInHundreds = it
+        }
         stopService()
         _hasStoppedService.value = true
     }
@@ -104,6 +107,8 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
         fun getSteps(): Int? {
             return companionSteps
         }
+
+        fun getDistance(): Float? = companionDistance
     }
 
     override fun onCleared() {

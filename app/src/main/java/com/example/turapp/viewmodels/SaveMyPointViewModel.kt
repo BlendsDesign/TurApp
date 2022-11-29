@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 
-class SaveMyPointViewModel(private val app: Application, val typeArgument: String, uri: Uri?): ViewModel() {
+class SaveMyPointViewModel(private val app: Application, val typeArgument: String, uri: Uri?) :
+    ViewModel() {
 
     private val repository: MyPointRepository = MyPointRepository(app)
 
@@ -28,27 +29,34 @@ class SaveMyPointViewModel(private val app: Application, val typeArgument: Strin
     private val _imageUri = MutableLiveData<Uri>()
     val imageUri: LiveData<Uri> get() = _imageUri
 
-    private var _timeOfTrekInMillis : Long? = null
+    private var _timeOfTrekInMillis: Long? = null
+    private var _distanceOfTrek: Float? = null
+    private var _steps: Int? = null
 
     init {
         if (typeArgument == TYPE_TRACKING) {
             val tempTracked = NowTrackingViewModel.getTreck()
-            NowTrackingViewModel.getTimeInHundreds()?.let {
-                _timeOfTrekInMillis = it * 10
+            NowTrackingViewModel.apply {
+                getTimeInHundreds()?.let {
+                    _timeOfTrekInMillis = it * 10
+                }
+                _distanceOfTrek = getDistance()
+
+                _steps = getSteps()
             }
             if (tempTracked != null) {
                 _trackedLocations.value = tempTracked!!
             }
-
         }
-        if(uri != null) {
-            _imageUri.value = uri!!
+
+        uri?.let {
+            _imageUri.value = it
         }
     }
 
     fun saveSinglePoint(title: String, description: String, marker: Marker?) {
         viewModelScope.launch {
-            var image : String? = null
+            var image: String? = null
             _imageUri.value?.let {
                 image = it.toString()
             }
@@ -59,10 +67,12 @@ class SaveMyPointViewModel(private val app: Application, val typeArgument: Strin
                 title = title,
                 description = description,
                 timeTaken = _timeOfTrekInMillis,
-                location = marker?.position
+                location = marker?.position,
+                distanceInMeters = _distanceOfTrek,
+                steps = _steps?.toLong()
             )
-            var geoList : MutableList<MutableList<GeoPoint>>? = null
-            if (typeArgument == TYPE_TRACKING)  {
+            var geoList: MutableList<MutableList<GeoPoint>>? = null
+            if (typeArgument == TYPE_TRACKING) {
                 _trackedLocations.value?.let {
                     geoList = it
                 }
@@ -80,11 +90,15 @@ class SaveMyPointViewModel(private val app: Application, val typeArgument: Strin
                 )
             }
         } catch (e: Exception) {
-            Log.e("SelfieViewModel","Error deleting image", e)
+            Log.e("SelfieViewModel", "Error deleting image", e)
         }
     }
 
-    class Factory(private val app: Application, private val typeArgument: String, private val uri: Uri?) : ViewModelProvider.Factory {
+    class Factory(
+        private val app: Application,
+        private val typeArgument: String,
+        private val uri: Uri?
+    ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(SaveMyPointViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
