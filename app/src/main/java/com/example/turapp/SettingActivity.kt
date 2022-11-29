@@ -2,15 +2,22 @@ package com.example.turapp
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.databinding.ActivitySettingBinding
-
+import java.util.*
 
 
 class SettingActivity : AppCompatActivity() {
@@ -52,6 +59,7 @@ class SettingActivity : AppCompatActivity() {
         }
 
 
+
         binding.switchDarkmode.apply {
             isChecked = viewModel.isNightMode.value ?: isUsingNightModeResources()
             //switch.isChecked = isUsingNightModeResources()
@@ -65,6 +73,49 @@ class SettingActivity : AppCompatActivity() {
                 }
             }
         }
+
+        setSpinner(binding.spLanguages,listOf("English","Norwegian"))
+
+
+    }
+
+    fun setSpinner(spinner: Spinner, spinnerList : List<String>) {
+        val adapter = object :
+            ArrayAdapter<Any>(
+                this,android.R.layout.simple_list_item_1,android.R.id.text1,
+                spinnerList
+            ) {
+            override fun getDropDownView(
+                position: Int,
+                convertView: View?,
+                parent: ViewGroup
+            ): View {
+                return super.getDropDownView(position, convertView, parent).also {
+                    if (position == spinner.selectedItemPosition) {
+                        it.setBackgroundColor(ContextCompat.getColor(this@SettingActivity,R.color.purple_200))
+                    }
+                }
+            }
+        }
+        spinner.adapter = adapter
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+
+                val language = spinner.selectedItem.toString()
+                if (language == "English"){
+                    setAppLocale("en")
+                }else{
+                    setAppLocale("no")
+                }
+
+            }
+        }
     }
 
 
@@ -76,6 +127,18 @@ class SettingActivity : AppCompatActivity() {
             Configuration.UI_MODE_NIGHT_UNDEFINED -> false
             else -> false
         }
+    }
+
+    fun setAppLocale(language : String) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = resources.configuration
+        config.setLocale(locale)
+        this.createConfigurationContext(config)
+        this.resources.updateConfiguration(config, resources.displayMetrics)
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }

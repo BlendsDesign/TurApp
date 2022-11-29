@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         tools:context=".SettingActivity">
 
         <Switch
@@ -44,10 +44,30 @@
 
         <Button
             android:id="@+id/btnApplyLimit"
-            android:text="Apply Limit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Apply Limit"
             app:layout_constraintTop_toBottomOf="@id/sbSeekBar" />
+
+        <TextView
+            android:id="@+id/tv_language"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Language:"
+            android:textColor="@color/textColorBlack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnApplyLimit">
+
+        </TextView>
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tv_language"
+            app:layout_constraintStart_toStartOf="@id/tv_language"
+            android:layout_marginStart="16dp"
+            android:id="@+id/sp_languages"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
