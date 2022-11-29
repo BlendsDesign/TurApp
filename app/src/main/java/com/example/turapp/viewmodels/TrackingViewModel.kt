@@ -130,10 +130,10 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             repository.limitPoints(limit).collect {
                 _myPointList.value = it
             }
-
-//            repository.getAllMyPoints().collect {
-//                _myPointList.value = it
-//            }
+            //Show all the points in the list on the map:
+            //repository.getAllMyPoints().collect {
+            //_myPointList.value = it
+            //}
 
 
         }
