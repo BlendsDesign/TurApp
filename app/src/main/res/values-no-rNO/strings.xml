@@ -28,15 +28,15 @@
     <string name="change_poi_location_warning">Save POI\'s new location?</string>
     <string name="current_location">Current Location:</string>
     <string name="no_location_information">No Location Information</string>
-    <string name="save_poi">Save POI</string>
-    <string name="cancel">Cancel</string>
-    <string name="poi_title">POI Title</string>
-    <string name="poi_description">POI Description</string>
+    <string name="save_poi">Lagre POI</string>
+    <string name="cancel">Avbryt</string>
+    <string name="poi_title">POI Tittel</string>
+    <string name="poi_description">POI Beskrivelse</string>
 
-    <string name="take_photo">Take Photo</string>
-    <string name="start_capture">Start Capture</string>
-    <string name="stop_capture">Stop Capture</string>
-    <string name="graph">Graph</string>
-    <string name="unknown">Unknown</string>
+    <string name="take_photo">Ta bilde</string>
+    <string name="start_capture">Start fangs</string>
+    <string name="stop_capture">Stopp fangst</string>
+    <string name="graph">Graf</string>
+    <string name="unknown">Ukjent</string>
     <string name="plane_finding">detecting plane…</string>
 </resources>
