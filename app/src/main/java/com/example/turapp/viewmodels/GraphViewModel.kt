@@ -4,7 +4,7 @@ import android.app.Application
 import android.graphics.Color
 import androidx.lifecycle.*
 import com.example.turapp.repository.trackingDb.entities.MyPointWeek
-import com.example.turapp.utils.MyPointRepository
+import com.example.turapp.repository.MyPointRepository
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
@@ -48,8 +48,8 @@ class GraphViewModel(app: Application) : ViewModel() {
     val rawData = liveData {
         channel.receiveAsFlow().cancellable().collectLatest {
             currentWeek.value?.let { week ->
-                repository.getAllMyPointsByWeek(week).cancellable().collectLatest { pointsWithGeo ->
-                    this@liveData.emit(pointsWithGeo.map { pointWithGeo -> pointWithGeo.point})
+                repository.getAllMyPointsByWeek(week).cancellable().collectLatest { points ->
+                    this@liveData.emit(points)
                 }
             }
         }

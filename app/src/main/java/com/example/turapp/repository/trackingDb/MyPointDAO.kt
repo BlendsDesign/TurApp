@@ -10,8 +10,6 @@ import com.example.turapp.repository.trackingDb.entities.MyPoint
 import com.example.turapp.repository.trackingDb.entities.TrekLocations
 import kotlinx.coroutines.flow.Flow
 import com.example.turapp.repository.trackingDb.entities.MyPointWeek
-import com.example.turapp.repository.trackingDb.entities.PointGeoData
-import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
 
 @Dao
 interface MyPointDAO {
@@ -28,7 +26,7 @@ interface MyPointDAO {
 
     @Transaction
     @Query("SELECT * FROM my_point WHERE createdAt >= :startDate AND createdAt <= :endDate ORDER BY createdAt DESC")
-    fun getMyPointByWeeks(startDate: Long, endDate: Long): Flow<List<MyPointWithGeo>>
+    fun getMyPointByWeeks(startDate: Long, endDate: Long): Flow<List<MyPoint>>
 
     @Query("""
         SELECT

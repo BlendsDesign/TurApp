@@ -3,7 +3,6 @@ package com.example.turapp.repository
 import android.app.Application
 import com.example.turapp.repository.trackingDb.MyPointDB
 import com.example.turapp.repository.trackingDb.entities.*
-import com.example.turapp.repository.trackingDb.relations.MyPointWithGeo
 import kotlinx.coroutines.flow.Flow
 import org.osmdroid.util.GeoPoint
 import java.time.Instant
@@ -20,7 +19,7 @@ class MyPointRepository(app: Application) {
     fun getMyPoint(id: Long) = dao.getMyPointById(id)
 
     fun getTrek(id: Long) = dao.getTrekById(id)
-    fun getAllMyPointsByWeek(week: MyPointWeek): Flow<List<MyPointWithGeo>> {
+    fun getAllMyPointsByWeek(week: MyPointWeek): Flow<List<MyPoint>> {
         return dao.getMyPointByWeeks(
             Instant.parse("${week.earliest}T00:00:00.00Z").toEpochMilli(),
             Instant.parse("${week.latest}T00:00:00.00Z")
@@ -34,9 +33,6 @@ class MyPointRepository(app: Application) {
         return dao.getMyPointWeeks()
     }
 
-    suspend fun getMyPointWithGeo(id: Int): MyPointWithGeo? {
-        return dao.getMyPointById(id)
-    }
 
 
     suspend fun deleteMyPoint(point: MyPoint, trekLocations: TrekLocations?): Boolean {
