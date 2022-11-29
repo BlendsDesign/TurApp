@@ -23,7 +23,10 @@
 
         <TextView
             android:id="@+id/tvLoading"
-            android:text="Loading"
+            android:text="Please wait while AR plane is loading..."
+            android:textAlignment="center"
+            android:textColor="@color/colorOnPrimary"
+            android:background="#4DF7941D"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

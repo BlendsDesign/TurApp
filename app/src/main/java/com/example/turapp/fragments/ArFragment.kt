@@ -261,7 +261,7 @@ class ArFragment : Fragment() {
 
     private fun showLoadingMessage() {
         binding.tvLoading.apply {
-            text = "Plane is loading"
+            //text = "Plane is loading"
             visibility = View.VISIBLE
         }
     }
