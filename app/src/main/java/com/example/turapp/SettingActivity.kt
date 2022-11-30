@@ -136,9 +136,10 @@ class SettingActivity : AppCompatActivity() {
         config.setLocale(locale)
         this.createConfigurationContext(config)
         this.resources.updateConfiguration(config, resources.displayMetrics)
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+        //temporary commented out because it will throw the user back to MainActivity immediately
+        //val intent = Intent(this, MainActivity::class.java)
+        //startActivity(intent)
+        //finish()
     }
 
 }
