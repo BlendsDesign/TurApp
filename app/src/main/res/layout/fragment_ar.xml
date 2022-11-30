@@ -23,7 +23,7 @@
 
         <TextView
             android:id="@+id/tvLoading"
-            android:text="Please wait while AR plane is loading..."
+            android:text="Move the phone around while waiting for AR..."
             android:textAlignment="center"
             android:textColor="@color/colorOnPrimary"
             android:background="#4DF7941D"

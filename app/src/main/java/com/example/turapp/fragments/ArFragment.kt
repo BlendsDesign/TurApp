@@ -47,15 +47,16 @@ private const val MIN_OPENGL_VERSION = 3.0
 class ArFragment : Fragment() {
 
     private lateinit var binding : FragmentArBinding
-
-    private var installRequested = false
     private var hasFinishedLoading = false
+    private var installRequested = false
 
     private var arSceneView: ArSceneView? = null
 
     private var exampleLayoutRenderAble1: ViewRenderable? = null
     private var locationScene: LocationScene? = null
     private var layoutLocationMarker1: LocationMarker? = null
+
+    private var loadingView: TextView? = null
 
     private val viewModel: ArViewModel by lazy {
         val app = requireNotNull(activity).application
@@ -69,14 +70,11 @@ class ArFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //checkIsSupportedDeviceOrFinish(MainActivity())
-
         arguments?.let {
             point = it.get("poi") as GeoPoint?
             latitude = point?.latitude!!
             longitude = point?.longitude!!
         }
-
     }
 
     private fun requestPermissions() {
@@ -110,7 +108,7 @@ class ArFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        val loadingView = binding.tvLoading
+        loadingView = binding.tvLoading
 
         arSceneView = binding.arSceneView
 
@@ -138,8 +136,6 @@ class ArFragment : Fragment() {
 
         Log.d(TAG, "UpdateListener")
 
-
-
         arSceneView!!.scene.addOnUpdateListener { frameTime: FrameTime? ->
             if (!hasFinishedLoading) {
                 return@addOnUpdateListener
@@ -148,7 +144,7 @@ class ArFragment : Fragment() {
                 locationScene = LocationScene(requireContext(), requireActivity(), arSceneView)
                 layoutLocationMarker1 = LocationMarker(
                     longitude, latitude,
-                    getExampleView(exampleLayoutRenderAble1)
+                    getPOIView(exampleLayoutRenderAble1)
                 )
 
                 // "onRender" event that renders every frame
@@ -168,7 +164,7 @@ class ArFragment : Fragment() {
                 return@addOnUpdateListener
             }
             locationScene?.processFrame(frame)
-            if (loadingView.visibility == View.VISIBLE) {
+            if (loadingView!!.visibility == View.VISIBLE) {
                 for (plane in frame.getUpdatedTrackables(
                     Plane::class.java
                 )) {
@@ -181,13 +177,11 @@ class ArFragment : Fragment() {
 
         Log.d("ARCoreCamera", "Request permission")
 
-        //ARLocationPermissionHelper.requestPermission(requireActivity())
-
         return binding.root
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun getExampleView(renderable: ViewRenderable?): Node {
+    private fun getPOIView(renderable: ViewRenderable?): Node {
         Log.d("ARCoreCamera", "getExampleView")
         val base = Node()
         base.renderable = renderable
@@ -260,29 +254,14 @@ class ArFragment : Fragment() {
     }
 
     private fun showLoadingMessage() {
-        binding.tvLoading.apply {
+        loadingView?.apply {
             //text = "Plane is loading"
             visibility = View.VISIBLE
         }
     }
 
     private fun hideLoadingMessage() {
-        binding.tvLoading.visibility = View.GONE
-    }
-
-    private fun checkIsSupportedDeviceOrFinish(activity: MainActivity): Boolean {
-        val openGLVersionString =
-            (activity.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager)
-                .deviceConfigurationInfo
-                .glEsVersion
-        if (openGLVersionString.toDouble() < MIN_OPENGL_VERSION) {
-            Log.d(TAG, "Sceneform requires OpenGL ES 3.0 or later")
-            Toast.makeText(activity, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG)
-                .show()
-            findNavController().popBackStack()
-            return false
-        }
-        return true
+        loadingView?.visibility = View.GONE
     }
 
 }
