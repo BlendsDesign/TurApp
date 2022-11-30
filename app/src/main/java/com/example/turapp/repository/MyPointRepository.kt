@@ -4,14 +4,14 @@ import android.app.Application
 import com.example.turapp.repository.trackingDb.MyPointDB
 import com.example.turapp.repository.trackingDb.entities.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import org.osmdroid.util.GeoPoint
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 
 class MyPointRepository(app: Application) {
-
-    private val myApp = app
     private val dao = MyPointDB.getInstance(app).myPointDao
 
     fun getAllMyPoints() = dao.getAllMyPoints()
@@ -20,7 +20,7 @@ class MyPointRepository(app: Application) {
 
     fun getTrek(id: Long) = dao.getTrekById(id)
     fun getAllMyPointsByWeek(week: MyPointWeek): Flow<List<MyPoint>> {
-        return dao.getMyPointByWeeks(
+        return dao.getMyPointByTimeInterval(
             Instant.parse("${week.earliest}T00:00:00.00Z").toEpochMilli(),
             Instant.parse("${week.latest}T00:00:00.00Z")
                 .plus(1, ChronoUnit.DAYS)
@@ -74,4 +74,35 @@ class MyPointRepository(app: Application) {
         }
         return true
     }
+    fun getHighestPointOfATrek(trek :TrekLocations): GeoPoint? {
+        val allPoints = mutableListOf<GeoPoint>()
+        trek.trekList.forEach {
+            allPoints.addAll(it)
+        }
+        try {
+            var res = allPoints.first()
+            allPoints.forEach {
+                if (res.altitude < it.altitude)
+                    res = it
+                return res
+            }
+        } catch (e: NoSuchElementException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    suspend fun findHighestTrekPointInInterval(startTimeInMillis: Long, endTimeInMillis: Long) {
+        //Finish this function to return highest point if we decide we need it
+        val myPointsForInterval = mutableListOf <MyPoint>()
+        dao.getMyPointByTimeInterval(startTimeInMillis, endTimeInMillis).collect{
+            myPointsForInterval.addAll(it)
+        }
+        for (point in myPointsForInterval) {
+            if(point.type == TYPE_TRACKING) {
+                val highestPoint = getHighestPointOfATrek(dao.getTrekById(point.pointId!!).first())
+            }
+        }
+    }
+
 }
