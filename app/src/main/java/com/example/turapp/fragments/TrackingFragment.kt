@@ -211,6 +211,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         super.onPause()
         map.onPause()
         orientationProvider.stopOrientationProvider()
+        viewModel.stopOrientationProvider() //
     }
 
     override fun onResume() {
