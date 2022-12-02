@@ -165,6 +165,12 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             } ?: binding.distanceInputField.setText(getString(R.string.unknown))
         }
 
+        viewModel.elevationString.observe(viewLifecycleOwner) {
+            it?.let { distanceString ->
+                binding.elevationInputField.setText(distanceString)
+            } ?: binding.elevationInputField.setText(getString(R.string.unknown))
+        }
+
         binding.btnSetAsTarget.addOnCheckedChangeListener { _, isChecked ->
             viewModel.setSelectedAsTargetMarker(isChecked)
         }
@@ -215,14 +221,14 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         viewModel.currentPosition.value?.let {
             map.controller.animateTo(it)
 
-//            geoField = GeomagneticField(
-//                it.latitude.toFloat(),
-//                it.longitude.toFloat(),
-//                it.altitude.toFloat(),
-//                System.currentTimeMillis()
-//            )
-//
-//            declination = geoField.declination
+            geoField = GeomagneticField(
+                it.latitude.toFloat(),
+                it.longitude.toFloat(),
+                it.altitude.toFloat(),
+                System.currentTimeMillis()
+            )
+
+            declination = geoField.declination //deviation from true north
         }
 
         val sharedPrefs = activity?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
@@ -231,21 +237,10 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         orientationProvider.startOrientationProvider { orientation, source ->
 
             //Log.d("Declination",declination.toString())
-            clMark.rotation = -orientation //- declination
+            clMark.rotation = -orientation - declination
             map.invalidate()
         }
         viewModel.currentPosition.observe(viewLifecycleOwner) { curPos ->
-
-            //compute the magnetic declination from true north
-            geoField = GeomagneticField(
-                curPos.latitude.toFloat(),
-                curPos.longitude.toFloat(),
-                curPos.altitude.toFloat(),
-                System.currentTimeMillis()
-            )
-
-            declination = geoField.declination
-
             clMark.position = curPos
         }
     }
