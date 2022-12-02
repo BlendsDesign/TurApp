@@ -52,20 +52,15 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private lateinit var map: MapView // 3
 
-    private lateinit var geoField : GeomagneticField
+    private lateinit var geoField: GeomagneticField
 
-    private var declination : Float = 0F
+    private var declination: Float = 0F
 
     private val pathToTarget = Polyline().apply {
         color = Color.CYAN
     }
 
-    private val clMark: Marker by lazy {
-        Marker(map).apply {
-            icon = getDrawable(requireContext(), R.drawable.ic_my_location_arrow)
-            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-        }
-    }
+    private lateinit var clMark: Marker
 
     private val viewModel: TrackingViewModel by lazy {
         val app = requireNotNull(activity).application
@@ -101,6 +96,11 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
         // Set up Map handling
         map = binding.trackingMap
+        clMark = Marker(map).apply {
+            icon = getDrawable(requireContext(), R.drawable.ic_my_location_arrow)
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+        }
+        map.overlays.add(clMark)
         lifecycleScope.launchWhenCreated {
             map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
             map.setMultiTouchControls(true) //3
@@ -115,7 +115,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             val myMapEventsOverlay = MapEventsOverlay(getEventsReceiver())
             map.overlays.add(myMapEventsOverlay)
         }
-        map.overlayManager.add(clMark)
 
         viewModel.myPointList.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
@@ -127,25 +126,25 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     markersList.clear()
 
                     it.forEach { point ->
-                            // Could do a check here to draw polyline if the list is multiple points
-                            val temp = Marker(map)
-                            temp.apply {
-                                point.location?.let {
-                                    position = it
-                                }
-                                title = point.title
-                                subDescription = point.description
-                                icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
-                                id = point.pointId.toString()
-                                setOnMarkerClickListener { marker, _ ->
-                                    if (!binding.btnSetAsTarget.isChecked) {
-                                        viewModel.setSelectedMarker(marker)
-                                    }
-                                    true
-                                }
+                        // Could do a check here to draw polyline if the list is multiple points
+                        val temp = Marker(map)
+                        temp.apply {
+                            point.location?.let {
+                                position = it
                             }
-                            markersList.add(temp)
-                            map.overlays.add(temp)
+                            title = point.title
+                            subDescription = point.description
+                            icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
+                            id = point.pointId.toString()
+                            setOnMarkerClickListener { marker, _ ->
+                                if (!binding.btnSetAsTarget.isChecked) {
+                                    viewModel.setSelectedMarker(marker)
+                                }
+                                true
+                            }
+                        }
+                        markersList.add(temp)
+                        map.overlays.add(temp)
 
                     }
                 }
@@ -240,10 +239,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
 
         val sharedPrefs = activity?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-        val limit = sharedPrefs?.getInt("limit",5)
+        val limit = sharedPrefs?.getInt("limit", 5)
         viewModel.refreshList(limit!!)
         orientationProvider.startOrientationProvider { orientation, source ->
-
             //Log.d("Declination",declination.toString())
             clMark.rotation = -orientation + declination
             map.invalidate()
@@ -334,10 +332,10 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             viewModel.setAddingCustomMarker(isChecked)
         }
 
-        binding.btnViewInArMode.setOnClickListener{
+        binding.btnViewInArMode.setOnClickListener {
             val markedGeoPoint = viewModel.selectedMarker.value?.position
 
-            if(markedGeoPoint != null) {
+            if (markedGeoPoint != null) {
                 Toast.makeText(
                     requireContext(),
                     "All aboard the AR train", Toast.LENGTH_SHORT
@@ -348,9 +346,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                         markedGeoPoint
                     )
                 )
-            }
-            else
-            {
+            } else {
                 Toast.makeText(
                     requireContext(),
                     "You must select a marker(poi) first!", Toast.LENGTH_SHORT
