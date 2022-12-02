@@ -237,7 +237,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         orientationProvider.startOrientationProvider { orientation, source ->
 
             //Log.d("Declination",declination.toString())
-            clMark.rotation = -orientation - declination
+            clMark.rotation = -orientation + declination
             map.invalidate()
         }
         viewModel.currentPosition.observe(viewLifecycleOwner) { curPos ->
