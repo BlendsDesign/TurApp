@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.hardware.GeomagneticField
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,6 +26,7 @@ import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.utils.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.turapp.utils.locationClient.LocationService
 import com.example.turapp.viewmodels.TrackingViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -72,6 +74,17 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         requestPermissions()
         if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
             viewModel.startLocationClient()
+        } else {
+            lifecycleScope.launch {
+            var timer = 10
+                while(
+                    !PermissionCheckUtility.hasLocationPermissions(requireContext())
+                    || timer == 10) {
+                    delay(1000)
+                    timer++
+                }
+                viewModel.startLocationClient()
+            }
         }
         orientationProvider = InternalCompassOrientationProvider(requireContext())
     }
@@ -93,6 +106,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
             alertDialog.show()
         }
+
+
+
 
         // Set up Map handling
         map = binding.trackingMap
@@ -198,6 +214,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             map.invalidate()
 
         }
+        viewModel.errorMessage.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        }
 
 //        compass = CompassOverlay(
 //            requireContext(),
@@ -261,18 +280,31 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
 
     private fun requestPermissions() {
-        if (PermissionCheckUtility.hasLocationPermissions(requireContext())) {
+        if (PermissionCheckUtility.hasAllPermissions(requireContext())) {
             return
         }
-        EasyPermissions.requestPermissions(
-            this,
-            "You need to accept location permissions to use this app.",
-            REQUEST_CODE_LOCATION_PERMISSION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-            Manifest.permission.ACTIVITY_RECOGNITION
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            EasyPermissions.requestPermissions(
+                this,
+                getString(R.string.permissions_rationale),
+                REQUEST_CODE_LOCATION_PERMISSION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACTIVITY_RECOGNITION,
+                Manifest.permission.CAMERA,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        } else {
+            EasyPermissions.requestPermissions(
+                this,
+                getString(R.string.permissions_rationale),
+                REQUEST_CODE_LOCATION_PERMISSION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACTIVITY_RECOGNITION,
+                Manifest.permission.CAMERA
+            )
+        }
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
