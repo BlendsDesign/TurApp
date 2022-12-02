@@ -9,16 +9,16 @@
     <string name="record">Ta opp</string>
     <string name="accelerometer">ACCELEROMETER</string>
     <string name="gyroscope">GYROSCOPE</string>
-    <string name="stop_recording">STOP RECORDING</string>
+    <string name="stop_recording">STOPP OPPTAKET</string>
     <string name="accelerator_data">ACCELERATOR DATA</string>
     <string name="gyroscope_data">GYROSCOPE DATA</string>
-    <string name="heading_data">HEADING DATA</string>
-    <string name="computed_orientation">COMPUTED ORIENTATION</string>
-    <string name="filtered_gyro_data">FILTERED GYRO DATA</string>
+    <string name="heading_data">OVERORDNINGSDATA</string>
+    <string name="computed_orientation">BEREGNET ORIENTERING</string>
+    <string name="filtered_gyro_data">FILTRERT GYRO DATA</string>
     <string name="magnetometer">MAGNETOMETER</string>
-    <string name="filtered_magnetometer">FILTERED MAGNETOMETER</string>
-    <string name="filtered_acceleration">FILTERED ACCELERATION</string>
-    <string name="delete_are_you_sure">Are you sure you want to delete this POI</string>
+    <string name="filtered_magnetometer">FILTERET MAGNETOMETER</string>
+    <string name="filtered_acceleration">FILTERET ACCELERATION</string>
+    <string name="delete_are_you_sure">Er du sikker på at du vil slette dette POI</string>
     <string name="about_app">Om denne appen</string>
     <string name="info_text">As a digital nomad, you know that the key to traveling the world is being able to stay connected. And with your busy lifestyle, you don\'t have time to research long lists of travel apps. That\'s why we built the world\'s most comprehensive app for digital nomads. With our app, you can visit places with visual descriptions of the areas (POI – points of interest)\n\n When the user is near the area he/she can take up the camera and observe graphics with associated text related to the place.\n\n App has built in features such as menu to edit settings, language, theme etc.\n\nTemporary views for: MAP, CAMERA, GRAPH, INFORMATION\n\nRaw and filtered Sensor recording of accelerometer, gyroscope\n\nComputed orientation using accelerometer and magnetometer\n\nVisualization of the sensor data with orientation\nThis app was developed during a student project by a team (Team ID=6) of three members:\n\nMagnus Roald Ree  \nTore Bjerkan Tore Bjerkan\nSharmila Ratnasingam\n
 </string>
@@ -39,4 +39,8 @@
     <string name="graph">Graf</string>
     <string name="unknown">Ukjent</string>
     <string name="plane_finding">detecting plane…</string>
+    <string name="_week_item">Uke %d</string>
+    <string name="help_text">Her får brukeren muligheten til å spore egen aktivitet. Ved å trykke start begynner appen å spore bevegelsene.
+Appen tegner en linje langs stien der brukeren forflytter seg. I tilfelle markøren til brukeren ikke er synlig,
+er det mulig å trykke \'here\' for sentrere kartet på markøren.</string>
 </resources>

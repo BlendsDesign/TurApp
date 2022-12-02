@@ -34,6 +34,16 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             app:layout_constraintTop_toBottomOf="@id/spinners_container" />
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/graphDistance"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            app:layout_constraintTop_toBottomOf="@id/graphSteps" />
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/graphTime"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            app:layout_constraintTop_toBottomOf="@id/graphDistance" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>
