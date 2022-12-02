@@ -11,7 +11,6 @@ import com.example.turapp.repository.MyPointRepository
 import com.example.turapp.utils.locationClient.DefaultLocationClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -144,10 +143,16 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
         }
     }
 
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage : LiveData<String?>  get() = _errorMessage
+
     fun startLocationClient() {
         // This is only for the map, and not for the tracking service
         locationClient.getLocationUpdates(500L)
-            .catch { e -> e.printStackTrace()/*Toast.makeText(app.applicationContext, e.message, Toast.LENGTH_SHORT).show()*/ }
+            .catch { e ->
+                e.printStackTrace()
+                _errorMessage.value = e.message
+            }
             .onEach { location ->
                 getLocation.postValue(location)
 
