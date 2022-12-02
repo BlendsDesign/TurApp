@@ -40,4 +40,7 @@
     <string name="unknown">Unknown</string>
     <string name="plane_finding">detecting plane…</string>
     <string name="_week_item">Week %d</string>
+    <string name="help_text">Here, the user gets the opportunity to track their own activity. By pressing start, the app starts tracking the movements.
+The app draws a line along the path where the user moves. In case the cursor of the user is not visible,
+is it possible to press \'here\' to center the map on the marker.</string>
 </resources>

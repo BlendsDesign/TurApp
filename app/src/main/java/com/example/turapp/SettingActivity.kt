@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -17,12 +18,16 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.databinding.ActivitySettingBinding
+import com.example.turapp.utils.helperFiles.LocaleHelper
+import kotlinx.android.synthetic.main.activity_setting.*
 import java.util.*
 
 
 class SettingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingBinding
+
+    private lateinit var localeHelper: LocaleHelper
 
     private val viewModel: SettingsViewModel by lazy {
         val sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
@@ -35,6 +40,8 @@ class SettingActivity : AppCompatActivity() {
 
         binding = ActivitySettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        localeHelper = LocaleHelper(this)
 
         viewModel.limit.value?.let {
             binding.sbSeekBar.progress = it
@@ -76,6 +83,17 @@ class SettingActivity : AppCompatActivity() {
 
         setSpinner(binding.spLanguages,listOf("English","Norwegian"))
 
+        btnApplyLanguage.setOnClickListener {
+            val language = binding.spLanguages.selectedItem.toString()
+            if (language == "English"){
+                setAppLocale("en")
+            }else{
+                setAppLocale("no")
+            }
+        }
+
+        binding.btnCancel.setOnClickListener { finish() }
+
 
     }
 
@@ -98,24 +116,7 @@ class SettingActivity : AppCompatActivity() {
             }
         }
         spinner.adapter = adapter
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-
-            }
-
-            override fun onItemSelected(parent: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-
-                val language = spinner.selectedItem.toString()
-                if (language == "English"){
-                    setAppLocale("en")
-                }else{
-                    setAppLocale("no")
-                }
-
-            }
-        }
+        spinner.setSelection(if (localeHelper.getLocale().language == "no") 1 else 0)
     }
 
 
@@ -130,15 +131,8 @@ class SettingActivity : AppCompatActivity() {
     }
 
     fun setAppLocale(language : String) {
-        val locale = Locale(language)
-        Locale.setDefault(locale)
-        val config = resources.configuration
-        config.setLocale(locale)
-        this.createConfigurationContext(config)
-        this.resources.updateConfiguration(config, resources.displayMetrics)
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+        Log.d("SettingsActivity", "setAppLocale: " + language)
+        localeHelper.setLocale(language)
     }
 
 }

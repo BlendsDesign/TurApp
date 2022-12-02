@@ -69,6 +69,23 @@
             android:layout_marginStart="16dp"
             android:id="@+id/sp_languages"/>
 
+        <Button
+            android:id="@+id/btnApplyLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apply Language"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/sp_languages"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ok"
+            app:layout_constraintTop_toBottomOf="@id/btnApplyLanguage"
+            app:layout_constraintStart_toStartOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
