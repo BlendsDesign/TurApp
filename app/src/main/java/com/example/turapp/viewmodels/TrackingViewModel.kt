@@ -38,6 +38,10 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     val selectedMarkerIsTarget: LiveData<Boolean> get() = _selectedMarkerIsTarget
     private val _distanceToTargetString = MutableLiveData<String?>()
     val distanceToTargetString: LiveData<String?> get() = _distanceToTargetString
+
+    private val _elevationString = MutableLiveData<String?>()
+    val elevationString: LiveData<String?> get() = _elevationString
+
     private val _pathPointsToTarget = MutableLiveData<MutableList<GeoPoint>>()
     val pathPointsToTarget : LiveData<MutableList<GeoPoint>> get() = _pathPointsToTarget
     fun updatePathPointsToTarget() {
@@ -60,6 +64,7 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             _selectedMarker.value = marker
             _currentPosition.value?.let {
                 setDistanceToTargetString(it)
+                setElevationToTargetString(it)
             }
         }
     }
@@ -92,6 +97,7 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             )
             _selectedMarker.value = null
             _distanceToTargetString.value = null
+            _elevationString.value = null
             _pathPointsToTarget.value = mutableListOf()
         }
     }
@@ -101,6 +107,13 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             val target: GeoPoint = it.position
             val distance = current.distanceToAsDouble(target)
             _distanceToTargetString.value = String.format("%.2f meters", distance)
+        }
+    }
+
+    private fun setElevationToTargetString(current: GeoPoint) {
+        _selectedMarker.value?.let {
+            val elevation = current.altitude
+            _elevationString.value = String.format("%.2f meters", elevation)
         }
     }
 

@@ -4,8 +4,6 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.hardware.GeomagneticField
-import android.hardware.SensorManager
 import android.location.Location
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -13,8 +11,6 @@ import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.lifecycle.MutableLiveData
 import com.example.turapp.R
-import com.example.turapp.utils.Sensors.AccelerometerSensor
-import com.example.turapp.utils.Sensors.MagnetoMeterSensor
 import com.example.turapp.utils.Sensors.StepDetectorSensor
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.google.android.gms.location.LocationServices
@@ -46,9 +42,9 @@ class LocationService: Service() {
 
     private var _distance: Float? = null
 
+    private var _totalAscent: Double? = null
+
     private var stepDetectorSensor: StepDetectorSensor? = null
-    private var accelerometerSensor: AccelerometerSensor? = null
-    private var magnetoMeterSensor: MagnetoMeterSensor? = null
     private var _steps = 0
 
 
@@ -118,7 +114,14 @@ class LocationService: Service() {
                 if (tracking) {
                     if (_distance == null)
                         _distance = 0F
+                    if (_totalAscent == null)
+                        _totalAscent = 0.0
                     _distance = _distance!! + location.distanceTo(_currentLocation?: location)
+                    val diff = location.altitude - (_currentLocation?.altitude ?: location.altitude)
+                    if (diff > 0) {
+                        _totalAscent = _totalAscent!! + diff
+                        totalAscent.postValue(_totalAscent?.toFloat())
+                    }
                     val geo = GeoPoint(location)
                     _trackedPoints.last().add(geo)
                     distance.postValue(_distance!!)
@@ -165,68 +168,6 @@ class LocationService: Service() {
         }
     }
 
-    private var _magnetoSensorData = mutableListOf<Float>()
-    private var _accSensorData = mutableListOf<Float>()
-    private val rotationMatrix = FloatArray(9)
-    private val orientationAngles = FloatArray(3)
-
-    private fun startAccAndMag(){
-        serviceScope.launch {
-            magnetoMeterSensor = MagnetoMeterSensor(requireNotNull(applicationContext))
-            accelerometerSensor = AccelerometerSensor(requireNotNull(applicationContext))
-
-            magnetoMeterSensor?.let {
-                it.setOnSensorValuesChangedListener { reading ->
-                    _magnetoSensorData = reading as MutableList<Float>
-                    updateDeclination()
-                }
-
-                it.startListening()
-            }
-
-            accelerometerSensor?.let { it ->
-                it.setOnSensorValuesChangedListener { reading ->
-                    _accSensorData = reading as MutableList<Float>
-                    updateDeclination()
-                }
-                it.startListening()
-            }
-
-        }
-    }
-
-    //https://developer.android.com/guide/topics/sensors/sensors_position#sensors-pos-orient
-    private fun updateDeclination() {
-            // Update rotation matrix, which is needed to update orientation angles.
-            SensorManager.getRotationMatrix(
-                rotationMatrix,
-                null,
-                _accSensorData.toFloatArray(),
-                _magnetoSensorData.toFloatArray()
-            )
-            // "rotationMatrix" now has up-to-date information.
-
-            val orient = SensorManager.getOrientation(rotationMatrix, orientationAngles).toMutableList()
-
-            //convert to degrees from radians
-            val azimuth =  Math.toDegrees(orient[0].toDouble()).toFloat()
-
-        getTrueNorth(azimuth)
-    }
-
-    private fun getTrueNorth(_azimuth:Float){
-        var azimuth = _azimuth
-        val geoField = GeomagneticField(
-            _currentLocation?.latitude!!.toFloat(),
-            _currentLocation?.longitude!!.toFloat() ,
-            _currentLocation?.altitude!!.toFloat(),
-            System.currentTimeMillis()
-        )
-        azimuth += geoField.declination
-        //val bearing: Float = _currentLocation.bearingTo(target) // (it's already in degrees)
-        //val direction = azimuth - bearing
-    }
-
     private fun switchTracking() {
         tracking = tracking != true
     }
@@ -249,11 +190,11 @@ class LocationService: Service() {
         const val ACTION_START_OR_RESUME_SERVICE = "ACTION_START_OR_RESUME_SERVICE"
         const val ACTION_PAUSE_TRACKING = "ACTION_PAUSE_TRACKING"
         const val ACTION_STOP = "ACTION_STOP"
-        const val ACTION_SWITCH_TRACKING = "ACTION_SWITCH_TRACKING"
         val currentLocation = MutableLiveData<Location>()
         val trackedPoints = MutableLiveData<mPolylines>()
         val timerHundreds  = MutableLiveData<Long>()
         val steps = MutableLiveData<Int>()
         val distance = MutableLiveData<Float>()
+        val totalAscent = MutableLiveData<Float>()
     }
 }

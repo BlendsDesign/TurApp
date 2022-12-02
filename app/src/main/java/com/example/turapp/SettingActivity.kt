@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -131,7 +130,6 @@ class SettingActivity : AppCompatActivity() {
     }
 
     fun setAppLocale(language : String) {
-        Log.d("SettingsActivity", "setAppLocale: " + language)
         localeHelper.setLocale(language)
     }
 

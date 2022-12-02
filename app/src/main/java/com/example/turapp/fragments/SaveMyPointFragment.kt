@@ -26,6 +26,7 @@ import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import java.io.IOException
@@ -36,6 +37,8 @@ class SaveMyPointFragment : Fragment() {
     private lateinit var binding: FragmentSaveMyPointBinding
 
     private lateinit var viewModel: SaveMyPointViewModel
+
+    private var boundingBox: BoundingBox? = null
 
     private var location: GeoPoint? = null
     private lateinit var map: MapView
@@ -136,6 +139,16 @@ class SaveMyPointFragment : Fragment() {
         binding.btnGrpLocation.addOnCheckedChangeListener { button, isChecked ->
             if (isChecked) {
                 binding.frameForMap.visibility = View.VISIBLE
+                map.addOnFirstLayoutListener { v, left, top, right, bottom ->
+                    boundingBox?.let {
+                        map.zoomToBoundingBox(it.increaseByScale(1.2F), false)
+                        if (map.zoomLevelDouble > 20)
+                            map.controller.setZoom(20.0)
+                        Log.d("BOUNDINGBOX", map.zoomLevelDouble.toString())
+                    }
+                }
+
+
             } else {
                 binding.frameForMap.visibility = View.GONE
             }
@@ -236,15 +249,23 @@ class SaveMyPointFragment : Fragment() {
                 add(marker)
                 add(endMarker)
             }
-            val boundingBox = BoundingBox.fromGeoPointsSafe(allPointsForBoundingBox)
+            boundingBox = BoundingBox.fromGeoPointsSafe(allPointsForBoundingBox)
 
-            map.zoomToBoundingBox(boundingBox, false)
-            if (boundingBox.diagonalLengthInMeters < 1000)
-                map.controller.setZoom(20.0)
+
+//            if (boundingBox.diagonalLengthInMeters < 1000)
+//                map.controller.setZoom(20.0)
             Log.d("MAP ZOOMLEVEL", map.zoomLevelDouble.toString())
 
             map.invalidate()
         }
+    }
+
+    fun takeMapSnapshot() {
+        //val mapSnapshot =
+        MapSnapshot(MapSnapshot.MapSnapshotable() {
+                                                  //TODO Do something with the snapshot
+        }, MapSnapshot.INCLUDE_FLAG_UPTODATE, map)
+
     }
 
     override fun onDestroy() {

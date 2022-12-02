@@ -11,12 +11,14 @@ import com.example.turapp.repository.trackingDb.entities.TrekLocations
         MyPoint::class,
         TrekLocations::class,
     ],
-    version = 5,
+    version = 6,
     autoMigrations = [AutoMigration(
         from = 4,
         to = 5,
-        spec = MyPointDB.Migration4To5::class
-    )
+        spec = MyPointDB.Migration4To5::class),
+        AutoMigration(
+            from = 5,
+            to = 6)
     ],
     exportSchema = true,
 )

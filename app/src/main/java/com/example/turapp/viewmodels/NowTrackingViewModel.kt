@@ -28,6 +28,9 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
     private val _distance = LocationService.distance
     val distance: LiveData<Float> get() = _distance
 
+    private val _totalAscent = LocationService.totalAscent
+    val totalAscent: LiveData<Float> get() = _totalAscent
+
     private val _hasStoppedService = MutableLiveData<Boolean>()
     val hasStoppedService: LiveData<Boolean> get() = _hasStoppedService
     fun resetFinishedSaving() {
@@ -57,6 +60,12 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
         }
         _distance.value?.let {
             companionDistance = it
+        }
+        _timer.value?.let {
+            companionTimeInHundreds = it
+        }
+        _totalAscent.value?.let {
+            companionTotalAscent = it
         }
         stopService()
         _hasStoppedService.value = true
@@ -93,17 +102,16 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
         private var companionTimeInHundreds: Long? = null
         private var companionSteps: Int? = null
         private var companionDistance: Float? = null
-        fun getTreck(): MutableList<MutableList<GeoPoint>>? {
-            return companionTreck
-        }
+        private var companionTotalAscent: Float? = null
+        fun getTreck(): MutableList<MutableList<GeoPoint>>? = companionTreck
 
-        fun getTimeInHundreds(): Long? {
-            return companionTimeInHundreds
-        }
+        fun getTimeInHundreds(): Long? = companionTimeInHundreds
 
-        fun getSteps(): Int? {
-            return companionSteps
-        }
+        fun getSteps(): Int? = companionSteps
+
+        fun getDistance(): Float? = companionDistance
+
+        fun getTotalAscent(): Float? = companionTotalAscent
     }
 
     override fun onCleared() {
@@ -112,6 +120,7 @@ class NowTrackingViewModel(private val app: Application) : ViewModel() {
         companionTimeInHundreds = null
         companionSteps = null
         companionDistance = null
+        companionTotalAscent = null
     }
 
     class Factory(private val app: Application) : ViewModelProvider.Factory {

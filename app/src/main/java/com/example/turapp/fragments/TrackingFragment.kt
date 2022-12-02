@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -35,7 +34,6 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
-import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -55,8 +53,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private lateinit var map: MapView // 3
 
     private lateinit var geoField : GeomagneticField
-
-    private lateinit var compass : CompassOverlay
 
     private var declination : Float = 0F
 
@@ -110,18 +106,18 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             map.setMultiTouchControls(true) //3
             map.setTileSource(TileSourceFactory.MAPNIK)
             map.controller.setZoom(18.0)
-            viewModel.startingPoint.observe(viewLifecycleOwner, Observer {
+            viewModel.startingPoint.observe(viewLifecycleOwner) {
                 if (it != null) {
                     map.controller.animateTo(it)
                     map.invalidate()
                 }
-            })
+            }
             val myMapEventsOverlay = MapEventsOverlay(getEventsReceiver())
             map.overlays.add(myMapEventsOverlay)
         }
         map.overlayManager.add(clMark)
 
-        viewModel.myPointList.observe(viewLifecycleOwner, Observer {
+        viewModel.myPointList.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 lifecycleScope.launch {
                     // REMOVE EXISTING MARKERS
@@ -154,10 +150,10 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     }
                 }
             }
-        })
+        }
 
         // Observe selected point
-        viewModel.selectedMarker.observe(viewLifecycleOwner, Observer {
+        viewModel.selectedMarker.observe(viewLifecycleOwner) {
             if (it != null) {
                 map.overlays.add(clearSelectedMarkerOverlay)
                 binding.selectedMarkerDialog.visibility = View.VISIBLE
@@ -165,32 +161,39 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 if (title.length > 30)
                     title = title.substring(0, 30) + "..."
                 binding.titleInputField.setText(title)
+                map.controller.animateTo(it.position)
             } else {
                 binding.selectedMarkerDialog.visibility = View.GONE
                 map.overlays.remove(clearSelectedMarkerOverlay)
             }
-        })
-        viewModel.distanceToTargetString.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.distanceToTargetString.observe(viewLifecycleOwner) {
             it?.let { distanceString ->
                 binding.distanceInputField.setText(distanceString)
             } ?: binding.distanceInputField.setText(getString(R.string.unknown))
-        })
+        }
+
+        viewModel.elevationString.observe(viewLifecycleOwner) {
+            it?.let { distanceString ->
+                binding.elevationInputField.setText(distanceString)
+            } ?: binding.elevationInputField.setText(getString(R.string.unknown))
+        }
 
         binding.btnSetAsTarget.addOnCheckedChangeListener { _, isChecked ->
             viewModel.setSelectedAsTargetMarker(isChecked)
         }
 
         // Observe if we have a target location
-        viewModel.selectedMarkerIsTarget.observe(viewLifecycleOwner, Observer {
+        viewModel.selectedMarkerIsTarget.observe(viewLifecycleOwner) {
             if (it == true) {
                 map.overlays.remove(clearSelectedMarkerOverlay)
             } else if (viewModel.selectedMarker.value != null) {
                 map.overlays.add(clearSelectedMarkerOverlay)
             }
-        })
+        }
         // TODO This can be done better with a simple point.
         //  Especially to put it on the bottom of overlays
-        viewModel.pathPointsToTarget.observe(viewLifecycleOwner, Observer {
+        viewModel.pathPointsToTarget.observe(viewLifecycleOwner) {
             if (it.size > 1) {
                 pathToTarget.setPoints(it)
                 map.overlays.add(pathToTarget)
@@ -198,7 +201,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 map.overlays.remove(pathToTarget)
                 map.invalidate()
             }
-        })
+        }
 
 //        compass = CompassOverlay(
 //            requireContext(),
@@ -226,14 +229,14 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         viewModel.currentPosition.value?.let {
             map.controller.animateTo(it)
 
-//            geoField = GeomagneticField(
-//                it.latitude.toFloat(),
-//                it.longitude.toFloat(),
-//                it.altitude.toFloat(),
-//                System.currentTimeMillis()
-//            )
-//
-//            declination = geoField.declination
+            geoField = GeomagneticField(
+                it.latitude.toFloat(),
+                it.longitude.toFloat(),
+                it.altitude.toFloat(),
+                System.currentTimeMillis()
+            )
+
+            declination = geoField.declination //deviation from true north
         }
 
         val sharedPrefs = activity?.getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
@@ -242,23 +245,12 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         orientationProvider.startOrientationProvider { orientation, source ->
 
             //Log.d("Declination",declination.toString())
-            clMark.rotation = -orientation //- declination
+            clMark.rotation = -orientation + declination
             map.invalidate()
         }
-        viewModel.currentPosition.observe(viewLifecycleOwner, Observer { curPos ->
-
-            //compute the magnetic declination from true north
-            geoField = GeomagneticField(
-                curPos.latitude.toFloat(),
-                curPos.longitude.toFloat(),
-                curPos.altitude.toFloat(),
-                System.currentTimeMillis()
-            )
-
-            declination = geoField.declination
-
+        viewModel.currentPosition.observe(viewLifecycleOwner) { curPos ->
             clMark.position = curPos
-        })
+        }
     }
 
     override fun onDestroy() {
@@ -396,8 +388,11 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private fun getClearSelectedMarkerEventsReceiver(): MapEventsReceiver {
         return object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(geoPoint: GeoPoint): Boolean {
-                if (!binding.btnSetAsTarget.isChecked)
+                if (!binding.btnSetAsTarget.isChecked) {
+                    val temp = map.mapCenter
                     viewModel.clearSelectedMarker()
+                    map.controller.setCenter(temp)
+                }
                 return true
             }
 

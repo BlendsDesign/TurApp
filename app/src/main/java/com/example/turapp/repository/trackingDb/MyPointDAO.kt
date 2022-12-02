@@ -26,7 +26,7 @@ interface MyPointDAO {
 
     @Transaction
     @Query("SELECT * FROM my_point WHERE createdAt >= :startDate AND createdAt <= :endDate ORDER BY createdAt DESC")
-    fun getMyPointByWeeks(startDate: Long, endDate: Long): Flow<List<MyPoint>>
+    fun getMyPointByTimeInterval(startDate: Long, endDate: Long): Flow<List<MyPoint>>
 
     @Query("""
         SELECT
