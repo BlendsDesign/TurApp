@@ -64,6 +64,7 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             _selectedMarker.value = marker
             _currentPosition.value?.let {
                 setDistanceToTargetString(it)
+                setElevationToTargetString(it)
             }
         }
     }
