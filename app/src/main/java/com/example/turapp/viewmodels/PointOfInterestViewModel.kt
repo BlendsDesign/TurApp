@@ -1,7 +1,6 @@
 package com.example.turapp.viewmodels
 
 import android.app.Application
-import android.net.Uri
 import androidx.lifecycle.*
 import com.example.turapp.repository.trackingDb.entities.MyPoint
 import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
@@ -33,6 +32,7 @@ class PointOfInterestViewModel(app: Application, private val id: Long, val typeA
     val finishedDeleting: LiveData<Boolean> get() = _finishedDeleting
 
     fun deletePoi() {
+        //TODO Delete image as well
         _loadingImage.value = true
         viewModelScope.launch {
             myPoint.value?.let {

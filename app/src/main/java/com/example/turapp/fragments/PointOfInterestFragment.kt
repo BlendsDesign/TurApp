@@ -86,6 +86,7 @@ class PointOfInterestFragment : Fragment() {
 
         viewModel.myPoint.observe(viewLifecycleOwner) {
             if (it != null) {
+                Toast.makeText(requireContext(), it.totalAscent.toString(), Toast.LENGTH_SHORT).show()
                 //Set up POI textviews
                 Toast.makeText(requireContext(), "${it.location?.altitude}", Toast.LENGTH_SHORT)
                     .show()

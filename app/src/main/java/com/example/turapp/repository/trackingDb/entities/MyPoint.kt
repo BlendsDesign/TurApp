@@ -16,7 +16,8 @@ data class MyPoint(
     var distanceInMeters: Float? = null,
     var timeTaken: Long? = null,
     var steps: Long? = null,
-    var hasAdditionalData: Boolean = false
+    var hasAdditionalData: Boolean = false,
+    var totalAscent: Float? = null
 ) {
     @PrimaryKey(autoGenerate = true)
     var pointId: Long? = null

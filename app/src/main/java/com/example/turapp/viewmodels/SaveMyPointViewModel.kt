@@ -32,6 +32,7 @@ class SaveMyPointViewModel(private val app: Application, val typeArgument: Strin
     private var _timeOfTrekInMillis: Long? = null
     private var _distanceOfTrek: Float? = null
     private var _steps: Int? = null
+    private var _totalAscent : Float? = null
 
     init {
         if (typeArgument == TYPE_TRACKING) {
@@ -41,8 +42,8 @@ class SaveMyPointViewModel(private val app: Application, val typeArgument: Strin
                     _timeOfTrekInMillis = it * 10
                 }
                 _distanceOfTrek = getDistance()
-
                 _steps = getSteps()
+                _totalAscent = getTotalAscent()
             }
             if (tempTracked != null) {
                 _trackedLocations.value = tempTracked!!
@@ -69,7 +70,8 @@ class SaveMyPointViewModel(private val app: Application, val typeArgument: Strin
                 timeTaken = _timeOfTrekInMillis,
                 location = marker?.position,
                 distanceInMeters = _distanceOfTrek,
-                steps = _steps?.toLong()
+                steps = _steps?.toLong(),
+                totalAscent = _totalAscent
             )
             var geoList: MutableList<MutableList<GeoPoint>>? = null
             if (typeArgument == TYPE_TRACKING) {
