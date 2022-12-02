@@ -63,9 +63,7 @@ class SettingActivity : AppCompatActivity() {
             viewModel.saveLimit()
             finish()
         }
-
-
-
+        
         binding.switchDarkmode.apply {
             isChecked = viewModel.isNightMode.value ?: isUsingNightModeResources()
             //switch.isChecked = isUsingNightModeResources()
