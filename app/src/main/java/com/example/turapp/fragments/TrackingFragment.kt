@@ -361,7 +361,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private fun getEventsReceiver(): MapEventsReceiver {
         return object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(geoPoint: GeoPoint): Boolean {
-                if (viewModel.addingCustomMarker.value == true) {
+                if (map.isLayoutOccurred && viewModel.addingCustomMarker.value == true) {
                     viewModel.setAddingCustomMarker(false)
                     binding.btnAddPoint.isChecked = false
                     findNavController().navigate(
