@@ -57,7 +57,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private var declination: Float = 0F
 
     private val pathToTarget = Polyline().apply {
-        color = Color.CYAN
+        color = Color.BLUE
     }
 
     private lateinit var clMark: Marker
@@ -100,6 +100,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             icon = getDrawable(requireContext(), R.drawable.ic_my_location_arrow)
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         }
+        map.overlays.add(pathToTarget)
         map.overlays.add(clMark)
         lifecycleScope.launchWhenCreated {
             map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
@@ -193,13 +194,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         // TODO This can be done better with a simple point.
         //  Especially to put it on the bottom of overlays
         viewModel.pathPointsToTarget.observe(viewLifecycleOwner) {
-            if (it.size > 1) {
-                pathToTarget.setPoints(it)
-                map.overlays.add(pathToTarget)
-            } else {
-                map.overlays.remove(pathToTarget)
-                map.invalidate()
-            }
+            pathToTarget.setPoints(it)
+            map.invalidate()
+
         }
 
 //        compass = CompassOverlay(
