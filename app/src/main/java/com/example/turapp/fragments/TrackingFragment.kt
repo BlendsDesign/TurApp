@@ -1,7 +1,9 @@
 package com.example.turapp.fragments
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.hardware.GeomagneticField
@@ -88,7 +90,13 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         setUpBottomNavTrackingFragmentButtons()
 
         binding.fabTrackingHelp.setOnClickListener {
-            //TODO Add an alertdialog for this
+            val alertDialog = AlertDialog.Builder(requireContext()).create()
+            alertDialog.setTitle("Help")
+            alertDialog.setMessage(getString(R.string.help_text))
+            alertDialog.setButton(
+                AlertDialog.BUTTON_NEUTRAL, "OK"
+            ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+            alertDialog.show()
         }
 
         // Set up Map handling
@@ -251,7 +259,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             action = LocationService.ACTION_STOP
             context?.startService(this)
         }
-        map.onDetach()
+        if (::map.isInitialized) {
+            map.onDetach()
+        }
     }
 
 

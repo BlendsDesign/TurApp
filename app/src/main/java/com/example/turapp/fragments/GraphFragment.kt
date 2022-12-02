@@ -2,6 +2,7 @@ package com.example.turapp.fragments
 
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,29 +10,25 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import android.widget.CheckBox
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentGraphBinding
 import com.example.turapp.repository.trackingDb.entities.MyPointWeek
+import com.example.turapp.utils.helperFiles.GraphValueFormatter
 import com.example.turapp.viewmodels.GraphViewModel
-import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.formatter.ValueFormatter
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
+import com.github.mikephil.charting.utils.MPPointF
 
 class GraphFragment : Fragment() {
 
-    enum class Metrics {
-        STEPS,
-        DISTANCE,
-        TIME_TAKEN
+    enum class Metrics(val text: String) {
+        STEPS("Steps"),
+        DISTANCE("Distance"),
+        TIME_TAKEN("Time Taken")
     }
 
     private val viewModel: GraphViewModel by lazy {
@@ -86,24 +83,27 @@ class GraphFragment : Fragment() {
         // set-up metrics options
         binding.spinnerMetrics.adapter = MetricsAdapter()
 
-        // listen to metrics changes
-        (binding.spinnerMetrics.adapter as MetricsAdapter).setOnCheckChangedListener(
-            object: OnCheckChangedListener {
-                override fun onCheckChanged(metric: Metrics, checked: Boolean) {
-                    when (metric) {
-                        Metrics.STEPS -> {
-                            viewModel.showSteps.value = checked
-                        }
-                        Metrics.DISTANCE -> {
-                            viewModel.showDistance.value = checked
-                        }
-                        Metrics.TIME_TAKEN -> {
-                            viewModel.showTimeTaken.value = checked
-                        }
-                    }
-                }
-            }
+        val graphViews = listOf(
+            binding.graphSteps,
+            binding.graphDistance,
+            binding.graphTime,
         )
+
+        // listen to metrics visibility changes
+        binding.spinnerMetrics.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long,
+            ) {
+                graphViews.forEachIndexed { index, graph -> graph.isVisible = position == index  }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
 
         // listen to new my points data and display it
         viewModel.rawData.observe(viewLifecycleOwner) {
@@ -111,40 +111,110 @@ class GraphFragment : Fragment() {
                 return@observe
             }
             binding.graphSteps.apply {
-                data = viewModel.getBarData()
-                groupBars(0f, 0.1f, 0.0f)
+                data = viewModel.getStepsData()
                 xAxis.apply {
                     axisMaximum = data.dataSetCount.toFloat() * 3
-                    valueFormatter = object: ValueFormatter() {
-                        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-                            if (value.toInt().toFloat() != value) {
-                                return ""
-                            }
-                            return it.getOrNull(value.toInt())
-                                ?.createdAt?.let { date ->
-                                    DateTimeFormatter.ofPattern("dd/MMM").format(
-                                        ZonedDateTime.ofInstant(Date(date).toInstant(), ZoneId.systemDefault()))
-                                } ?: ""
-                        }
-                    }
+                    valueFormatter = GraphValueFormatter(it)
                     setCenterAxisLabels(true)
                     position = XAxis.XAxisPosition.BOTTOM
                     setDrawGridLines(false)
                 }
                 axisLeft.apply { setDrawGridLines(false) }
                 axisRight.isEnabled = false
+                description = Description().apply {
+                    text = "X-axis: Date\nY-axis: Steps"
+                    setPosition(300f, 30f)
+                    textAlign = Paint.Align.CENTER
+                }
                 when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                     Configuration.UI_MODE_NIGHT_YES -> {
                         xAxis.textColor = Color.WHITE
                         axisLeft.textColor = Color.WHITE
+                        data.dataSets.forEach { dataSet -> dataSet.valueTextColor = Color.WHITE}
+                        legend.textColor = Color.WHITE
+                        description.textColor = Color.WHITE
                     }
                     else -> {
                         xAxis.textColor = Color.BLACK
                         axisLeft.textColor = Color.BLACK
+                        data.dataSets.forEach { dataSet -> dataSet.valueTextColor = Color.BLACK}
+                        legend.textColor = Color.BLACK
+                        description.textColor = Color.BLACK
                     }
 
                 }
-                description = Description().apply { isEnabled = false }
+                invalidate()
+            }
+            binding.graphDistance.apply {
+                data = viewModel.getDistanceData()
+                xAxis.apply {
+                    axisMaximum = data.dataSetCount.toFloat() * 3
+                    valueFormatter = GraphValueFormatter(it)
+                    setCenterAxisLabels(true)
+                    position = XAxis.XAxisPosition.BOTTOM
+                    setDrawGridLines(false)
+                }
+                axisLeft.apply {
+                    setDrawGridLines(false)
+                }
+                axisRight.isEnabled = false
+                description = Description().apply {
+                    text = "X-axis: Date\nY-axis: Distance (in meters)"
+                    setPosition(300f, 30f)
+                    textAlign = Paint.Align.CENTER
+                }
+                when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                    Configuration.UI_MODE_NIGHT_YES -> {
+                        xAxis.textColor = Color.WHITE
+                        axisLeft.textColor = Color.WHITE
+                        data.dataSets.forEach { dataSet -> dataSet.valueTextColor = Color.WHITE}
+                        legend.textColor = Color.WHITE
+                        description.textColor = Color.WHITE
+                    }
+                    else -> {
+                        xAxis.textColor = Color.BLACK
+                        axisLeft.textColor = Color.BLACK
+                        data.dataSets.forEach { dataSet -> dataSet.valueTextColor = Color.BLACK}
+                        legend.textColor = Color.BLACK
+                        description.textColor = Color.BLACK
+                    }
+
+                }
+                invalidate()
+            }
+            binding.graphTime.apply {
+                data = viewModel.getTimeData()
+                xAxis.apply {
+                    axisMaximum = data.dataSetCount.toFloat() * 3
+                    valueFormatter = GraphValueFormatter(it)
+                    setCenterAxisLabels(true)
+                    position = XAxis.XAxisPosition.BOTTOM
+                    setDrawGridLines(false)
+                }
+                axisLeft.apply { setDrawGridLines(false) }
+                axisRight.isEnabled = false
+                description = Description().apply {
+                    text = "X-axis: Date\nY-axis: Time Taken (in minutes)"
+                    setPosition(300f, 30f)
+                    textAlign = Paint.Align.CENTER
+                }
+                when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                    Configuration.UI_MODE_NIGHT_YES -> {
+                        xAxis.textColor = Color.WHITE
+                        axisLeft.textColor = Color.WHITE
+                        data.dataSets.forEach { dataSet -> dataSet.valueTextColor = Color.WHITE}
+                        legend.textColor = Color.WHITE
+                        description.textColor = Color.WHITE
+                    }
+                    else -> {
+                        xAxis.textColor = Color.BLACK
+                        axisLeft.textColor = Color.BLACK
+                        data.dataSets.forEach { dataSet -> dataSet.valueTextColor = Color.BLACK}
+                        legend.textColor = Color.BLACK
+                        description.textColor = Color.BLACK
+                    }
+
+                }
                 invalidate()
             }
         }
@@ -168,54 +238,25 @@ class GraphFragment : Fragment() {
             getView(position, convertView, parent)
     }
 
-    inner class MetricsAdapter: ArrayAdapter<Pair<Metrics, Boolean>>(
+    inner class MetricsAdapter: ArrayAdapter<String>(
         requireContext(),
         android.R.layout.simple_list_item_1,
         android.R.id.text1
     ) {
 
-        private var onCheckChangedListener: OnCheckChangedListener? = null
-
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = convertView ?: layoutInflater.inflate(
-                R.layout.item_metric_checkable, parent,false).also {
-                it.findViewById<CheckBox>(R.id.check1).apply {
-                    getItem(position).let { item ->
-                        isChecked = item.second
-                        setOnCheckedChangeListener { _, isChecked ->
-                            onCheckChangedListener?.onCheckChanged(item.first, isChecked)
-                        }
-                    }
-                }
-            }
-            view.findViewById<TextView>(R.id.text1).apply {
-                getItem(position).let { item ->
-                    text = item.first.toString()
-                }
-            }
+                android.R.layout.simple_list_item_1, parent,false)
+            view.findViewById<TextView>(android.R.id.text1).text = getItem(position)
             return view
         }
 
-        override fun getItem(position: Int): Pair<Metrics, Boolean> {
-            return when (position) {
-                0 -> Pair(Metrics.STEPS, viewModel.showSteps.value ?: true)
-                1 -> Pair(Metrics.DISTANCE, viewModel.showDistance.value ?: true)
-                2 -> Pair(Metrics.TIME_TAKEN, viewModel.showTimeTaken.value ?: true)
-                else -> Pair(Metrics.STEPS, viewModel.showSteps.value ?: true)
-            }
-        }
+        override fun getItem(position: Int) = Metrics.values()[position].text
 
-        override fun getCount() = 3
-
-        fun setOnCheckChangedListener(onCheckChangedListener: OnCheckChangedListener) {
-            this.onCheckChangedListener = onCheckChangedListener
-        }
+        override fun getCount() = Metrics.values().size
 
         override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup) =
             getView(position, convertView, parent)
 
-    }
-    interface OnCheckChangedListener {
-        fun onCheckChanged(metric: Metrics, checked: Boolean)
     }
 }

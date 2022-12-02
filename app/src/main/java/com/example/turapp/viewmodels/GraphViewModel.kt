@@ -18,29 +18,17 @@ class GraphViewModel(app: Application) : ViewModel() {
 
     private val repository = MyPointRepository(app)
     val currentWeek: MutableLiveData<MyPointWeek> = MutableLiveData()
-    val showSteps = MutableLiveData(true)
-    val showDistance = MutableLiveData(true)
-    val showTimeTaken = MutableLiveData(true)
     private val channel = Channel<Unit>()
 
     init {
-        showSteps.observeForever(::update)
-        showDistance.observeForever(::update)
-        showTimeTaken.observeForever(::update)
         currentWeek.observeForever(::updateWeek)
     }
 
     override fun onCleared() {
         super.onCleared()
-        showSteps.removeObserver(::update)
-        showDistance.removeObserver(::update)
-        showTimeTaken.removeObserver(::update)
         currentWeek.removeObserver(::updateWeek)
     }
 
-    private fun update(@Suppress("UNUSED_PARAMETER") enabled: Boolean) {
-        viewModelScope.launch { channel.send(Unit) }
-    }
     private fun updateWeek(@Suppress("UNUSED_PARAMETER") week: MyPointWeek) {
         viewModelScope.launch { channel.send(Unit) }
     }
@@ -56,28 +44,26 @@ class GraphViewModel(app: Application) : ViewModel() {
 
     }
 
-    fun getBarData() = BarData(
-        listOf(
-            BarDataSet(rawData.value?.takeIf { showSteps.value == true }?.mapIndexed { i, it ->
-                BarEntry(i.toFloat(), it.steps?.toFloat() ?: 0f)
-            } ?: listOf(), "Steps").apply {
-                color = Color.RED
-            },
-            BarDataSet(rawData.value?.takeIf { showDistance.value == true }?.mapIndexed { i, it ->
-                BarEntry(i.toFloat(), it.distanceInMeters ?: 0f)
-            } ?: listOf(), "Distance").apply {
-                color = Color.BLUE
-            },
-            BarDataSet(rawData.value?.takeIf { showTimeTaken.value == true }?.mapIndexed { i, it ->
-                BarEntry(i.toFloat(), ((it.timeTaken?.toFloat() ?: 0f) / 1000) / 60)
-            } ?: listOf(), "Time taken").apply {
-                color = Color.GREEN
+    fun getStepsData() =
+        BarData(BarDataSet(rawData.value?.mapIndexed { i, it ->
+            BarEntry(i.toFloat(), it.steps?.toFloat() ?: 0f)
+        } ?: listOf(), "Steps").apply {
+            color = Color.RED
+        })
 
-            },
-        )
-    ).apply {
-        barWidth = 0.30f
-    }
+    fun getDistanceData() =
+        BarData(BarDataSet(rawData.value?.mapIndexed { i, it ->
+            BarEntry(i.toFloat(), it.distanceInMeters ?: 0f)
+        } ?: listOf(), "Distance").apply {
+            color = Color.BLUE
+        })
+
+    fun getTimeData() =
+        BarData(BarDataSet(rawData.value?.mapIndexed { i, it ->
+            BarEntry(i.toFloat(), ((it.timeTaken?.toFloat() ?: 0f) / 1000) / 60)
+        } ?: listOf(), "Time taken").apply {
+            color = Color.GREEN
+        })
 
 
     val weeks = liveData {
