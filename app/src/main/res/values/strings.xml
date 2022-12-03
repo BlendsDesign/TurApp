@@ -21,8 +21,8 @@
     <string name="about_app">About this app</string>
     <string name="info_text">As a digital nomad, you know that the key to traveling the world is being able to stay connected. And with your busy lifestyle, you don\'t have time to research long lists of travel apps. That\'s why we built the world\'s most comprehensive app for digital nomads. With our app, you can visit places with visual descriptions of the areas (POI – points of interest)\n\n When the user is near the area he/she can take up the camera and observe graphics with associated text related to the place.\n\n App has built in features such as menu to edit settings, language, theme etc.\n\nTemporary views for: MAP, CAMERA, GRAPH, INFORMATION\n\nRaw and filtered Sensor recording of accelerometer, gyroscope\n\nComputed orientation using accelerometer and magnetometer\n\nVisualization of the sensor data with orientation\nThis app was developed during a student project by a team (Team ID=6) of three members:\n\nMagnus Roald Ree  \nTore Bjerkan Tore Bjerkan\nSharmila Ratnasingam\n
 </string>
-    <string name="pause_run">Pause Run</string>
-    <string name="resume_tracking">Resume tracking</string>
+    <string name="pause_run">Pause</string>
+    <string name="resume_tracking">Resume</string>
     <string name="edit_pois">Edit POI\'s</string>
     <string name="change_poi_location_warning">Save POI\'s new location?</string>
     <string name="current_location">Current Location:</string>
@@ -59,4 +59,7 @@ is it possible to press \'here\' to center the map on the marker.</string>
     <string name="add_poi_help">Click on map to add a point there</string>
     <string name="go_to_ar_help">You must select a marker(poi) first!</string>
     <string name="missing_camera_permissions">You need to allow camerapermissions in Android Settings to use this feature</string>
+    <string name="distance_formatted_string">Distance: %.2f m</string>
+    <string name="steps_formatted_string">Steps: %d</string>
+    <string name="stop">Stop</string>
 </resources>

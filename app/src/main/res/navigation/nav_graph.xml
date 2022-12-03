@@ -110,6 +110,9 @@
         <action
             android:id="@+id/action_nowTrackingFragment_to_selfieFragment"
             app:destination="@id/selfieFragment" />
+        <action
+            android:id="@+id/action_nowTrackingFragment_to_saveMyPointFragment"
+            app:destination="@id/saveMyPointFragment" />
     </fragment>
     <fragment
         android:id="@+id/selfieFragment"

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -69,11 +68,11 @@ class NowTrackingFragment : Fragment() {
             map.setTileSource(TileSourceFactory.MAPNIK)
             map.overlays.add(clMark)
             map.controller.setZoom(18.0)
-            viewModel.currentLocation.observe(viewLifecycleOwner, Observer {
+            viewModel.currentLocation.observe(viewLifecycleOwner) {
                 clMark.position = GeoPoint(it)
                 map.controller.animateTo(clMark.position)
-            })
-            viewModel.tracked.observe(viewLifecycleOwner, Observer { outerList ->
+            }
+            viewModel.tracked.observe(viewLifecycleOwner) { outerList ->
                 if (outerList.isNotEmpty()) {
                     outerList.forEach { innerList ->
                         val poli = Polyline()
@@ -83,19 +82,19 @@ class NowTrackingFragment : Fragment() {
                         map.invalidate()
                     }
                 }
-            })
+            }
         }
 
-        viewModel.timer.observe(viewLifecycleOwner, Observer {
+        viewModel.timer.observe(viewLifecycleOwner) {
             binding.tvShowTimer.text = getFormattedTimerString(it)
-        })
+        }
 
-        viewModel.steps.observe(viewLifecycleOwner, Observer {
-            binding.tvShowSteps.text = "Steps: $it"
-        })
+        viewModel.steps.observe(viewLifecycleOwner) {
+            binding.tvShowSteps.text = getString(R.string.steps_formatted_string, it)
+        }
         viewModel.distance.observe(viewLifecycleOwner) {
             it?.let {
-                binding.tvShowDistance.text = String.format("Distance: %.2f m", it)
+                binding.tvShowDistance.text = getString(R.string.distance_formatted_string ,it)
             }
         }
 
@@ -103,13 +102,13 @@ class NowTrackingFragment : Fragment() {
             when(isChecked) {
                 true -> {
                     viewModel.pauseService()
-                    button.icon = resources.getDrawable(R.drawable.ic_play_arrow)
-                    button.text = "Resume"
+                    button.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_play_arrow)
+                    button.text = getString(R.string.resume_tracking)
                 }
                 false -> {
                     viewModel.resumeService()
-                    button.icon = resources.getDrawable(R.drawable.ic_pause)
-                    button.text = "Pause"
+                    button.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_pause)
+                    button.text = getString(R.string.pause_run)
                 }
             }
         }
@@ -117,29 +116,35 @@ class NowTrackingFragment : Fragment() {
             when(isChecked) {
                 true -> {
                     viewModel.saveTreck()
-                    findNavController().navigate(
-                        NowTrackingFragmentDirections.actionNowTrackingFragmentToSelfieFragment(TYPE_TRACKING)
-                    )
-                    button.apply {
-                        text = "Restart Service"
-                        icon = resources.getDrawable(R.drawable.ic_play_arrow)
+                    if (PermissionCheckUtility.hasCameraPermissions(requireContext())) {
+                        findNavController().navigate(
+                            NowTrackingFragmentDirections.actionNowTrackingFragmentToSelfieFragment(
+                                TYPE_TRACKING
+                            )
+                        )
+                    } else {
+                        findNavController().navigate(
+                            NowTrackingFragmentDirections.actionNowTrackingFragmentToSaveMyPointFragment(
+                                TYPE_TRACKING, null, null
+                            )
+                        )
                     }
                 }
                 false -> {
                     viewModel.resumeService()
                     button.apply {
-                        text = "Stop"
-                        icon = resources.getDrawable(R.drawable.ic_stop)
+                        text = getString(R.string.stop)
+                        icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_stop)
                     }
                 }
             }
         }
 
-        viewModel.hasStoppedService.observe(viewLifecycleOwner, Observer {
+        viewModel.hasStoppedService.observe(viewLifecycleOwner) {
             if(it == true) {
                 viewModel.resetFinishedSaving()
             }
-        })
+        }
 
         // Inflate the layout for this fragment
         return binding.root

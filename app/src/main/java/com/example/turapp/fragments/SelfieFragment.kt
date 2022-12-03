@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.view.PreviewView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
@@ -51,12 +50,9 @@ class SelfieFragment : Fragment() {
                 this, SelfieViewModel.Factory(app, typeArgument)
             )[SelfieViewModel::class.java]
         }
-
-        requestPermissions()
         if (!PermissionCheckUtility.hasCameraPermissions(requireContext())) {
             Toast.makeText(requireContext(), getString(R.string.missing_camera_permissions), Toast.LENGTH_SHORT)
                 .show()
-
             if (viewModel.typeArgument == TYPE_TRACKING) {
                 findNavController().navigate(
                     SelfieFragmentDirections.actionSelfieFragmentToSaveMyPointFragment(
