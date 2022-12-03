@@ -331,4 +331,10 @@ class PointOfInterestFragment : Fragment() {
         val format = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
         return format.format(date)
     }
+
+    private suspend fun getTrekAltitudes(outerList: MutableList<MutableList<GeoPoint>>) {
+        lifecycleScope.launch {
+
+        }
+    }
 }
