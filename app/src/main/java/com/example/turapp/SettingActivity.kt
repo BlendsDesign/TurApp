@@ -7,11 +7,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.SeekBar
+import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
@@ -44,7 +41,8 @@ class SettingActivity : AppCompatActivity() {
 
         viewModel.limit.value?.let {
             binding.sbSeekBar.progress = it
-        }
+            binding.sbSeekBar.min = 1 //0 doesn't make sense since it shows all stored points
+         }
 
         binding.sbSeekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -56,16 +54,18 @@ class SettingActivity : AppCompatActivity() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
+                Toast.makeText( //important to give feedback on how many points are showing
+                    this@SettingActivity,
+                    seekBar.progress.toString(), Toast.LENGTH_SHORT
+                ).show()
             }
         })
 
-        binding.btnApplyLimit.setOnClickListener {
-            viewModel.saveLimit()
-            finish()
-        }
-
-
-
+//        binding.btnApplyLimit.setOnClickListener {
+//            viewModel.saveLimit()
+//            finish()
+//        }
+        
         binding.switchDarkmode.apply {
             isChecked = viewModel.isNightMode.value ?: isUsingNightModeResources()
             //switch.isChecked = isUsingNightModeResources()
@@ -82,21 +82,31 @@ class SettingActivity : AppCompatActivity() {
 
         setSpinner(binding.spLanguages,listOf("English","Norwegian"))
 
-        btnApplyLanguage.setOnClickListener {
+//        btnApplyLanguage.setOnClickListener {
+//            val language = binding.spLanguages.selectedItem.toString()
+//            if (language == "English"){
+//                setAppLocale("en")
+//            }else{
+//                setAppLocale("no")
+//            }
+//        }
+//
+//        binding.btnCancel.setOnClickListener { finish() }
+
+        binding.btnApplyChanges.setOnClickListener{
+            viewModel.saveLimit()
             val language = binding.spLanguages.selectedItem.toString()
             if (language == "English"){
                 setAppLocale("en")
             }else{
                 setAppLocale("no")
             }
+            finish()
         }
-
-        binding.btnCancel.setOnClickListener { finish() }
-
 
     }
 
-    fun setSpinner(spinner: Spinner, spinnerList : List<String>) {
+    private fun setSpinner(spinner: Spinner, spinnerList : List<String>) {
         val adapter = object :
             ArrayAdapter<Any>(
                 this,android.R.layout.simple_list_item_1,android.R.id.text1,
@@ -129,7 +139,7 @@ class SettingActivity : AppCompatActivity() {
         }
     }
 
-    fun setAppLocale(language : String) {
+    private fun setAppLocale(language : String) {
         localeHelper.setLocale(language)
     }
 

@@ -32,8 +32,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //setSupportActionBar(findViewById(R.id.turToolbar))
-        //setContentView(R.layout.activity_main)
 
         checkPrefs()
         navController = findViewById<View?>(R.id.navHostFragment).findNavController()
@@ -54,10 +52,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-        //val myToolbar = findViewById<View>(R.id.turToolbar) as Toolbar
         setSupportActionBar(binding.turToolbar)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

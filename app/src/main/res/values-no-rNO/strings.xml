@@ -1,7 +1,6 @@
 <resources>
-    <string name="app_name">TurApp</string>
+    <string name="app_name">Sweat Proof</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="settings">Innstillinger</string>
     <string name="help">Hjelp</string>
     <string name="info">Info</string>
@@ -43,4 +42,21 @@
     <string name="help_text">Her får brukeren muligheten til å spore egen aktivitet. Ved å trykke start begynner appen å spore bevegelsene.
 Appen tegner en linje langs stien der brukeren forflytter seg. I tilfelle markøren til brukeren ikke er synlig,
 er det mulig å trykke \'here\' for sentrere kartet på markøren.</string>
+    <string name="map">Kart</string>
+    <string name="camera">Kamera</string>
+    <string name="statistics">Statistikk</string>
+    <string name="permissions_rationale">Dette er de tillatelsene vi anbefaler for å gi deg den beste opplevelsen med vår app</string>
+    <string name="list">Liste</string>
+    <string name="title">Tittel</string>
+    <string name="distance">Distanse</string>
+    <string name="elevation">Høyde</string>
+    <string name="help_info">Hjelp</string>
+    <string name="open">gå til</string>
+    <string name="see_in_ar">Se i AR</string>
+    <string name="target">sett mål</string>
+    <string name="start">Start</string>
+    <string name="add_poi">Legg til POI</string>
+    <string name="here">her</string>
+    <string name="add_poi_help">Klikk på kartet for å legge til POI der</string>
+    <string name="go_to_ar_help">Du må velge en markør(poi) først!</string>
 </resources>

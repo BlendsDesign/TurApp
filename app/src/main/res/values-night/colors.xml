@@ -11,7 +11,7 @@
     <color name="theme_blue">#2E3192</color>
     <color name="transparent_theme_blue">#E62E3192</color>
     <color name="darker_gray">#E62E3192</color>
-
+    <color name="red">#D30048</color>
     <color name="textColorBlack">@color/white</color>
 
 
