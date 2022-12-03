@@ -63,4 +63,5 @@ er det mulig å trykke \'here\' for sentrere kartet på markøren.</string>
     <string name="distance_formatted_string">Distanse: %.2f m</string>
     <string name="steps_formatted_string">Steg: %d</string>
     <string name="stop">Stopp</string>
+    <string name="CreditPage">Credit page showing name and product idea</string>
 </resources>

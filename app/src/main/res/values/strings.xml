@@ -62,4 +62,6 @@ is it possible to press \'here\' to center the map on the marker.</string>
     <string name="distance_formatted_string">Distance: %.2f m</string>
     <string name="steps_formatted_string">Steps: %d</string>
     <string name="stop">Stop</string>
+    <string name="CreditPage">Credit page showing name and product idea</string>
+    <string name="ok">OK</string>
 </resources>

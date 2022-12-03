@@ -82,4 +82,12 @@
         <item name="android:background">@color/theme_orange</item>
         <item name="android:textColor">@color/theme_blue</item>
     </style>
+<!--    https://stackoverflow.com/questions/42187110/how-to-remove-extra-space-from-alert-dialog-in-android-->
+    <style name="MyInfoTheme" parent="Theme.AppCompat.Light.Dialog.Alert">>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
 </resources>

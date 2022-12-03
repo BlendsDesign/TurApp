@@ -9,10 +9,12 @@ import android.graphics.Color
 import android.hardware.GeomagneticField
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.fragment.app.Fragment
@@ -98,15 +100,54 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding = FragmentTrackingBinding.inflate(inflater)
         setUpBottomNavTrackingFragmentButtons()
 
+        //courtesy of https://stackoverflow.com/questions/6276501/how-to-put-an-image-in-an-alertdialog-android
+//        binding.fabTrackingHelp.setOnClickListener {
+//            val image = ImageView(requireContext())
+//            val alertDialog = AlertDialog.Builder(requireContext()).create()
+//            image.setImageResource(R.drawable.ic_my_location_arrow)
+//            alertDialog.setTitle("Help")
+//            alertDialog.setMessage(getString(R.string.help_text))
+//            alertDialog.setButton(
+//                AlertDialog.BUTTON_NEUTRAL, "OK"
+//            ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+//            alertDialog.setView(image)
+//            alertDialog.show()
+//        }
+
         binding.fabTrackingHelp.setOnClickListener {
-            val alertDialog = AlertDialog.Builder(requireContext()).create()
+            val alertDialog = AlertDialog.Builder(context).create()
+            val imageView = ImageView(requireContext())
+            val linearLayout = LinearLayout(context)
+            val textView1 = TextView(context)
+            val textView2 = TextView(context)
+            linearLayout.orientation = LinearLayout.VERTICAL;
+            imageView.setImageResource(R.drawable.ic_my_location_arrow)
+
+
+            textView1.setText(R.string.help_text)
+            textView1.setText(R.string.help_text)
+            linearLayout.addView(textView1);
+            linearLayout.addView(imageView);
+            linearLayout.addView(textView2);
+
             alertDialog.setTitle("Help")
             alertDialog.setMessage(getString(R.string.help_text))
             alertDialog.setButton(
                 AlertDialog.BUTTON_NEUTRAL, "OK"
             ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+            alertDialog.setView(linearLayout)
             alertDialog.show()
         }
+
+//        binding.fabTrackingHelp.setOnClickListener {
+//            val alertDialog = AlertDialog.Builder(requireContext()).create()
+//            alertDialog.setTitle("Help")
+//            alertDialog.setMessage(getString(R.string.help_text))
+//            alertDialog.setButton(
+//                AlertDialog.BUTTON_NEUTRAL, "OK"
+//            ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+//            alertDialog.show()
+//        }
 
 
         // Set up Map handling
