@@ -4,6 +4,7 @@ import android.app.Application
 import android.location.Location
 import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.example.turapp.R
 import com.example.turapp.repository.trackingDb.entities.MyPoint
@@ -58,8 +59,7 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     }
     fun setSelectedMarker(marker: Marker) {
         if (_selectedMarkerIsTarget.value != true) {
-            marker.icon =
-                AppCompatResources.getDrawable(app.applicationContext, R.drawable.ic_marker_blue)
+            marker.icon.setTint(ContextCompat.getColor(app.applicationContext, R.color.theme_blue))
             _selectedMarker.value = marker
             _currentPosition.value?.let {
                 setDistanceToTargetString(it)
@@ -74,26 +74,17 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
 
         _selectedMarker.value?.let {
             if (isChecked) {
-                it.icon = AppCompatResources.getDrawable(
-                    app.applicationContext,
-                    R.drawable.ic_marker_red
-                )
+                it.icon.setTint(ContextCompat.getColor(app.applicationContext, R.color.red))
                 updatePathPointsToTarget()
             } else {
-                it.icon = AppCompatResources.getDrawable(
-                    app.applicationContext,
-                    R.drawable.ic_marker_blue
-                )
+                it.icon.setTint(ContextCompat.getColor(app.applicationContext, R.color.theme_blue))
             }
         }
     }
 
     fun clearSelectedMarker() {
         if (_selectedMarker.value != null) {
-            _selectedMarker.value?.icon = AppCompatResources.getDrawable(
-                app.applicationContext,
-                R.drawable.ic_marker_orange
-            )
+            _selectedMarker.value?.icon?.setTint(ContextCompat.getColor(app.applicationContext, R.color.theme_orange))
             _selectedMarker.value = null
             _distanceToTargetString.value = null
             _elevationString.value = null
