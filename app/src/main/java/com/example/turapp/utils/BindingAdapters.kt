@@ -1,14 +1,9 @@
 package com.example.turapp.utils
 
-import android.app.Application
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.LiveData
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.turapp.R
@@ -16,8 +11,6 @@ import com.example.turapp.repository.trackingDb.entities.MyPoint
 import com.example.turapp.repository.trackingDb.entities.TYPE_POI
 import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
 import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
-import com.example.turapp.utils.RecyclerViewAdapters.MyPointListAdapter
-import kotlin.coroutines.coroutineContext
 
 @BindingAdapter("loadImage")
 fun bindImage(imageView: ImageView, imageUrl: String?) {
@@ -76,21 +69,6 @@ fun bindSelfieUriImage(imageView: ImageView, imageUrl: Uri?) {
     }
 }
 
-@BindingAdapter("listShowImage")
-fun bindListUriImage(imageView: ImageView, imageString: String?) {
-    if (imageString == null) {
-        imageView.visibility = View.GONE
-    }
-    imageString?.let {
-        val imageUri = Uri.parse(it)
-        Glide.with(imageView.context).load(imageUri).apply(
-            RequestOptions()
-                .error(R.drawable.ic_baseline_broken_image)
-        ).into(imageView).view.apply {
-        }
-    }
-    imageView.visibility = View.VISIBLE
-}
 
 @BindingAdapter("setListAdapterIcon")
 fun bindImageView(view: ImageView, myPoint: MyPoint?) {

@@ -63,4 +63,16 @@ er det mulig å trykke \'here\' for sentrere kartet på markøren.</string>
     <string name="distance_formatted_string">Distanse: %.2f m</string>
     <string name="steps_formatted_string">Steg: %d</string>
     <string name="stop">Stopp</string>
+    <string name="no_snapshot_image">There is no image connected to this point!</string>
+    <string name="tracking_info_format_string">Du løp %.2f meter på %.2f sekund med en gjennomsnittshastighet på %.2f m/s</string>
+    <string name="image">image</string>
+    <string name="location">location</string>
+    <string name="the_image_connected_to_this_point">The Image connected to this point</string>
+    <string name="description">Description</string>
+    <string name="date">Date</string>
+    <string name="other_info">Other Info</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="back">Back</string>
+    <string name="loading">Loading</string>
 </resources>

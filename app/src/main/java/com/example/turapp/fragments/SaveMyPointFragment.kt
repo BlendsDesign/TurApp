@@ -32,6 +32,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import java.io.IOException
 import java.util.*
 
 class SaveMyPointFragment : Fragment() {
@@ -182,6 +183,8 @@ class SaveMyPointFragment : Fragment() {
             val ads = adrs!![0]
             return ads.getAddressLine(0)
         } catch (e: IndexOutOfBoundsException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
             e.printStackTrace()
         }
         return ""

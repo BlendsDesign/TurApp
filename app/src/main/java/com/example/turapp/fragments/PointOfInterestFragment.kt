@@ -2,6 +2,7 @@ package com.example.turapp.fragments
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -18,15 +20,17 @@ import com.example.turapp.R
 import com.example.turapp.viewmodels.PointOfInterestViewModel
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
 import com.example.turapp.repository.trackingDb.entities.*
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import java.io.IOException
-import java.sql.Timestamp
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -39,17 +43,23 @@ class PointOfInterestFragment : Fragment() {
 
     private lateinit var viewModel: PointOfInterestViewModel
 
+    private lateinit var marker: Marker
+
+    private var boundingBox: BoundingBox? = null
+
+    // TODO add altidude graf for trek
+    private val altitudeList = mutableListOf<Float>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val app = requireNotNull(activity).application
         arguments?.let {
             val id = it.getLong("id")
-            val type = it.getString("type")
-            if (id != 0L && type != null) {
+            if (id != 0L) {
                 viewModel = ViewModelProvider(
                     this,
-                    PointOfInterestViewModel.Factory(app, id, type)
+                    PointOfInterestViewModel.Factory(app, id)
                 )[PointOfInterestViewModel::class.java]
             } else
                 findNavController().popBackStack()
@@ -63,40 +73,137 @@ class PointOfInterestFragment : Fragment() {
         _binding = FragmentPointOfInterestBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+        map = binding.mapHolder
+        marker = Marker(map)
+        marker.isDraggable = false
+        map.overlays.add(marker)
+        lifecycleScope.launchWhenCreated {
+            map.setTileSource(TileSourceFactory.MAPNIK)
+            map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT) //3
+            map.apply {
+                setMultiTouchControls(true) //3
+                controller.setZoom(18.0)
+            }
+        }
+        binding.btnGrpImage.addOnCheckedChangeListener { button, isChecked ->
+            if (isChecked) {
+                binding.imgHolder.visibility = View.VISIBLE
+            } else {
+                binding.imgHolder.visibility = View.GONE
+            }
+        }
+        binding.btnGrpLocation.addOnCheckedChangeListener { button, isChecked ->
+            if (isChecked) {
+                binding.frameForMap.visibility = View.VISIBLE
+                map.addOnFirstLayoutListener { _, _, _, _, _ ->
+                    boundingBox?.let {
+                        map.zoomToBoundingBox(it.increaseByScale(1.2F), false)
+                        if (map.zoomLevelDouble > 20)
+                            map.controller.setZoom(20.0)
+                        Log.d("BOUNDINGBOX", map.zoomLevelDouble.toString())
+                    }
+                }
+
+
+            } else {
+                binding.frameForMap.visibility = View.GONE
+            }
+        }
 
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        viewModel.trek.observe(viewLifecycleOwner) { outerList ->
-            var maxHeight = 0.0
-            try {
-                outerList.trekList.forEach { innerList ->
-                    innerList.forEach {
-                        if (it.altitude > maxHeight)
-                            maxHeight = it.altitude
-                    }
-                }
-            } catch (e: java.lang.NullPointerException) {
-                e.printStackTrace()
+        viewModel.trek.observe(viewLifecycleOwner) {
+            it?.trekList?.let { outerlist ->
+                drawTrackedLocations(outerlist)
             }
-            Toast.makeText(requireContext(), "${maxHeight}", Toast.LENGTH_SHORT).show()
+
         }
 
 
-        viewModel.myPoint.observe(viewLifecycleOwner) {
-            if (it != null) {
-                Toast.makeText(requireContext(), it.totalAscent.toString(), Toast.LENGTH_SHORT).show()
-                //Set up POI textviews
-                Toast.makeText(requireContext(), "${it.location?.altitude}", Toast.LENGTH_SHORT)
-                    .show()
-                binding.apply {
-                    titleInputField.setText(it.title ?: " ")
-                    dateInputField.setText(
-                        String.format("${Date(Timestamp(it.createdAt).time)}")
-                    )
-                    descInputField.setText(it.description)
+        viewModel.myPoint.observe(viewLifecycleOwner) { myPoint ->
+            if (myPoint != null) {
+                myPoint.location?.let {
+                    marker.position = it
+                    map.controller.setCenter(it)
+                    marker.title = getLocationInformation(it)
+                    marker.setOnMarkerClickListener { marker, _ ->
+                        marker.showInfoWindow()
+                        true
+                    }
                 }
+                lifecycleScope.launch {
+                    binding.apply {
+                        titleInputField.setText(myPoint.title ?: " ")
+                        dateInputField.setText(convertLongToTime(myPoint.createdAt))
+                        if (myPoint.description.isNullOrBlank())
+                            descInputFieldHolder.visibility = View.GONE
+                        else
+                            descInputField.setText(myPoint.description)
+                    }
+                    when (myPoint.type) {
+                        TYPE_SNAPSHOT -> {
+                            binding.apply {
+                                if (!myPoint.image.isNullOrBlank()) {
+                                    btnGrpImage.isChecked = true
+                                    imgHolder.visibility = View.VISIBLE
+                                    frameForMap.visibility = View.GONE
+                                } else {
+                                    btnGrpImage.visibility = View.GONE
+                                    imgHolder.visibility = View.GONE
+                                    Toast.makeText(
+                                        requireContext(),
+                                        getString(R.string.no_snapshot_image), Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                            marker.apply {
+                                icon = ContextCompat.getDrawable(
+                                    requireContext(),
+                                    R.drawable.ic_image
+                                )
+                                icon.setTint(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.theme_blue
+                                    )
+                                )
+                                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                            }
+                            binding.loadingScreen.visibility = View.GONE
+                        }
+                        TYPE_POI -> {
+                            binding.apply {
+                                if (myPoint.location != null) {
+                                    marker.apply {
+                                        icon = ContextCompat.getDrawable(
+                                            requireContext(),
+                                            R.drawable.ic_marker_blue
+                                        )
+                                    }
+                                    btnGrpLocation.isChecked = true
+                                    frameForMap.visibility = View.VISIBLE
+                                } else {
+                                    btnGrpLocation.visibility = View.GONE
+                                    frameForMap.visibility = View.GONE
+                                }
+                                loadingScreen.visibility = View.GONE
+                            }
+                        }
+                        TYPE_TRACKING -> {
+                            marker.apply {
+                                icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_run_circle_blue)
+                                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                            }
+                            binding.otherInfoInputField.setText(getActivityInformationString(myPoint))
+                            binding.otherInfoInputFieldHolder.visibility = View.VISIBLE
+                        }
+                    }
+
+                }
+
+
                 binding.btnDeleteMyPointOrSaveEdits.setOnClickListener {
                     val alertDialog = AlertDialog.Builder(context).create()
                     if (viewModel.isInEditMode.value != true) {
@@ -107,6 +214,7 @@ class PointOfInterestFragment : Fragment() {
                         ) { dialog: DialogInterface, _: Int ->
                             Log.d("DELETE", "ALERTDIALOG")
                             viewModel.deletePoi()
+                            binding.loadingScreen.visibility = View.VISIBLE
                         }
                     } else {
                         alertDialog.setTitle("Are you sure you want to save these changes")
@@ -125,116 +233,68 @@ class PointOfInterestFragment : Fragment() {
                     }
                     alertDialog.show()
                 }
-                // Set up map
-                if (it.location != null)
-                    setUpMap()
-
-                if (it.type == TYPE_TRACKING)
-                    binding.otherInfoInputField.setText(getActivityInformationString(it))
             }
         }
 
 
-        viewModel.finishedDeleting.observe(viewLifecycleOwner) {
+        viewModel.finishedDeleting.observe(viewLifecycleOwner)
+        {
             if (it) {
                 findNavController().popBackStack()
             }
         }
-
         return binding.root
     }
 
-    private fun setUpMap(): Boolean {
-        Toast.makeText(requireContext(), "setUpMap() ran", Toast.LENGTH_SHORT).show()
-        val myPoint = viewModel.myPoint.value
-        if (myPoint?.location == null)
-            return false
+    private fun drawTrackedLocations(outerList: MutableList<MutableList<GeoPoint>>) {
         lifecycleScope.launch {
-            map = binding.mapHolder
-            map.setTileSource(TileSourceFactory.MAPNIK)
-            val geoPoints = mutableListOf<GeoPoint>()
-            val marker = Marker(map)
-            if (myPoint.type == TYPE_TRACKING) {
-//                val geoPointsForBoundingBox = mutableListOf<GeoPoint>()
-//                val endMarker = Marker(map)
-//                myPoint.geoData.forEach {
-//
-//                    // Use this to
-//                    geoPoints.add(it.geoPoint)
-//                    geoPointsForBoundingBox.add(it.geoPoint)
-//                    // Check if it is a starting or pause point
-//                    when (it.type) {
-//                        TRACKING_STARTING_POINT -> {
-//                            marker.apply {
-//                                icon = AppCompatResources.getDrawable(
-//                                    requireContext(),
-//                                    R.drawable.ic_marker_blue
-//                                )
-//                                position = geoPoints[0]
-//                                title = "Starting Point"
-//                                subDescription =
-//                                    getActivityInformationString(viewModel.myPoint.value?.point)
-//                                showInfoWindow()
-//                            }
-//                        }
-//                        TRACKING_END_POINT -> {
-//                            endMarker.apply {
-//                                icon = AppCompatResources.getDrawable(
-//                                    requireContext(),
-//                                    R.drawable.ic_marker_blue
-//                                )
-//                                position = geoPoints[0]
-//                                title = "Starting Point"
-//                                subDescription =
-//                                    getActivityInformationString(viewModel.myPoint.value?.point)
-//                                showInfoWindow()
-//                            }
-//                        }
-//                        TRACKING_PAUSE_POINT -> {
-//                            val poli = Polyline()
-//                            poli.color = Color.RED
-//                            geoPoints.forEach {
-//                                poli.addPoint(it)
-//                            }
-//                            map.overlays.add(poli)
-//                            geoPoints.clear()
-//                        }
-//                    }
-//                }
-//                map.overlays.add(endMarker)
-//                map.zoomToBoundingBox(
-//                    BoundingBox.fromGeoPointsSafe(geoPointsForBoundingBox),
-//                    true
-//                )
-            } else {
-                marker.apply {
-                    icon = if (myPoint.type == TYPE_POI) {
-                        AppCompatResources.getDrawable(
-                            requireContext(),
-                            R.drawable.ic_marker_blue
-                        )
-                    } else {
-                        AppCompatResources.getDrawable(
-                            requireContext(),
-                            R.drawable.ic_camera
-                        )
-                    }
-                    position = myPoint.location
-                    title = getLocationInformation(myPoint.location)
-                    showInfoWindow()
-                }
-                map.controller.apply {
-                    setZoom(18.0)
-                    animateTo(marker.position)
-                }
+            if (outerList.isEmpty() || outerList.first().isEmpty())
+                cancel("Empty or null list")
+
+            val startPoint = outerList.first().first()
+            var endPoint = startPoint
+            try {
+                endPoint = outerList.last().last()
+            } catch (e: java.lang.IndexOutOfBoundsException) {
+                e.printStackTrace()
             }
-            map.overlays.add(marker)
+
+            val allPointsForBoundingBox = mutableListOf<GeoPoint>()
+
+            // This draws the line or lines
+            outerList.forEach { innerList ->
+                allPointsForBoundingBox.addAll(innerList)
+                val poli = Polyline()
+                poli.color = Color.RED
+                poli.setPoints(innerList)
+                map.overlays.add(poli)
+                map.invalidate()
+
+            }
+            val endMarker = Marker(map)
+            endMarker.apply {
+                isDraggable = false
+                title = "End"
+                icon = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_marker_blue)
+                subDescription = getLocationInformation(endPoint)
+                showInfoWindow()
+                position = endPoint
+            }
+            if (endPoint.distanceToAsDouble(startPoint) < 3) {
+                endMarker.title = "Start/End"
+                endMarker.showInfoWindow()
+            }
+            map.overlays.apply {
+                add(marker)
+                add(endMarker)
+            }
+            binding.frameForMap.visibility = View.VISIBLE
+            binding.btnGrpLocation.isChecked = true
+            boundingBox = BoundingBox.fromGeoPointsSafe(allPointsForBoundingBox)
+
+            map.invalidate()
+            binding.loadingScreen.visibility = View.GONE
         }
-        binding.mapHolder.visibility = View.VISIBLE
-        binding.btnGrpLocation.visibility = View.VISIBLE
-
-
-        return true
     }
 
     private fun getLocationInformation(geoPoint: GeoPoint?): String {
@@ -246,6 +306,8 @@ class PointOfInterestFragment : Fragment() {
             return ads.getAddressLine(0)
         } catch (e: IOException) {
             e.printStackTrace()
+        } catch (e: IndexOutOfBoundsException){
+            e.printStackTrace()
         }
         return ""
     }
@@ -254,13 +316,19 @@ class PointOfInterestFragment : Fragment() {
         if (point == null)
             return ""
         val distance = point.distanceInMeters ?: 0f
-        val timeInSeconds = point.timeTaken?.div(10.0) ?: 1.0
+        val timeInSeconds = point.timeTaken?.div(1000.0) ?: 1.0
         val speed = distance.div(timeInSeconds)
         return String.format(
-            "You ran %.2f meters in %.2f seconds at a speed of %.2f m/s",
+            getString(R.string.tracking_info_format_string),
             distance,
             timeInSeconds,
             speed
         )
+    }
+
+    private fun convertLongToTime(time: Long): String {
+        val date = Date(time)
+        val format = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+        return format.format(date)
     }
 }

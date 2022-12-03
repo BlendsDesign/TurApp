@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentTrackingBinding
 import com.example.turapp.repository.trackingDb.entities.TYPE_POI
+import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
+import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
 import com.example.turapp.utils.helperFiles.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.turapp.utils.locationClient.LocationService
@@ -150,8 +153,19 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                                 position = it
                             }
                             title = point.title
-                            subDescription = ""
-                            icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
+                            when(point.type) {
+                                TYPE_POI -> icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
+                                TYPE_TRACKING -> {
+                                    icon = getDrawable(requireContext(), R.drawable.ic_run_circle_blue)
+                                    icon.setTint(ContextCompat.getColor(requireContext(), R.color.theme_orange))
+                                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                                }
+                                TYPE_SNAPSHOT -> {
+                                    icon = getDrawable(requireContext(), R.drawable.ic_image)
+                                    icon.setTint(ContextCompat.getColor(requireContext(), R.color.theme_orange))
+                                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                                }
+                            }
                             id = point.pointId.toString()
                             setOnMarkerClickListener { marker, _ ->
                                 if (!binding.btnSetAsTarget.isChecked) {
@@ -217,6 +231,24 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
+        binding.btnGoToMyPointPage.addOnCheckedChangeListener { button, isChecked ->
+            when(isChecked) {
+                true -> button.isChecked = false
+                else -> {}
+            }
+        }
+
+        binding.btnGoToMyPointPage.apply {
+            setOnClickListener {
+                viewModel.selectedMarker.value?.id?.let {
+                    findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToPointOfInterestFragment(it.toLong()))
+                }
+            }
+        }
+
+
+
+
 
         return binding.root
     }
