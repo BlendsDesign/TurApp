@@ -6,15 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.turapp.R
 import com.example.turapp.databinding.FragmentListBinding
-import com.example.turapp.utils.RecyclerViewAdapters.LocationAdapter
 import com.example.turapp.utils.RecyclerViewAdapters.MyPointListAdapter
 import com.example.turapp.viewmodels.ListViewModel
 import kotlinx.coroutines.launch
@@ -72,19 +68,17 @@ class ListFragment : Fragment() {
             if (it != null) {
                 this.findNavController().navigate(
                     ListFragmentDirections.actionListFragmentToPointOfInterestFragment(
-                        it.pointId!!,
-                        it.type
+                        it.pointId!!
                     )
                 )
                 viewModel.navigateComplete()
             }
         }
-
         // Inflate the layout for this fragment
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        }
+    }
 }

@@ -1,14 +1,13 @@
 package com.example.turapp.viewmodels
 
 import android.app.Application
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.*
-import com.example.turapp.repository.trackingDb.entities.MyPoint
-import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.repository.MyPointRepository
 import kotlinx.coroutines.launch
-import org.osmdroid.util.GeoPoint
 
-class PointOfInterestViewModel(app: Application, private val id: Long, val typeArgument: String) : ViewModel() {
+class PointOfInterestViewModel(private val app: Application, id: Long) : ViewModel() {
 
 
     private val repository = MyPointRepository(app)
@@ -24,18 +23,24 @@ class PointOfInterestViewModel(app: Application, private val id: Long, val typeA
         //TODO Save edits to MyPoint
     }
 
-    private val _loadingImage = MutableLiveData<Boolean>()
-    val loadingImage: LiveData<Boolean> get() = _loadingImage
-
 
     private val _finishedDeleting = MutableLiveData<Boolean>()
     val finishedDeleting: LiveData<Boolean> get() = _finishedDeleting
 
     fun deletePoi() {
         //TODO Delete image as well
-        _loadingImage.value = true
         viewModelScope.launch {
             myPoint.value?.let {
+                try {
+                    it.image?.let {
+                        val uri = Uri.parse(it)
+                        app.applicationContext.contentResolver.delete(
+                            uri, null, null
+                        )
+                    }
+                } catch (e: Exception) {
+                    Log.e("PointOfInterestViewModel", "Error deleting image", e)
+                }
                 _finishedDeleting.value = repository.deleteMyPoint(it, trek.value)
             }
         }
@@ -44,13 +49,12 @@ class PointOfInterestViewModel(app: Application, private val id: Long, val typeA
 
     class Factory(
         private val app: Application,
-        private val id: Long,
-        private val typeArgument: String
+        private val id: Long
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(PointOfInterestViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return PointOfInterestViewModel(app, id, typeArgument) as T
+                return PointOfInterestViewModel(app, id) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

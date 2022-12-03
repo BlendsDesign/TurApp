@@ -6,7 +6,6 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.turapp.R
 import com.example.turapp.databinding.RvItemLocationBinding
-import com.example.turapp.fragments.StartFragmentDirections
 import com.example.turapp.repository.trackingDb.entities.MyPoint
 import com.example.turapp.repository.trackingDb.entities.TYPE_POI
 import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
@@ -46,11 +45,7 @@ class LocationAdapter(
                     else -> this.icon = resources.getDrawable(R.drawable.ic_help)
                 }
                 setOnClickListener {
-                    nav.navigate(
-                        StartFragmentDirections.actionStartFragmentToPointOfInterestFragment(
-                            point.pointId!!, point.type
-                        )
-                    )
+
                 }
             }
         }
