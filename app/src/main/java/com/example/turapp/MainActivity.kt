@@ -9,6 +9,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                     R.id.listFragment,
                     R.id.selfieFragment -> {
                         binding.bottomNav.visibility = View.VISIBLE
-                        }
+                    }
                     else -> binding.bottomNav.visibility = View.GONE
 
                 }
@@ -70,13 +72,21 @@ class MainActivity : AppCompatActivity() {
                 //return true
             }
             R.id.miInfo -> {
-                val alertDialog = AlertDialog.Builder(this@MainActivity).create()
-                alertDialog.setTitle(getString(R.string.about_app))
-                alertDialog.setMessage(getString(R.string.info_text))
+                val linearLayout = LinearLayout(this)
+                linearLayout.orientation = LinearLayout.VERTICAL;
+                val image = ImageView(this@MainActivity)
+                linearLayout.addView(image)
+                image.setImageResource(R.drawable.infoimage2)
+                //val alertDialog = AlertDialog.Builder(this@MainActivity, R.layout.dialog_info).create()
+                val alertDialog = AlertDialog.Builder(this@MainActivity, R.style.MyInfoTheme).create()
+                    //android.R.style.Theme_Translucent_NoTitleBar_Fullscreen).create()
                 alertDialog.setButton(
                     AlertDialog.BUTTON_NEUTRAL, "OK"
                 ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+
+                alertDialog.setView(linearLayout)
                 alertDialog.show()
+
             }
             else -> {
                 val btnQuit = findViewById<Button>(R.id.miClose)
