@@ -95,12 +95,21 @@ class SettingActivity : AppCompatActivity() {
 
         binding.btnApplyChanges.setOnClickListener{
             viewModel.saveLimit()
+
+            val sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+            val editor = sharedPrefs.edit()
             val language = binding.spLanguages.selectedItem.toString()
             if (language == "English"){
                 setAppLocale("en")
             }else{
                 setAppLocale("no")
             }
+
+            editor.apply {
+                putString("language", language)
+                apply()
+            }
+
             finish()
         }
 

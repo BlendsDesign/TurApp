@@ -114,40 +114,40 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 //            alertDialog.show()
 //        }
 
-        binding.fabTrackingHelp.setOnClickListener {
-            val alertDialog = AlertDialog.Builder(context).create()
-            val imageView = ImageView(requireContext())
-            val linearLayout = LinearLayout(context)
-            val textView1 = TextView(context)
-            val textView2 = TextView(context)
-            linearLayout.orientation = LinearLayout.VERTICAL;
-            imageView.setImageResource(R.drawable.ic_my_location_arrow)
-
-
-            textView1.setText(R.string.help_text)
-            textView1.setText(R.string.help_text)
-            linearLayout.addView(textView1);
-            linearLayout.addView(imageView);
-            linearLayout.addView(textView2);
-
-            alertDialog.setTitle("Help")
-            alertDialog.setMessage(getString(R.string.help_text))
-            alertDialog.setButton(
-                AlertDialog.BUTTON_NEUTRAL, "OK"
-            ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-            alertDialog.setView(linearLayout)
-            alertDialog.show()
-        }
-
 //        binding.fabTrackingHelp.setOnClickListener {
-//            val alertDialog = AlertDialog.Builder(requireContext()).create()
+//            val alertDialog = AlertDialog.Builder(context).create()
+//            val imageView = ImageView(requireContext())
+//            val linearLayout = LinearLayout(context)
+//            val textView1 = TextView(context)
+//            val textView2 = TextView(context)
+//            linearLayout.orientation = LinearLayout.VERTICAL;
+//            imageView.setImageResource(R.drawable.ic_my_location_arrow)
+//
+//
+//            textView1.setText(R.string.help_text)
+//            textView1.setText(R.string.help_text)
+//            linearLayout.addView(textView1);
+//            linearLayout.addView(imageView);
+//            linearLayout.addView(textView2);
+//
 //            alertDialog.setTitle("Help")
 //            alertDialog.setMessage(getString(R.string.help_text))
 //            alertDialog.setButton(
 //                AlertDialog.BUTTON_NEUTRAL, "OK"
 //            ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+//            alertDialog.setView(linearLayout)
 //            alertDialog.show()
 //        }
+
+        binding.fabTrackingHelp.setOnClickListener {
+            val alertDialog = AlertDialog.Builder(requireContext()).create()
+            alertDialog.setTitle("Help")
+            alertDialog.setMessage(getString(R.string.help_text))
+            alertDialog.setButton(
+                AlertDialog.BUTTON_NEUTRAL, "OK"
+            ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+            alertDialog.show()
+        }
 
 
         // Set up Map handling

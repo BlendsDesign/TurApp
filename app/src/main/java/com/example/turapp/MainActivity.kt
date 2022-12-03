@@ -18,9 +18,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.turapp.databinding.ActivityMainBinding
-import com.example.turapp.fragments.TrackingFragmentDirections
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -76,13 +74,23 @@ class MainActivity : AppCompatActivity() {
                 linearLayout.orientation = LinearLayout.VERTICAL;
                 val image = ImageView(this@MainActivity)
                 linearLayout.addView(image)
-                image.setImageResource(R.drawable.infoimage2)
+                val sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+                val curLang = sharedPrefs.getString("language", "none")
+                if(curLang == "English") {
+                    image.setImageResource(R.drawable.info_image_eng)
+                } else { //language == "nb"
+                    image.setImageResource(R.drawable.info_image_nor)
+                }
+
                 //val alertDialog = AlertDialog.Builder(this@MainActivity, R.layout.dialog_info).create()
                 val alertDialog = AlertDialog.Builder(this@MainActivity, R.style.MyInfoTheme).create()
                     //android.R.style.Theme_Translucent_NoTitleBar_Fullscreen).create()
                 alertDialog.setButton(
                     AlertDialog.BUTTON_NEUTRAL, "OK"
                 ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+                alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).apply {
+
+                }
 
                 alertDialog.setView(linearLayout)
                 alertDialog.show()
