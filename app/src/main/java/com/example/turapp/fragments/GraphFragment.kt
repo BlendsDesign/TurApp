@@ -11,7 +11,6 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.turapp.R
@@ -21,15 +20,8 @@ import com.example.turapp.utils.helperFiles.GraphValueFormatter
 import com.example.turapp.viewmodels.GraphViewModel
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.utils.MPPointF
 
 class GraphFragment : Fragment() {
-
-    enum class Metrics(val text: String) {
-        STEPS("Steps"),
-        DISTANCE("Distance"),
-        TIME_TAKEN("Time Taken")
-    }
 
     private val viewModel: GraphViewModel by lazy {
         ViewModelProvider(
@@ -77,31 +69,6 @@ class GraphFragment : Fragment() {
                 clear()
                 addAll(it)
                 notifyDataSetChanged()
-            }
-        }
-
-        // set-up metrics options
-        binding.spinnerMetrics.adapter = MetricsAdapter()
-
-        val graphViews = listOf(
-            binding.graphSteps,
-            binding.graphDistance,
-            binding.graphTime,
-        )
-
-        // listen to metrics visibility changes
-        binding.spinnerMetrics.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long,
-            ) {
-                graphViews.forEachIndexed { index, graph -> graph.isVisible = position == index  }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
             }
         }
 
@@ -217,6 +184,41 @@ class GraphFragment : Fragment() {
                 }
                 invalidate()
             }
+            binding.graphAscent.apply {
+                data = viewModel.getAscentData()
+                xAxis.apply {
+                    axisMaximum = data.dataSetCount.toFloat() * 3
+                    valueFormatter = GraphValueFormatter(it)
+                    setCenterAxisLabels(true)
+                    position = XAxis.XAxisPosition.BOTTOM
+                    setDrawGridLines(false)
+                }
+                axisLeft.apply { setDrawGridLines(false) }
+                axisRight.isEnabled = false
+                description = Description().apply {
+                    text = "X-axis: Date\nY-axis: Total Ascent"
+                    setPosition(300f, 30f)
+                    textAlign = Paint.Align.CENTER
+                }
+                when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                    Configuration.UI_MODE_NIGHT_YES -> {
+                        xAxis.textColor = Color.WHITE
+                        axisLeft.textColor = Color.WHITE
+                        data.dataSets.forEach { dataSet -> dataSet.valueTextColor = Color.WHITE}
+                        legend.textColor = Color.WHITE
+                        description.textColor = Color.WHITE
+                    }
+                    else -> {
+                        xAxis.textColor = Color.BLACK
+                        axisLeft.textColor = Color.BLACK
+                        data.dataSets.forEach { dataSet -> dataSet.valueTextColor = Color.BLACK}
+                        legend.textColor = Color.BLACK
+                        description.textColor = Color.BLACK
+                    }
+
+                }
+                invalidate()
+            }
         }
     }
 
@@ -238,25 +240,4 @@ class GraphFragment : Fragment() {
             getView(position, convertView, parent)
     }
 
-    inner class MetricsAdapter: ArrayAdapter<String>(
-        requireContext(),
-        android.R.layout.simple_list_item_1,
-        android.R.id.text1
-    ) {
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view = convertView ?: layoutInflater.inflate(
-                android.R.layout.simple_list_item_1, parent,false)
-            view.findViewById<TextView>(android.R.id.text1).text = getItem(position)
-            return view
-        }
-
-        override fun getItem(position: Int) = Metrics.values()[position].text
-
-        override fun getCount() = Metrics.values().size
-
-        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup) =
-            getView(position, convertView, parent)
-
-    }
 }
