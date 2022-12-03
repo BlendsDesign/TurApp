@@ -65,6 +65,13 @@ class GraphViewModel(app: Application) : ViewModel() {
             color = Color.GREEN
         })
 
+    fun getAscentData() =
+        BarData(BarDataSet(rawData.value?.mapIndexed { i, it ->
+            BarEntry(i.toFloat(), it.totalAscent?.coerceAtLeast(0f) ?: 0f)
+        } ?: listOf(), "Total Ascent").apply {
+            color = Color.YELLOW
+        })
+
 
     val weeks = liveData {
         repository.getAllMyPointWeeks().cancellable().collectLatest {
