@@ -83,6 +83,12 @@ class NowTrackingFragment : Fragment() {
                     }
                 }
             }
+
+            // TODO Remove this simple test
+            viewModel.totalAscent.observe(viewLifecycleOwner) {
+
+                Toast.makeText(requireContext(), "totalAscent: ${it}", Toast.LENGTH_SHORT).show()
+            }
         }
 
         viewModel.timer.observe(viewLifecycleOwner) {
