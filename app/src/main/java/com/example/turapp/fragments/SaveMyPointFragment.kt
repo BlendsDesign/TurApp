@@ -29,7 +29,6 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
-import java.io.IOException
 import java.util.*
 
 class SaveMyPointFragment : Fragment() {
@@ -120,7 +119,11 @@ class SaveMyPointFragment : Fragment() {
             marker = Marker(map)
             marker?.apply {
                 isDraggable = true
-                title = getLocationInformation(location!!)
+                lifecycleScope.launch {
+                    location?.let { loc ->
+                        title =  getLocationInformation(loc)
+                    }
+                }
                 showInfoWindow()
                 setOnMarkerDragListener(getMarkerDragListener())
                 position = location
@@ -181,7 +184,9 @@ class SaveMyPointFragment : Fragment() {
             override fun onMarkerDragEnd(marker: Marker?) {
                 if (marker != null) {
                     marker.position = marker.position
-                    marker.title = getLocationInformation(marker.position)
+                    lifecycleScope.launch {
+                        marker.title = getLocationInformation(marker.position)
+                    }
                     marker.showInfoWindow()
                     map.controller.animateTo(marker.position)
                     binding.scrollView.setScrollingEnabled(true)
