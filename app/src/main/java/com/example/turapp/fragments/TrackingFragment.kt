@@ -60,6 +60,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private val pathToTarget = Polyline().apply {
         color = Color.BLUE
+        setPoints(mutableListOf())
     }
 
     private lateinit var clMark: Marker
@@ -76,10 +77,11 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             viewModel.startLocationClient()
         } else {
             lifecycleScope.launch {
-            var timer = 10
-                while(
+                var timer = 10
+                while (
                     !PermissionCheckUtility.hasLocationPermissions(requireContext())
-                    || timer == 10) {
+                    || timer == 10
+                ) {
                     delay(1000)
                     timer++
                 }
@@ -94,7 +96,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentTrackingBinding.inflate(inflater)
-        binding.lifecycleOwner = viewLifecycleOwner
         setUpBottomNavTrackingFragmentButtons()
 
         binding.fabTrackingHelp.setOnClickListener {
@@ -108,10 +109,9 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
 
 
-
-
         // Set up Map handling
         map = binding.trackingMap
+        map.setDestroyMode(false)
         clMark = Marker(map).apply {
             icon = getDrawable(requireContext(), R.drawable.ic_my_location_arrow)
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
@@ -217,16 +217,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         viewModel.errorMessage.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
-
-//        compass = CompassOverlay(
-//            requireContext(),
-//            InternalCompassOrientationProvider(requireContext()), map
-//        )
-//
-//        Log.d("Azimuth",compass.azimuthOffset.toString())
-//
-//        compass.enableCompass()
-//        map.overlays.add(compass)
 
         return binding.root
     }
