@@ -164,8 +164,8 @@ class NowTrackingFragment : Fragment() {
     private fun getFormattedTimerString(timeHundreds: Long) : String {
         val hundreds = timeHundreds % 100
         val seconds = (timeHundreds / 100) % 60
-        val minutes = (timeHundreds / 60000) % 60
-        val hours = (timeHundreds / 3600000)
+        val minutes = (timeHundreds / 6000) % 60
+        val hours = (timeHundreds / 360000)
         val hoursString = if (hours < 10) "0$hours:" else "$hours:"
         val minutesString = if (minutes < 10) "0$minutes:" else "$minutes:"
         val secondsString = if (seconds < 10) "0$seconds:" else "$seconds:"
