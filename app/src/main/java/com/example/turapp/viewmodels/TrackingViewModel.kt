@@ -3,7 +3,6 @@ package com.example.turapp.viewmodels
 import android.app.Application
 import android.location.Location
 import android.util.Log
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.example.turapp.R
@@ -60,6 +59,7 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     fun setSelectedMarker(marker: Marker) {
         if (_selectedMarkerIsTarget.value != true) {
             marker.icon.setTint(ContextCompat.getColor(app.applicationContext, R.color.theme_blue))
+            marker.showInfoWindow()
             _selectedMarker.value = marker
             _currentPosition.value?.let {
                 setDistanceToTargetString(it)
@@ -84,7 +84,10 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
 
     fun clearSelectedMarker() {
         if (_selectedMarker.value != null) {
-            _selectedMarker.value?.icon?.setTint(ContextCompat.getColor(app.applicationContext, R.color.theme_orange))
+            _selectedMarker.value?.let {
+                it.icon.setTint(ContextCompat.getColor(app.applicationContext, R.color.theme_orange))
+                it.infoWindow.close()
+            }
             _selectedMarker.value = null
             _distanceToTargetString.value = null
             _elevationString.value = null
