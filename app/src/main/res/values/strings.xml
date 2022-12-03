@@ -42,4 +42,8 @@
     <string name="help_text">Here, the user gets the opportunity to track their own activity. By pressing start, the app starts tracking the movements.
 The app draws a line along the path where the user moves. In case the cursor of the user is not visible,
 is it possible to press \'here\' to center the map on the marker.</string>
+    <string name="list">List</string>
+    <string name="map">Map</string>
+    <string name="camera">Camera</string>
+    <string name="statistics">Statistics</string>
 </resources>
