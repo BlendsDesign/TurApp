@@ -356,11 +356,16 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             val markedGeoPoint = viewModel.selectedMarker.value?.position
 
             if (markedGeoPoint != null) {
-                findNavController().navigate(
-                    TrackingFragmentDirections.actionTrackingFragmentToArFragment(
-                        markedGeoPoint
+                if (PermissionCheckUtility.hasCameraPermissions(requireContext())) {
+                    findNavController().navigate(
+                        TrackingFragmentDirections.actionTrackingFragmentToArFragment(
+                            markedGeoPoint
+                        )
                     )
-                )
+                } else {
+                    //TODO replace this with alertdialog that takes you to permissions page
+                    Toast.makeText(requireContext(), getString(R.string.missing_camera_permissions), Toast.LENGTH_SHORT).show()
+                }
             } else {
                 Toast.makeText(
                     requireContext(),

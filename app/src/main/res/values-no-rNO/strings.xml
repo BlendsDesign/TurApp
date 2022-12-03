@@ -59,4 +59,5 @@ er det mulig å trykke \'here\' for sentrere kartet på markøren.</string>
     <string name="here">her</string>
     <string name="add_poi_help">Klikk på kartet for å legge til POI der</string>
     <string name="go_to_ar_help">Du må velge en markør(poi) først!</string>
+    <string name="missing_camera_permissions">Du må tillate kamerarettigheter i Android Settings for å bruke denne funksjonaliteten</string>
 </resources>

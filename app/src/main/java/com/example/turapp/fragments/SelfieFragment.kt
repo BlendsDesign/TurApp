@@ -1,7 +1,6 @@
 package com.example.turapp.fragments
 
 import android.Manifest
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -15,6 +14,7 @@ import androidx.camera.view.PreviewView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.turapp.R
 import com.example.turapp.databinding.FragmentSelfieBinding
 import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
 import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
@@ -54,7 +54,7 @@ class SelfieFragment : Fragment() {
 
         requestPermissions()
         if (!PermissionCheckUtility.hasCameraPermissions(requireContext())) {
-            Toast.makeText(requireContext(), "Missing Camera Permissions", Toast.LENGTH_SHORT)
+            Toast.makeText(requireContext(), getString(R.string.missing_camera_permissions), Toast.LENGTH_SHORT)
                 .show()
 
             if (viewModel.typeArgument == TYPE_TRACKING) {
@@ -88,7 +88,7 @@ class SelfieFragment : Fragment() {
 
         selfieCam = SelfieCamera(requireContext(), cameraView, this)
 
-        viewModel.selectedCamera.observe(viewLifecycleOwner, Observer {
+        viewModel.selectedCamera.observe(viewLifecycleOwner) {
             it.let {
                 selfieCam = SelfieCamera(requireContext(), cameraView, this, it)
                 selfieCam.startCamera()
@@ -96,7 +96,7 @@ class SelfieFragment : Fragment() {
                     selfieCam.takePhoto(getImageSavedCallback())
                 }
             }
-        })
+        }
 
         binding.btnSwichCamera.apply {
             addOnCheckedChangeListener { button, isChecked ->
@@ -144,7 +144,7 @@ class SelfieFragment : Fragment() {
         }
 
         // Observe if we have a picture
-        viewModel.pictureUri.observe(viewLifecycleOwner, Observer {
+        viewModel.pictureUri.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.btnSwichCamera.visibility = View.GONE
                 binding.btnSaveImage.visibility = View.VISIBLE
@@ -154,7 +154,7 @@ class SelfieFragment : Fragment() {
                 binding.btnSaveImage.visibility = View.GONE
                 binding.selfieCaptureButton.visibility = View.VISIBLE
             }
-        })
+        }
 
         // Return the Layout
         return binding.root

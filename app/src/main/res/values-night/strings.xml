@@ -31,4 +31,5 @@
     <string name="here">here</string>
     <string name="add_poi_help">Click on map to add a point there</string>
     <string name="go_to_ar_help">You must select a marker(poi) first!</string>
+    <string name="missing_camera_permissions">You need to allow camerapermissions in Android Settings to use this feature</string>
 </resources>
