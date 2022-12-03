@@ -11,11 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.turapp.R
 import com.example.turapp.databinding.FragmentSaveMyPointBinding
+import com.example.turapp.repository.trackingDb.entities.TYPE_POI
+import com.example.turapp.repository.trackingDb.entities.TYPE_SNAPSHOT
 import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.utils.helperFiles.NAVIGATION_ARGUMENT_SAVING_TYPE
 import com.example.turapp.viewmodels.SaveMyPointViewModel
@@ -29,7 +32,6 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
-import java.io.IOException
 import java.util.*
 
 class SaveMyPointFragment : Fragment() {
@@ -119,14 +121,27 @@ class SaveMyPointFragment : Fragment() {
         } else if (location != null) {
             marker = Marker(map)
             marker?.apply {
+                icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_marker_blue)
                 isDraggable = true
-                title = getLocationInformation(location!!)
+                lifecycleScope.launch {
+                    location?.let { loc ->
+                        title =  getLocationInformation(loc)
+                    }
+                }
                 showInfoWindow()
                 setOnMarkerDragListener(getMarkerDragListener())
                 position = location
             }
             map.overlays.add(marker)
+            if (viewModel.typeArgument == TYPE_POI) {
+                binding.frameForMap.visibility = View.VISIBLE
+                binding.btnGrpLocation.isChecked = true
+            }
             map.controller.animateTo(location)
+        }
+        if (viewModel.typeArgument == TYPE_SNAPSHOT) {
+            binding.imgHolder.visibility = View.VISIBLE
+            binding.btnGrpImage.isChecked = true
         }
 
         binding.btnGrpImage.addOnCheckedChangeListener { button, isChecked ->
@@ -181,7 +196,9 @@ class SaveMyPointFragment : Fragment() {
             override fun onMarkerDragEnd(marker: Marker?) {
                 if (marker != null) {
                     marker.position = marker.position
-                    marker.title = getLocationInformation(marker.position)
+                    lifecycleScope.launch {
+                        marker.title = getLocationInformation(marker.position)
+                    }
                     marker.showInfoWindow()
                     map.controller.animateTo(marker.position)
                     binding.scrollView.setScrollingEnabled(true)
@@ -249,6 +266,8 @@ class SaveMyPointFragment : Fragment() {
                 add(marker)
                 add(endMarker)
             }
+            binding.frameForMap.visibility = View.VISIBLE
+            binding.btnGrpLocation.isChecked = true
             boundingBox = BoundingBox.fromGeoPointsSafe(allPointsForBoundingBox)
 
 

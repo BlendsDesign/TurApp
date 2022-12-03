@@ -14,8 +14,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -152,7 +150,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                                 position = it
                             }
                             title = point.title
-                            subDescription = point.description
+                            subDescription = ""
                             icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
                             id = point.pointId.toString()
                             setOnMarkerClickListener { marker, _ ->

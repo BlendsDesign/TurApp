@@ -1,9 +1,9 @@
 package com.example.turapp.viewmodels
 
 import android.app.Application
+import android.location.Geocoder
 import android.location.Location
 import android.util.Log
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.example.turapp.R
@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
+import java.util.*
 
 
 class TrackingViewModel(private val app: Application) : ViewModel() {
@@ -60,6 +61,13 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     fun setSelectedMarker(marker: Marker) {
         if (_selectedMarkerIsTarget.value != true) {
             marker.icon.setTint(ContextCompat.getColor(app.applicationContext, R.color.theme_blue))
+            if (marker.subDescription.isNullOrEmpty()) {
+                viewModelScope.launch {
+                    marker.subDescription = getLocationInformation(marker.position)
+
+                }
+            }
+            marker.showInfoWindow()
             _selectedMarker.value = marker
             _currentPosition.value?.let {
                 setDistanceToTargetString(it)
@@ -84,7 +92,10 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
 
     fun clearSelectedMarker() {
         if (_selectedMarker.value != null) {
-            _selectedMarker.value?.icon?.setTint(ContextCompat.getColor(app.applicationContext, R.color.theme_orange))
+            _selectedMarker.value?.let {
+                it.icon.setTint(ContextCompat.getColor(app.applicationContext, R.color.theme_orange))
+                it.infoWindow.close()
+            }
             _selectedMarker.value = null
             _distanceToTargetString.value = null
             _elevationString.value = null
@@ -170,6 +181,18 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     // This allows us to get location from other fragments
     companion object {
         val getLocation = MutableLiveData<Location>()
+    }
+
+    private fun getLocationInformation(p: GeoPoint): String? {
+        val gc = Geocoder(app.applicationContext, Locale.getDefault())
+        try {
+            val adrs = gc.getFromLocation(p.latitude, p.longitude, 1)
+            val ads = adrs!![0]
+            return ads.getAddressLine(0)
+        } catch (e: IndexOutOfBoundsException) {
+            e.printStackTrace()
+        }
+        return ""
     }
 
 
