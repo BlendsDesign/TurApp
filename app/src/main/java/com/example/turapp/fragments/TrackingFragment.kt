@@ -6,17 +6,20 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.hardware.GeomagneticField
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
+import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -100,16 +103,41 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding = FragmentTrackingBinding.inflate(inflater)
         setUpBottomNavTrackingFragmentButtons()
 
+        //courtesy of https://stackoverflow.com/questions/6276501/how-to-put-an-image-in-an-alertdialog-android
         binding.fabTrackingHelp.setOnClickListener {
-            val alertDialog = AlertDialog.Builder(requireContext()).create()
+            val alertDialog = AlertDialog.Builder(context).create()
+            alertDialog.setIcon(R.drawable.ic_help)
+            val imageView = ImageView(requireContext())
+            val linearLayout = LinearLayout(context)
+            val textView = TextView(context)
+
+            linearLayout.orientation = LinearLayout.VERTICAL
+//            val layoutParams = (linearLayout.layoutParams as? MarginLayoutParams)
+//            layoutParams?.setMargins(40, 40, 40, 40)
+//            linearLayout.layoutParams = layoutParams
+            val sharedPrefs = requireContext().getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+            val curLang = sharedPrefs.getString("language", "none")
+            if(curLang == "English") {
+                imageView.setImageResource(R.drawable.help_map_eng)
+            } else { //language == "nb"
+                imageView.setImageResource(R.drawable.help_map_nor)
+            }
+
+
+            textView.setText(R.string.help_text)
+            textView.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            textView.setTypeface(null, Typeface.BOLD)
+            linearLayout.addView(textView)
+            linearLayout.addView(imageView);
+
+
             alertDialog.setTitle("Help")
-            alertDialog.setMessage(getString(R.string.help_text))
             alertDialog.setButton(
                 AlertDialog.BUTTON_NEUTRAL, "OK"
             ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+            alertDialog.setView(linearLayout)
             alertDialog.show()
         }
-
 
         // Set up Map handling
         map = binding.trackingMap
