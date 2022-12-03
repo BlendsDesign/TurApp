@@ -345,7 +345,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             if (isChecked) {
                 Toast.makeText(
                     requireContext(),
-                    "Click on map to add a point there", Toast.LENGTH_SHORT
+                    getString(R.string.add_poi_help)
+                    , Toast.LENGTH_SHORT
                 ).show()
             }
             viewModel.setAddingCustomMarker(isChecked)
@@ -355,11 +356,6 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             val markedGeoPoint = viewModel.selectedMarker.value?.position
 
             if (markedGeoPoint != null) {
-                Toast.makeText(
-                    requireContext(),
-                    "All aboard the AR train", Toast.LENGTH_SHORT
-                ).show()
-
                 findNavController().navigate(
                     TrackingFragmentDirections.actionTrackingFragmentToArFragment(
                         markedGeoPoint
@@ -368,7 +364,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             } else {
                 Toast.makeText(
                     requireContext(),
-                    "You must select a marker(poi) first!", Toast.LENGTH_SHORT
+                    getString(R.string.go_to_ar_help), Toast.LENGTH_SHORT
                 ).show()
 
             }

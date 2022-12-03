@@ -19,4 +19,16 @@
     <string name="map">Map</string>
     <string name="camera">Camera</string>
     <string name="statistics">Statistics</string>
+    <string name="title">Title</string>
+    <string name="distance">Distance</string>
+    <string name="elevation">Elevation</string>
+    <string name="help_info">Help info</string>
+    <string name="open">open</string>
+    <string name="see_in_ar">See in AR</string>
+    <string name="target">Target</string>
+    <string name="start">Start</string>
+    <string name="add_poi">Add POI</string>
+    <string name="here">here</string>
+    <string name="add_poi_help">Click on map to add a point there</string>
+    <string name="go_to_ar_help">You must select a marker(poi) first!</string>
 </resources>

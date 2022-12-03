@@ -17,7 +17,8 @@
             android:clickable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_help" />
+            app:srcCompat="@drawable/ic_help"
+            android:contentDescription="@string/help_info" />
 
         <org.osmdroid.views.MapView
             android:id="@+id/trackingMap"
@@ -45,7 +46,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Title"
+                android:hint="@string/title"
                 android:minWidth="88dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -61,14 +62,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:baselineAligned="false">
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Distance">
+                    android:hint="@string/distance">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/distanceInputField"
@@ -86,7 +88,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Elevation">
+                    android:hint="@string/elevation">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/elevationInputField"
@@ -110,7 +112,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="open" />
+                    android:text="@string/open" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnViewInArMode"
@@ -118,7 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="See in AR" />
+                    android:text="@string/see_in_ar" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSetAsTarget"
@@ -126,7 +128,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Target" />
+                    android:text="@string/target" />
 
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -148,10 +150,10 @@
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start"
+                android:text="@string/start"
                 app:iconGravity="top"
                 android:layout_weight="1"
-                app:icon="@drawable/ic_track_changes"
+                app:icon="@drawable/ic_run_circle_blue"
                 android:checkable="false"/>
 
 
@@ -160,7 +162,7 @@
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add POI"
+                android:text="@string/add_poi"
                 app:iconGravity="top"
                 android:layout_weight="1"
                 app:icon="@drawable/ic_add_location" />
@@ -170,7 +172,7 @@
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="here"
+                android:text="@string/here"
                 app:iconGravity="top"
                 android:layout_weight="1"
                 app:icon="@drawable/ic_arrow_circle_24"
