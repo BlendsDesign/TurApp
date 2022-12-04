@@ -13,14 +13,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
-import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -131,7 +129,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             textView.textAlignment = View.TEXT_ALIGNMENT_CENTER
             textView.setTypeface(null, Typeface.BOLD)
             linearLayout.addView(textView)
-            linearLayout.addView(imageView);
+            linearLayout.addView(imageView)
 
 
             alertDialog.setTitle("Help")
@@ -259,7 +257,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
         }
         viewModel.errorMessage.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            if (it != null)
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
         binding.btnGoToMyPointPage.addOnCheckedChangeListener { button, isChecked ->
             when(isChecked) {
