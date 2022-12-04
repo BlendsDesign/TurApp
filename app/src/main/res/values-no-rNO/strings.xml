@@ -82,4 +82,13 @@ er det mulig å trykke \'here\' for sentrere kartet på markøren.</string>
     <string name="CreditPage">Credit page showing name and product idea</string>
     <string name="gps_is_disabled">GPS er avslått</string>
     <string name="ok">OK</string>
+    <string name="altitude_graph_description">x: avstand (i meter) y: høyde (i meter)</string>
+    <string name="steps_graph_description">X-axis: Dato Y-axis: Steg</string>
+    <string name="distance_graph_description">X-axis: Date Y-axis: Distance (i minutter)</string>
+    <string name="time_graph_description">X-axis: Date Y-axis: Tid brukt (i minutter)</string>
+    <string name="ascent_graph_description">X-axis: Date Y-axis: Total høyde</string>
+    <string name="steps">Steg</string>
+    <string name="time_taken">Tid brukt</string>
+    <string name="total_ascent">Total Høyde</string>
+    <string name="_empty_data">Oh, det er ingenting å vise.\nGå ut for å lagre noe aktivitet</string>
 </resources>

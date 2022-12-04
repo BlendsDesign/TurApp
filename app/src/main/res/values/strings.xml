@@ -85,4 +85,13 @@ is it possible to press \'here\' to center the map on the marker.</string>
     <string name="CreditPage">Credit page showing name and product idea</string>
     <string name="ok">OK</string>
     <string name="gps_is_disabled">GPS is disabled</string>
+    <string name="altitude_graph_description">x: distance (in meters) y: height (in meters)</string>
+    <string name="steps_graph_description">X-axis: Date Y-axis: Steps</string>
+    <string name="distance_graph_description">X-axis: Date Y-axis: Distance (in meters)</string>
+    <string name="time_graph_description">X-axis: Date Y-axis: Time Taken (in minutes)</string>
+    <string name="ascent_graph_description">X-axis: Date Y-axis: Total Ascent</string>
+    <string name="steps">Steps</string>
+    <string name="time_taken">Time taken</string>
+    <string name="total_ascent">Total Ascent</string>
+    <string name="_empty_data">Oh, there is nothing to show here.\nGet out there and record some activities</string>
 </resources>

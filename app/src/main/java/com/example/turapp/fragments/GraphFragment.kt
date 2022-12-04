@@ -18,6 +18,7 @@ import com.example.turapp.databinding.FragmentGraphBinding
 import com.example.turapp.repository.trackingDb.entities.MyPointWeek
 import com.example.turapp.utils.helperFiles.GraphValueFormatter
 import com.example.turapp.viewmodels.GraphViewModel
+import com.github.mikephil.charting.charts.Chart.PAINT_INFO
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 
@@ -78,7 +79,9 @@ class GraphFragment : Fragment() {
                 return@observe
             }
             binding.graphSteps.apply {
-                data = viewModel.getStepsData()
+                data = viewModel.getStepsData().apply {
+                    dataSets.forEach { it.label = getString(R.string.steps) }
+                }
                 xAxis.apply {
                     axisMaximum = data.dataSetCount.toFloat() * 3
                     valueFormatter = GraphValueFormatter(it)
@@ -89,7 +92,7 @@ class GraphFragment : Fragment() {
                 axisLeft.apply { setDrawGridLines(false) }
                 axisRight.isEnabled = false
                 description = Description().apply {
-                    text = "X-axis: Date\nY-axis: Steps"
+                    text = getString(R.string.steps_graph_description)
                     setPosition(300f, 30f)
                     textAlign = Paint.Align.CENTER
                 }
@@ -110,10 +113,13 @@ class GraphFragment : Fragment() {
                     }
 
                 }
+                setNoDataText(getString(R.string._empty_data))
                 invalidate()
             }
             binding.graphDistance.apply {
-                data = viewModel.getDistanceData()
+                data = viewModel.getDistanceData().apply {
+                    dataSets.forEach { it.label = getString(R.string.distance) }
+                }
                 xAxis.apply {
                     axisMaximum = data.dataSetCount.toFloat() * 3
                     valueFormatter = GraphValueFormatter(it)
@@ -126,7 +132,7 @@ class GraphFragment : Fragment() {
                 }
                 axisRight.isEnabled = false
                 description = Description().apply {
-                    text = "X-axis: Date\nY-axis: Distance (in meters)"
+                    text = getString(R.string.distance_graph_description)
                     setPosition(300f, 30f)
                     textAlign = Paint.Align.CENTER
                 }
@@ -147,10 +153,13 @@ class GraphFragment : Fragment() {
                     }
 
                 }
+                setNoDataText(getString(R.string._empty_data))
                 invalidate()
             }
             binding.graphTime.apply {
-                data = viewModel.getTimeData()
+                data = viewModel.getTimeData().apply {
+                    dataSets.forEach { it.label = getString(R.string.time_taken) }
+                }
                 xAxis.apply {
                     axisMaximum = data.dataSetCount.toFloat() * 3
                     valueFormatter = GraphValueFormatter(it)
@@ -161,7 +170,7 @@ class GraphFragment : Fragment() {
                 axisLeft.apply { setDrawGridLines(false) }
                 axisRight.isEnabled = false
                 description = Description().apply {
-                    text = "X-axis: Date\nY-axis: Time Taken (in minutes)"
+                    text = getString(R.string.time_graph_description)
                     setPosition(300f, 30f)
                     textAlign = Paint.Align.CENTER
                 }
@@ -182,10 +191,13 @@ class GraphFragment : Fragment() {
                     }
 
                 }
+                setNoDataText(getString(R.string._empty_data))
                 invalidate()
             }
             binding.graphAscent.apply {
-                data = viewModel.getAscentData()
+                data = viewModel.getAscentData().apply {
+                    dataSets.forEach { it.label = getString(R.string.total_ascent) }
+                }
                 xAxis.apply {
                     axisMaximum = data.dataSetCount.toFloat() * 3
                     valueFormatter = GraphValueFormatter(it)
@@ -196,7 +208,7 @@ class GraphFragment : Fragment() {
                 axisLeft.apply { setDrawGridLines(false) }
                 axisRight.isEnabled = false
                 description = Description().apply {
-                    text = "X-axis: Date\nY-axis: Total Ascent"
+                    text = getString(R.string.ascent_graph_description)
                     setPosition(300f, 30f)
                     textAlign = Paint.Align.CENTER
                 }
@@ -217,6 +229,8 @@ class GraphFragment : Fragment() {
                     }
 
                 }
+                setNoDataText(getString(R.string._empty_data))
+                getPaint(PAINT_INFO).textSize = 40f
                 invalidate()
             }
         }

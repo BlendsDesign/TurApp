@@ -20,6 +20,7 @@ import com.example.turapp.R
 import com.example.turapp.viewmodels.PointOfInterestViewModel
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
 import com.example.turapp.repository.trackingDb.entities.*
+import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.data.*
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -373,6 +374,9 @@ class PointOfInterestFragment : Fragment() {
                     lineWidth = 1.5f
                 })
             }
+
+            description = Description().apply { text = getString(R.string.altitude_graph_description) }
+
             invalidate()
 
         }
