@@ -73,7 +73,11 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             }
 
             val elevation = marker.position.altitude
-            _elevationString.value = String.format("%.2f m", elevation)
+            if (elevation != 0.0) {
+                _elevationString.value = String.format("%.2f m", elevation)
+            } else {
+                _elevationString.value = app.applicationContext.getString(R.string.unknown)
+            }
             marker.id?.let {
                 _trekLocations.value = repository.getTrek(it.toLong()).asLiveData()
             }
@@ -179,6 +183,7 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+        locationClient.stopLocationUpdates()
     }
 
     // This allows us to get location from other fragments
