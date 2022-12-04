@@ -18,7 +18,7 @@
     <color name="colorPrimary">@color/theme_orange</color>
     <color name="colorPrimaryVariant">@color/theme_orange</color>
     <color name="colorOnPrimary">@color/black</color>
-    <color name="colorSecondary">@color/theme_orange</color>
+    <color name="colorSecondary">@color/theme_blue</color>
     <color name="colorSecondaryVariant">@color/teal_200</color>
     <color name="colorOnSecondary">@color/black</color>
     <color name="titleTextColor">@color/white</color>
