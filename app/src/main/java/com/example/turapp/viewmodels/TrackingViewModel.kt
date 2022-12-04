@@ -71,7 +71,6 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             _selectedMarker.value = marker
             _currentPosition.value?.let {
                 setDistanceToTargetString(it)
-                setElevationToTargetString(it)
             }
         }
     }
@@ -107,14 +106,9 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
         _selectedMarker.value?.let {
             val target: GeoPoint = it.position
             val distance = current.distanceToAsDouble(target)
-            _distanceToTargetString.value = String.format("%.2f m", distance)
-        }
-    }
-
-    private fun setElevationToTargetString(current: GeoPoint) {
-        _selectedMarker.value?.let {
             val elevation = it.position.altitude - current.altitude
             _elevationString.value = String.format("%.2f m", elevation)
+            _distanceToTargetString.value = String.format("%.2f m", distance)
         }
     }
 
