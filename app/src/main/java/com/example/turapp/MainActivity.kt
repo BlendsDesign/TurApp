@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -18,7 +19,6 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.turapp.databinding.ActivityMainBinding
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -55,6 +55,15 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.turToolbar)
     }
 
+    override fun onStart() {
+        super.onStart()
+        val locationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            Toast.makeText(applicationContext, getString(R.string.gps_is_disabled), Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.app_bar_menu, menu)
         return true
@@ -71,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.miInfo -> {
                 val linearLayout = LinearLayout(this)
-                linearLayout.orientation = LinearLayout.VERTICAL;
+                linearLayout.orientation = LinearLayout.VERTICAL
                 val image = ImageView(this@MainActivity)
                 linearLayout.addView(image)
                 val sharedPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
