@@ -71,6 +71,8 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             _selectedMarker.value = marker
             _currentPosition.value?.let {
                 setDistanceToTargetString(it)
+                val elevation = it.altitude
+                _elevationString.value = String.format("%.2f m", elevation)
             }
         }
     }
@@ -106,8 +108,6 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
         _selectedMarker.value?.let {
             val target: GeoPoint = it.position
             val distance = current.distanceToAsDouble(target)
-            val elevation = it.position.altitude - current.altitude
-            _elevationString.value = String.format("%.2f m", elevation)
             _distanceToTargetString.value = String.format("%.2f m", distance)
         }
     }
@@ -183,7 +183,7 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             val adrs = gc.getFromLocation(p.latitude, p.longitude, 1)
             val ads = adrs!![0]
             return ads.getAddressLine(0)
-        } catch (e: IndexOutOfBoundsException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return ""
