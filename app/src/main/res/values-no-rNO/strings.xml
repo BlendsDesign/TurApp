@@ -45,7 +45,11 @@ er det mulig å trykke \'here\' for sentrere kartet på markøren.</string>
     <string name="map">Kart</string>
     <string name="camera">Kamera</string>
     <string name="statistics">Statistikk</string>
-    <string name="permissions_rationale">Dette er de tillatelsene vi anbefaler for å gi deg den beste opplevelsen med vår app</string>
+    <string name="permissions_rationale">Følgende tillatelser kreves for å gi den beste opplevelsen
+        \nGPS for å spore bevegelser.
+        \nAktivitet for skrittelleren.\n
+        \nKamera er påkrevd for å ta bilder og bruke AR\n
+        Vi bruker bare notifikasjon for å oppdatere deg at vi sporer.</string>
     <string name="list">Liste</string>
     <string name="title">Tittel</string>
     <string name="distance">Distanse</string>
