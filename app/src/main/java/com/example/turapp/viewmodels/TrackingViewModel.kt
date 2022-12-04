@@ -159,6 +159,8 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             }
             .onEach { location ->
                 getLocation.postValue(location)
+                //TODO DELETE THIS SIMPLE TEST
+                _errorMessage.value = location.altitude.toString()
 
                 Log.d("TrackingViewModel", "Updated getLocation")
                 val geo = GeoPoint(location)
