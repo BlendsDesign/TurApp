@@ -115,7 +115,7 @@ class PointOfInterestFragment : Fragment() {
 
         viewModel.trek.observe(viewLifecycleOwner) {
             if (it != null) {
-                it.trekList?.let { outerlist ->
+                it.trekList.let { outerlist ->
                     binding.graphAltitude.visibility = View.VISIBLE
                     drawTrackedLocations(outerlist)
                     getTrekAltitudes(outerlist)
@@ -365,9 +365,7 @@ class PointOfInterestFragment : Fragment() {
 
     private fun setUpGraph() {
         binding.graphAltitude.apply {
-            data = LineData().apply {
-
-            }
+            data = LineData()
 
             for (outerlist in graphEntries) {
                 this.data.addDataSet(LineDataSet(outerlist, "").apply {

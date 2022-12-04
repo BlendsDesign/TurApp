@@ -9,6 +9,7 @@ import androidx.lifecycle.*
 import com.example.turapp.R
 import com.example.turapp.repository.trackingDb.entities.MyPoint
 import com.example.turapp.repository.MyPointRepository
+import com.example.turapp.repository.trackingDb.entities.TrekLocations
 import com.example.turapp.utils.locationClient.DefaultLocationClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.catch
@@ -43,6 +44,9 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
     private val _elevationString = MutableLiveData<String?>()
     val elevationString: LiveData<String?> get() = _elevationString
 
+    private val _trekLocations = MutableLiveData<LiveData<TrekLocations>?>()
+    val trekLocations: LiveData<LiveData<TrekLocations>?> get() = _trekLocations
+
     private val _pathPointsToTarget = MutableLiveData<MutableList<GeoPoint>>()
     val pathPointsToTarget : LiveData<MutableList<GeoPoint>> get() = _pathPointsToTarget
     fun updatePathPointsToTarget() {
@@ -66,6 +70,9 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
                     marker.subDescription = getLocationInformation(marker.position)
 
                 }
+            }
+            marker.id?.let {
+                _trekLocations.value = repository.getTrek(it.toLong()).asLiveData()
             }
             marker.showInfoWindow()
             _selectedMarker.value = marker
@@ -97,6 +104,7 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
                 it.icon.setTint(ContextCompat.getColor(app.applicationContext, R.color.theme_orange))
                 it.infoWindow.close()
             }
+            _trekLocations.value = null
             _selectedMarker.value = null
             _distanceToTargetString.value = null
             _elevationString.value = null

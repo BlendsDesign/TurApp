@@ -56,6 +56,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     private val markersList = mutableListOf<Marker>()
 
+    private val trekOverlay = mutableListOf<Polyline>()
+
     private lateinit var orientationProvider: InternalCompassOrientationProvider
 
     private lateinit var map: MapView // 3
@@ -118,7 +120,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 //            linearLayout.layoutParams = layoutParams
             val sharedPrefs = requireContext().getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
             val curLang = sharedPrefs.getString("language", "none")
-            if(curLang == "English") {
+            if (curLang == "English") {
                 imageView.setImageResource(R.drawable.help_map_eng)
             } else { //language == "nb"
                 imageView.setImageResource(R.drawable.help_map_nor)
@@ -181,16 +183,28 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                                 position = it
                             }
                             title = point.title
-                            when(point.type) {
-                                TYPE_POI -> icon = getDrawable(requireContext(), R.drawable.ic_marker_orange)
+                            when (point.type) {
+                                TYPE_POI -> icon =
+                                    getDrawable(requireContext(), R.drawable.ic_marker_orange)
                                 TYPE_TRACKING -> {
-                                    icon = getDrawable(requireContext(), R.drawable.ic_run_circle_blue)
-                                    icon.setTint(ContextCompat.getColor(requireContext(), R.color.theme_orange))
+                                    icon =
+                                        getDrawable(requireContext(), R.drawable.ic_run_circle_blue)
+                                    icon.setTint(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.theme_orange
+                                        )
+                                    )
                                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                                 }
                                 TYPE_SNAPSHOT -> {
                                     icon = getDrawable(requireContext(), R.drawable.ic_image)
-                                    icon.setTint(ContextCompat.getColor(requireContext(), R.color.theme_orange))
+                                    icon.setTint(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.theme_orange
+                                        )
+                                    )
                                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                                 }
                             }
@@ -237,6 +251,29 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             } ?: binding.elevationInputField.setText(getString(R.string.unknown))
         }
 
+        viewModel.trekLocations.observe(viewLifecycleOwner) { liveData ->
+            if (liveData != null) {
+                liveData.observe(viewLifecycleOwner) { trek ->
+                    val temp = trek
+                    temp?.let {
+                        it.trekList.forEach { innerlist ->
+                            val poly = Polyline().apply {
+                                color = Color.RED
+                            }
+                            poly.setPoints(innerlist)
+                            trekOverlay.add(poly)
+                        }
+                        map.overlays.addAll(trekOverlay)
+                        map.invalidate()
+                    }
+                }
+            } else {
+                map.overlays.removeAll(trekOverlay)
+                trekOverlay.clear()
+                map.invalidate()
+            }
+        }
+
         binding.btnSetAsTarget.addOnCheckedChangeListener { _, isChecked ->
             viewModel.setSelectedAsTargetMarker(isChecked)
         }
@@ -261,7 +298,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
         binding.btnGoToMyPointPage.addOnCheckedChangeListener { button, isChecked ->
-            when(isChecked) {
+            when (isChecked) {
                 true -> button.isChecked = false
                 else -> {}
             }
@@ -270,7 +307,11 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         binding.btnGoToMyPointPage.apply {
             setOnClickListener {
                 viewModel.selectedMarker.value?.id?.let {
-                    findNavController().navigate(TrackingFragmentDirections.actionTrackingFragmentToPointOfInterestFragment(it.toLong()))
+                    findNavController().navigate(
+                        TrackingFragmentDirections.actionTrackingFragmentToPointOfInterestFragment(
+                            it.toLong()
+                        )
+                    )
                 }
             }
         }
@@ -406,8 +447,7 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             if (isChecked) {
                 Toast.makeText(
                     requireContext(),
-                    getString(R.string.add_poi_help)
-                    , Toast.LENGTH_SHORT
+                    getString(R.string.add_poi_help), Toast.LENGTH_SHORT
                 ).show()
             }
             viewModel.setAddingCustomMarker(isChecked)
@@ -425,7 +465,11 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     )
                 } else {
                     //TODO replace this with alertdialog that takes you to permissions page
-                    Toast.makeText(requireContext(), getString(R.string.missing_camera_permissions), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.missing_camera_permissions),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             } else {
                 Toast.makeText(
