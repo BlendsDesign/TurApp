@@ -71,6 +71,9 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
 
                 }
             }
+
+            val elevation = marker.position.altitude
+            _elevationString.value = String.format("%.2f m", elevation)
             marker.id?.let {
                 _trekLocations.value = repository.getTrek(it.toLong()).asLiveData()
             }
@@ -78,8 +81,6 @@ class TrackingViewModel(private val app: Application) : ViewModel() {
             _selectedMarker.value = marker
             _currentPosition.value?.let {
                 setDistanceToTargetString(it)
-                val elevation = it.altitude
-                _elevationString.value = String.format("%.2f m", elevation)
             }
         }
     }
