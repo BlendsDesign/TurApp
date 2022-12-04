@@ -24,9 +24,10 @@ class SelfieCamera(
     private var name : String? = null
 
 
-    fun takePhoto(myCallBack : ImageCapture.OnImageSavedCallback) {
+    fun takePhoto(myCallBack : ImageCapture.OnImageSavedCallback, imageRotation: Int) {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
+        imageCapture.targetRotation = imageRotation
 
         // Create time stamped name and MediaStore entry.
         name = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)

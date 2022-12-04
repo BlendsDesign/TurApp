@@ -1,12 +1,9 @@
 package com.example.turapp.fragments
 
-import android.Manifest
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -20,11 +17,9 @@ import com.example.turapp.repository.trackingDb.entities.TYPE_TRACKING
 import com.example.turapp.utils.SelfieCamera
 import com.example.turapp.utils.helperFiles.NAVIGATION_ARGUMENT_SAVING_TYPE
 import com.example.turapp.utils.helperFiles.PermissionCheckUtility
-import com.example.turapp.utils.helperFiles.REQUEST_CODE_CAMERA_PERMISSION
 import com.example.turapp.viewmodels.SelfieViewModel
 import com.example.turapp.viewmodels.TrackingViewModel
 import org.osmdroid.util.GeoPoint
-import pub.devrel.easypermissions.EasyPermissions
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -37,6 +32,26 @@ class SelfieFragment : Fragment() {
     private var pictureLocation: GeoPoint? = null
 
     private lateinit var viewModel: SelfieViewModel
+
+    private var imageRotation = Surface.ROTATION_0
+
+    private val orientationEventListener by lazy {
+        object : OrientationEventListener(requireContext()) {
+            override fun onOrientationChanged(orientaion: Int) {
+                if (orientaion == ORIENTATION_UNKNOWN) {
+                    return
+                }
+
+                val rotation = when(orientaion) {
+                    in 45 until 135 -> Surface.ROTATION_270
+                    in 135 until 225 -> Surface.ROTATION_180
+                    in 225 until 315 -> Surface.ROTATION_90
+                    else -> Surface.ROTATION_0
+                }
+                imageRotation = rotation
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +104,7 @@ class SelfieFragment : Fragment() {
                 selfieCam = SelfieCamera(requireContext(), cameraView, this, it)
                 selfieCam.startCamera()
                 binding.selfieCaptureButton.setOnClickListener {
-                    selfieCam.takePhoto(getImageSavedCallback())
+                    selfieCam.takePhoto(getImageSavedCallback(), imageRotation)
                 }
             }
         }
@@ -156,6 +171,16 @@ class SelfieFragment : Fragment() {
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+        orientationEventListener.enable()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        orientationEventListener.disable()
+    }
+
     private fun getImageSavedCallback(): ImageCapture.OnImageSavedCallback {
         return object : ImageCapture.OnImageSavedCallback {
             override fun onError(exception: ImageCaptureException) {
@@ -179,21 +204,6 @@ class SelfieFragment : Fragment() {
         super.onResume()
         if (viewModel.keepPicture.value == true)
             viewModel.resetKeepPicture()
-    }
-
-    companion object {}
-
-    private fun requestPermissions() {
-        if (PermissionCheckUtility.hasCameraPermissions(requireContext())) {
-            return
-        }
-        EasyPermissions.requestPermissions(
-            this,
-            "You need to accept camera permissions to use this app.",
-            REQUEST_CODE_CAMERA_PERMISSION,
-            Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        )
     }
 
     override fun onDestroy() {
