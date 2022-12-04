@@ -85,7 +85,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 
     // Location Services PLAY STORE NEEDED
-    implementation 'com.google.android.gms:play-services-location:21.0.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
     //CameraX
     def camerax_version = "1.1.0-beta01"
