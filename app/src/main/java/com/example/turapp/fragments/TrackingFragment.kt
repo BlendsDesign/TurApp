@@ -232,8 +232,8 @@ class TrackingFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
 
         viewModel.elevationString.observe(viewLifecycleOwner) {
-            it?.let { distanceString ->
-                binding.elevationInputField.setText(distanceString)
+            it?.let { elevationString ->
+                binding.elevationInputField.setText(elevationString)
             } ?: binding.elevationInputField.setText(getString(R.string.unknown))
         }
 
