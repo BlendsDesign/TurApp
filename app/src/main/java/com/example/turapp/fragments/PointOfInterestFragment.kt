@@ -49,8 +49,6 @@ class PointOfInterestFragment : Fragment() {
 
     private var boundingBox: BoundingBox? = null
 
-    private var graphEntries = mutableListOf<MutableList<Entry>>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val app = requireNotNull(activity).application
@@ -119,12 +117,16 @@ class PointOfInterestFragment : Fragment() {
                 it.trekList.let { outerlist ->
                     binding.graphAltitude.visibility = View.VISIBLE
                     drawTrackedLocations(outerlist)
-                    getTrekAltitudes(outerlist)
+                    viewModel.getTrekAltitudes(outerlist)
                 }
             } else {
                 binding.graphAltitude.visibility = View.GONE
             }
-
+        }
+        viewModel.graphEntries.observe(viewLifecycleOwner) {
+            it?.let {
+                setUpGraph(it)
+            }
         }
 
 
@@ -306,6 +308,7 @@ class PointOfInterestFragment : Fragment() {
         }
     }
 
+
     private fun getLocationInformation(geoPoint: GeoPoint?): String {
         if (geoPoint == null) return "No Location Data"
         val gc = Geocoder(requireContext(), Locale.getDefault())
@@ -341,30 +344,7 @@ class PointOfInterestFragment : Fragment() {
         return format.format(date)
     }
 
-    private fun getTrekAltitudes(outerList: MutableList<MutableList<GeoPoint>>) {
-        lifecycleScope.launch {
-            var distance = 0.0
-            var altitude = 0.0
-            var last: GeoPoint? = null
-            outerList.forEach { innerList ->
-                graphEntries.add(mutableListOf())
-                for (gp in innerList) {
-                    last?.let {
-                        distance += it.distanceToAsDouble(gp)
-                        altitude += it.altitude - gp.altitude
-                    }
-                    graphEntries.last().add(Entry(distance.toFloat(), gp.altitude.toFloat()))
-                    Log.d("GraphEntry test", graphEntries.toString())
-                    last = gp
-                }
-                last = null
-            }
-            setUpGraph()
-            binding.graphAltitude.visibility = View.VISIBLE
-        }
-    }
-
-    private fun setUpGraph() {
+    private fun setUpGraph(graphEntries: MutableList<MutableList<Entry>>) {
         binding.graphAltitude.apply {
             data = LineData()
 

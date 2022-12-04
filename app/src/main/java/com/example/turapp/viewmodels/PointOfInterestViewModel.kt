@@ -5,7 +5,9 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.turapp.repository.MyPointRepository
+import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.launch
+import org.osmdroid.util.GeoPoint
 
 class PointOfInterestViewModel(private val app: Application, id: Long) : ViewModel() {
 
@@ -46,6 +48,30 @@ class PointOfInterestViewModel(private val app: Application, id: Long) : ViewMod
         }
     }
 
+    private val _graphEntries = MutableLiveData<MutableList<MutableList<Entry>>>()
+    val graphEntries : LiveData<MutableList<MutableList<Entry>>> get() = _graphEntries
+
+    fun getTrekAltitudes(outerList: MutableList<MutableList<GeoPoint>>) {
+        viewModelScope.launch {
+            var distance = 0.0
+            var altitude = 0.0
+            var last: GeoPoint? = null
+            val list = mutableListOf<MutableList<Entry>>()
+            outerList.forEach { innerList ->
+                list.add(mutableListOf())
+                for (gp in innerList) {
+                    last?.let {
+                        distance += it.distanceToAsDouble(gp)
+                        altitude += it.altitude - gp.altitude
+                    }
+                    list.last().add(Entry(distance.toFloat(), gp.altitude.toFloat()))
+                    last = gp
+                }
+                last = null
+            }
+            _graphEntries.value = list
+        }
+    }
 
     class Factory(
         private val app: Application,
