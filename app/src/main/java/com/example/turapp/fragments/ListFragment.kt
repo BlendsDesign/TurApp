@@ -34,7 +34,7 @@ class ListFragment : Fragment() {
 
         adapter = MyPointListAdapter(MyPointListAdapter.OnClickListener {
             viewModel.setNavigateToMyPoint(it)
-        })
+        }, requireContext())
 
         binding.apply {
             lifecycleOwner = viewLifecycleOwner

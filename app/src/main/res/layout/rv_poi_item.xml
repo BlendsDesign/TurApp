@@ -24,8 +24,7 @@
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/rvTextView"
-            app:layout_constraintBottom_toBottomOf="@+id/rvDateView"
-            setListAdapterIcon="@{myPoint}"/>
+            app:layout_constraintBottom_toBottomOf="@+id/rvDateView"/>
 
         <TextView
             android:id="@+id/rvTextView"
