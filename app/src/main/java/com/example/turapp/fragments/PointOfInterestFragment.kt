@@ -20,6 +20,7 @@ import com.example.turapp.R
 import com.example.turapp.viewmodels.PointOfInterestViewModel
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
 import com.example.turapp.repository.trackingDb.entities.*
+import com.github.mikephil.charting.data.*
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -47,9 +48,7 @@ class PointOfInterestFragment : Fragment() {
 
     private var boundingBox: BoundingBox? = null
 
-    // TODO add altidude graf for trek
-    private val altitudeList = mutableListOf<Float>()
-
+    private var graphEntries = mutableListOf<MutableList<Entry>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,8 +114,14 @@ class PointOfInterestFragment : Fragment() {
         }
 
         viewModel.trek.observe(viewLifecycleOwner) {
-            it?.trekList?.let { outerlist ->
-                drawTrackedLocations(outerlist)
+            if (it != null) {
+                it.trekList?.let { outerlist ->
+                    binding.graphAltitude.visibility = View.VISIBLE
+                    drawTrackedLocations(outerlist)
+                    getTrekAltitudes(outerlist)
+                }
+            } else {
+                binding.graphAltitude.visibility = View.GONE
             }
 
         }
@@ -193,7 +198,10 @@ class PointOfInterestFragment : Fragment() {
                         }
                         TYPE_TRACKING -> {
                             marker.apply {
-                                icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_run_circle_blue)
+                                icon = ContextCompat.getDrawable(
+                                    requireContext(),
+                                    R.drawable.ic_run_circle_blue
+                                )
                                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                             }
                             binding.otherInfoInputField.setText(getActivityInformationString(myPoint))
@@ -306,7 +314,7 @@ class PointOfInterestFragment : Fragment() {
             return ads.getAddressLine(0)
         } catch (e: IOException) {
             e.printStackTrace()
-        } catch (e: IndexOutOfBoundsException){
+        } catch (e: IndexOutOfBoundsException) {
             e.printStackTrace()
         }
         return ""
@@ -332,8 +340,42 @@ class PointOfInterestFragment : Fragment() {
         return format.format(date)
     }
 
-    private suspend fun getTrekAltitudes(outerList: MutableList<MutableList<GeoPoint>>) {
+    private fun getTrekAltitudes(outerList: MutableList<MutableList<GeoPoint>>) {
         lifecycleScope.launch {
+            var distance = 0.0
+            var altitude = 0.0
+            var last: GeoPoint? = null
+            outerList.forEach { innerList ->
+                graphEntries.add(mutableListOf())
+                for (gp in innerList) {
+                    last?.let {
+                        distance += it.distanceToAsDouble(gp)
+                        altitude += it.altitude - gp.altitude
+                    }
+                    graphEntries.last().add(Entry(distance.toFloat(), altitude.toFloat()))
+                    Log.d("GraphEntry test", graphEntries.toString())
+                    last = gp
+                }
+                last = null
+            }
+            setUpGraph()
+            binding.graphAltitude.visibility = View.VISIBLE
+        }
+    }
+
+    private fun setUpGraph() {
+        binding.graphAltitude.apply {
+            data = LineData().apply {
+
+            }
+
+            for (outerlist in graphEntries) {
+                this.data.addDataSet(LineDataSet(outerlist, "").apply {
+                    color = ContextCompat.getColor(requireContext(),R.color.theme_blue)
+                    lineWidth = 1.5f
+                })
+            }
+            invalidate()
 
         }
     }
