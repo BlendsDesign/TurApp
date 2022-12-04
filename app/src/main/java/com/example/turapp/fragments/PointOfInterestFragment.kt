@@ -352,7 +352,7 @@ class PointOfInterestFragment : Fragment() {
                         distance += it.distanceToAsDouble(gp)
                         altitude += it.altitude - gp.altitude
                     }
-                    graphEntries.last().add(Entry(distance.toFloat(), altitude.toFloat()))
+                    graphEntries.last().add(Entry(distance.toFloat(), gp.altitude.toFloat()))
                     Log.d("GraphEntry test", graphEntries.toString())
                     last = gp
                 }
