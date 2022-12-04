@@ -4,8 +4,11 @@ import android.app.Application
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
+import com.example.turapp.R
 import com.example.turapp.repository.MyPointRepository
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 
@@ -48,28 +51,32 @@ class PointOfInterestViewModel(private val app: Application, id: Long) : ViewMod
         }
     }
 
-    private val _graphEntries = MutableLiveData<MutableList<MutableList<Entry>>>()
-    val graphEntries : LiveData<MutableList<MutableList<Entry>>> get() = _graphEntries
+    private val _graphEntries = MutableLiveData<LineData>()
+    val graphEntries : LiveData<LineData> get() = _graphEntries
 
     fun getTrekAltitudes(outerList: MutableList<MutableList<GeoPoint>>) {
         viewModelScope.launch {
             var distance = 0.0
             var altitude = 0.0
             var last: GeoPoint? = null
-            val list = mutableListOf<MutableList<Entry>>()
+            val data = LineData()
             outerList.forEach { innerList ->
-                list.add(mutableListOf())
+                val list = mutableListOf<Entry>()
                 for (gp in innerList) {
                     last?.let {
                         distance += it.distanceToAsDouble(gp)
                         altitude += it.altitude - gp.altitude
                     }
-                    list.last().add(Entry(distance.toFloat(), gp.altitude.toFloat()))
+                    list.add(Entry(distance.toFloat(), gp.altitude.toFloat()))
                     last = gp
                 }
                 last = null
+                data.addDataSet(LineDataSet(list, "").apply {
+                    color = getColor(R.color.theme_blue)
+                    lineWidth = 1.5f
+                })
             }
-            _graphEntries.value = list
+            _graphEntries.value = data
         }
     }
 

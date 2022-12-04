@@ -21,7 +21,6 @@ import com.example.turapp.viewmodels.PointOfInterestViewModel
 import com.example.turapp.databinding.FragmentPointOfInterestBinding
 import com.example.turapp.repository.trackingDb.entities.*
 import com.github.mikephil.charting.components.Description
-import com.github.mikephil.charting.data.*
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -125,7 +124,11 @@ class PointOfInterestFragment : Fragment() {
         }
         viewModel.graphEntries.observe(viewLifecycleOwner) {
             it?.let {
-                setUpGraph(it)
+                binding.graphAltitude.apply {
+                    data = it
+                    description = Description().apply { text = getString(R.string.altitude_graph_description) }
+                    invalidate()
+                }
             }
         }
 
@@ -342,23 +345,5 @@ class PointOfInterestFragment : Fragment() {
         val date = Date(time)
         val format = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
         return format.format(date)
-    }
-
-    private fun setUpGraph(graphEntries: MutableList<MutableList<Entry>>) {
-        binding.graphAltitude.apply {
-            data = LineData()
-
-            for (outerlist in graphEntries) {
-                this.data.addDataSet(LineDataSet(outerlist, "").apply {
-                    color = ContextCompat.getColor(requireContext(),R.color.theme_blue)
-                    lineWidth = 1.5f
-                })
-            }
-
-            description = Description().apply { text = getString(R.string.altitude_graph_description) }
-
-            invalidate()
-
-        }
     }
 }
